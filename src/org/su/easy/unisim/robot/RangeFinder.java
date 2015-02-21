@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.su.easy.unisim.sim.world.WorldObj;
+import org.su.easy.unisim.util.Line;
+import org.su.easy.unisim.util.Shape2D;
 
 /**
  * The RangeFinder class simulates a line of sight rangefinder (e.g. laser or
@@ -17,9 +19,7 @@ import org.su.easy.unisim.sim.world.WorldObj;
  */
 public class RangeFinder {
 
-    private final float maxRayLength;
-    private Vector2D basePoint;
-    private float angle;
+    private final Line line;
 
     /**
      * Initialises a new RangeFinder with specified base point, angle and
@@ -34,9 +34,7 @@ public class RangeFinder {
      * world bounds, or in rare instances intersections may be missed.
      */
     public RangeFinder(Vector2D basePoint, float angle, float maxRayLength) {
-        this.basePoint = basePoint;
-        this.angle = angle;
-        this.maxRayLength = maxRayLength;
+        this.line = Line.fromPolarVec(basePoint, angle, maxRayLength);
     }
 
     /**
@@ -49,26 +47,14 @@ public class RangeFinder {
      * object collection is set up properly and the max ray length is long
      * enough.
      */
-    public float findRange(Collection<WorldObj> objects) {
+    public float findRange(Collection<Shape2D> objects) {
         double lowestDist = 0; //will return this if no intersection found
 
-        //calculate line coordinates and create a new Line2D
-        float x1 = (float) basePoint.getX(),
-                y1 = (float) basePoint.getY(),
-                x2 = (float) (basePoint.getX() + Math.cos(angle) * maxRayLength),
-                y2 = (float) (basePoint.getX() + Math.sin(angle) * maxRayLength);
-
-        final Line2D line = new Line2D.Float(x1, y1, x2, y2);
-
-        for (WorldObj obj : objects) {
-            //get list of intersection distances from the object. If there are no
-            //intersections, the for loop will be skipped
-            ArrayList<Double> dists = obj.getLineIntersectionDists(line);
-            for (double d : dists) {
-                //check if an intersection has been found yet, and if one has,
-                //whether this intersection is closer
-                if (lowestDist == 0 | d < lowestDist) {
-                    lowestDist = d;
+        for (Shape2D obj : objects) {
+            Double dist = obj.getSmallestLineIntersectionDist(line);
+            if(!dist.isNaN()) {
+                if (lowestDist == 0 | dist < lowestDist) {
+                    lowestDist = dist;
                 }
             }
         }
@@ -76,50 +62,11 @@ public class RangeFinder {
         return (float) lowestDist;
     }
 
-    /**
-     * Sets the base point of the Range Finder.
-     *
-     * @param basePoint World coordinates of the base point this RangeFinder
-     * projects from
-     */
-    public void setBasePoint(Vector2D basePoint) {
-        this.basePoint = basePoint;
-    }
+   public void move(double distance, double deltaAngle) {
+       line.move(distance, deltaAngle);
+   }
 
-    /**
-     * Set the angle of projection of the ray
-     *
-     * @param angle Angle in radians of the ray
-     */
-    public void setAngle(float angle) {
-        this.angle = angle;
+    public void rotate(double deltaAngle) {
+        line.rotate(line.p1, deltaAngle);
     }
-
-    /**
-     * Get the maximum distance this RangeFinder will check for intersections.
-     *
-     * @return Maximum ray length in metres.
-     */
-    public float getMaxRayLength() {
-        return maxRayLength;
-    }
-
-    /**
-     * Get the angle of projection of the ray
-     *
-     * @return Angle in radians.
-     */
-    public float getAngle() {
-        return angle;
-    }
-
-    /**
-     * Get the current base point of the ray.
-     *
-     * @return Vector2D in world coordinates of the ray base point.
-     */
-    public Vector2D getBasePoint() {
-        return basePoint;
-    }
-
 }

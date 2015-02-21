@@ -1,5 +1,6 @@
 package org.su.easy.unisim.sim.world;
 
+import java.awt.geom.Area;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
@@ -109,6 +110,11 @@ public class RectangleObj implements WorldObj {
     @Override
     public Vector2D getPosition() {
         return position;
+    }
+
+    @Override
+    public boolean intersectsWithArea(Area area) {
+        return area.intersects(getRectangle());
     }
 
 }

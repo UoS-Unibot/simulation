@@ -1,6 +1,6 @@
 package org.su.easy.unisim.robot;
 
-import java.awt.geom.Rectangle2D;
+import java.awt.geom.Area;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 /**
@@ -27,7 +27,7 @@ public interface IRobot {
     /**
      * @return Current heading of the robot in radians.
      */
-    public float getHeading();
+    public double getHeading();
 
     /**
      * @return Vector2D containing world coordinates specifying this robot's
@@ -61,15 +61,7 @@ public interface IRobot {
     /**
      * @return the robot's angular velocity in radians/second.
      */
-    public float getAngularVelocity();
-
-    /**
-     * Returns a Java 2D geometry Rectangle2D object; currently only used for
-     * drawing the robot
-     *
-     * @return A Rectangle2D object representing the robot's body
-     */
-    public Rectangle2D getRectangle();
+    public double getAngularVelocity();
 
     /**
      * @return The robot's size in metres.
@@ -79,6 +71,6 @@ public interface IRobot {
     /**
      * @return The robot's current forward velocity in metres/second.
      */
-    public float getVelocity();
+    public double getVelocity();
 
 }

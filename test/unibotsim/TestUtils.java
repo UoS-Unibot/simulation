@@ -5,7 +5,11 @@
  */
 package unibotsim;
 
+import java.util.Collection;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.hamcrest.BaseMatcher;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
 import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
@@ -14,6 +18,46 @@ import org.junit.Test;
  * @author miles
  */
 public class TestUtils {
+    
+    public static final double EPS = 1E-5;
+    
+    public static Matcher<Vector2D> vEquals(final Vector2D v) {
+        return new BaseMatcher<Vector2D>() {
+
+            @Override
+            public boolean matches(Object item) {
+                return ((Vector2D)item).distance(v) < EPS;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("Vector does not equal expected vector " + v.toString());
+            }
+        };
+        
+    }
+    
+    public static Matcher<Vector2D> vIsIn(final Collection<Vector2D> vc) {
+        return new BaseMatcher<Vector2D>() {
+
+            @Override
+            public boolean matches(Object item) {
+                Vector2D v2 = (Vector2D)item;
+                boolean matchFound = false;
+                for(Vector2D v : vc) {
+                    if(v2.distance(v) < EPS)
+                        matchFound = true;
+                }
+                return matchFound;
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText("Vector not found in collection :" + vc.toString());
+            }
+            
+        };
+    }
     
     public static void assertTwoVector2DsEqual(Vector2D v1, Vector2D v2,boolean assertion) {
         boolean result;

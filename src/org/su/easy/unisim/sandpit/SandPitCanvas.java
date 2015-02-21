@@ -15,7 +15,9 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferStrategy;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.su.easy.unisim.robot.CTRNNRobotController;
 import org.su.easy.unisim.robot.IRobot;
+import org.su.easy.unisim.robot.SimulatedUnibot;
 import org.su.easy.unisim.sim.SimulationController;
 import org.su.easy.unisim.sim.world.SimulationWorld;
 
@@ -25,7 +27,7 @@ import org.su.easy.unisim.sim.world.SimulationWorld;
  */
 public class SandPitCanvas extends Canvas implements Runnable {
     
-    SimulationController controller = new SimulationController.SimulationBuilder(null).build();
+    SimulationController controller = new SimulationController.SimulationBuilder(new CTRNNRobotController()).build();
     
     public SandPitCanvas() {
         robot = controller.getRobot();
@@ -86,7 +88,7 @@ public class SandPitCanvas extends Canvas implements Runnable {
         grid.draw(g2);
         SandpitRenderer.drawWorld(g2, world);
         path.draw(g2);
-        SandpitRenderer.drawRobot(g2, robot);
+        SandpitRenderer.drawRobot(g2, (SimulatedUnibot)robot);
         
         g2.setTransform(prevTrans);
     }

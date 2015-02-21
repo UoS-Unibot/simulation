@@ -9,11 +9,10 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
-import org.su.easy.unisim.robot.IRobot;
-import org.su.easy.unisim.sim.world.LineObj;
-import org.su.easy.unisim.sim.world.RectangleObj;
+import org.su.easy.unisim.robot.SimulatedUnibot;
 import org.su.easy.unisim.sim.world.SimulationWorld;
-import org.su.easy.unisim.sim.world.WorldObj;
+import org.su.easy.unisim.util.Line;
+import org.su.easy.unisim.util.Shape2D;
 
 /**
  *
@@ -24,23 +23,22 @@ public class SandpitRenderer {
     
     
     public static void drawWorld(Graphics2D g2,SimulationWorld world) {
-        for(WorldObj obj : world.getObjects()) {
-            if(obj instanceof LineObj) {
-                LineObj line = (LineObj)obj;
+        for(Shape2D obj : world.getObjects()) {
+            if(obj instanceof Line) {
+                Line line = (Line)obj;
                 g2.setColor(Color.BLACK);
                 g2.setStroke(bstroke);
-                g2.draw(line.getLine());
-            } else if(obj instanceof RectangleObj) {
-                RectangleObj rect = (RectangleObj)obj;
+                g2.draw(line.toLine2D());
+            } else {
                 g2.setColor(Color.red);
                 g2.setStroke(bstroke);
-                g2.fill(rect.getRectangle());
+                g2.fill(obj.toJava2DShape());
             }
         }
     }
-    public static void drawRobot(Graphics2D g2,IRobot robot) {
+    public static void drawRobot(Graphics2D g2,SimulatedUnibot robot) {
         g2.setColor(Color.GREEN);
-        g2.fill(robot.getRectangle());
+        g2.fill(robot.getShape().toJava2DShape());
     }
     
     

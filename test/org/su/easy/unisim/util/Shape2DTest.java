@@ -1,0 +1,65 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package org.su.easy.unisim.util;
+
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import static org.junit.Assert.*;
+import static unibotsim.TestUtils.vIsIn;
+
+/**
+ *
+ * @author miles
+ */
+public class Shape2DTest {
+
+    public Shape2DTest() {
+    }
+
+    @BeforeClass
+    public static void setUpClass() {
+    }
+
+    @AfterClass
+    public static void tearDownClass() {
+    }
+
+    @Before
+    public void setUp() {
+    }
+
+    @After
+    public void tearDown() {
+    }
+
+    @Test
+    public void createRectangleShouldCreatePoints() {
+        Shape2D shape = Shape2D.createRectangleFromCenter(Vector2D.ZERO, new Vector2D(2, 2), 0);
+        assertFalse(shape.isEmpty());
+    }
+
+    
+    @Test
+    public void rectangleDoesntIntersectAnotherRectangle() {
+        Shape2D rect1 = Shape2D.createRectangleFromCenter(Vector2D.ZERO, new Vector2D(2, 2),0);
+        Shape2D rect2 = Shape2D.createRectangleFromCenter(new Vector2D(0,5), new Vector2D(2, 2),0);
+        assertFalse("Rectangles intersect",rect1.intersectsWith(rect2));
+    }
+    
+    
+    @Test
+    public void rectangleIntersectsAnotherRectangle() {
+        Shape2D rect1 = Shape2D.createRectangleFromCenter(Vector2D.ZERO, new Vector2D(2, 2),0);
+        Shape2D rect2 = Shape2D.createRectangleFromCenter(new Vector2D(0,1), new Vector2D(2, 2),Math.PI/4);
+        assertTrue("Rectangles don't intersect",rect1.intersectsWith(rect2));
+    }
+    
+
+}

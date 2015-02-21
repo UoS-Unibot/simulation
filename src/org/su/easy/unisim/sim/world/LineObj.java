@@ -1,8 +1,10 @@
 package org.su.easy.unisim.sim.world;
 
-import java.awt.geom.Line2D;
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.su.easy.unisim.util.Line;
+import org.su.easy.unisim.util.Line.LineIntersection;
 
 /**
  * Represents a line object in the world. For the purposes of the simulation it
@@ -14,37 +16,18 @@ public class LineObj implements WorldObj {
 
     private float rotation;
     private Vector2D position;
-    private final Line2D line = new Line2D.Float();
-
-    /**
-     * Instantiates a new LineObj with specified position, length and rotation.
-     * The line is projected symmetrically outwards from the specified center
-     * point.
-     *
-     * @param position Center point of this line in world coordinates.
-     * @param length Length, in metres, of this line.
-     * @param rotation Angle to translate this line by (pivoting around the
-     * position) in radians
-     */
-    public LineObj(Vector2D position, float length, float rotation) {
-        this.rotation = rotation;
-        this.position = position;
-        float hL = length / 2;
-        float cL = (float) (Math.cos(rotation) * hL);
-        float sL = (float) (Math.sin(rotation) * hL);
-        line.setLine(
-                position.getX() - cL,
-                position.getY() - sL,
-                position.getX() + cL,
-                position.getY() + sL
-        );
+    private Line line = new Line();
+    
+    public LineObj(Line line) {
+        this.line = line;
     }
+
 
     /**
      * @return Gets the Java2D geometry Line2D object. Currently used for
      * rendering.
      */
-    public Line2D getLine() {
+    public Line getLine() {
         return line;
     }
 
@@ -57,15 +40,32 @@ public class LineObj implements WorldObj {
     }
 
     @Override
-    public ArrayList<Double> getLineIntersectionDists(Line2D line2) {
-        ArrayList<Double> arr = new ArrayList<>(1);
-        arr.add(line.ptSegDist(line2.getX1(), line2.getY1()));
+    public Collection<Double> getLineIntersectionDists(Line line2) {
+        final LinkedList<Double> arr = new LinkedList<>();
+        LineIntersection li = line.getIntersection(line2);
+        if(li.isIntersection)
+            arr.add(li.line1DistToIntersect);
         return arr;
     }
 
     @Override
     public float getRotation() {
         return rotation;
+    }
+
+    @Override
+    public boolean intersectsWith(WorldObj obj) {
+        for(Line l : obj.getLines())
+            if(this.getLine().getIntersection(line).isIntersection)
+                return true;
+        return false;        
+    }
+
+    @Override
+    public Collection<Line> getLines() {
+        final LinkedList<Line> lines = new LinkedList<>();
+        lines.add(getLine());
+        return lines;
     }
 
 }

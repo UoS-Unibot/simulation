@@ -5,11 +5,16 @@
  */
 package org.su.easy.unisim.robot;
 
-import java.awt.geom.Rectangle2D;
+import java.awt.geom.Area;
+import java.awt.geom.PathIterator;
+import java.awt.geom.Point2D;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.junit.After;
 import org.junit.AfterClass;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -38,17 +43,20 @@ public class SimulatedUnibotTest {
         robot = new SimulatedUnibot(new MockRobotController(),Vector2D.ZERO,new Vector2D(2, 2),0);
     }
     
+    @Test
+    public void areaHasCoordinatesOf() {
+        Area area = robot.getArea();
+        assertFalse("Area should not be empty",area.isEmpty());
+        PathIterator pi = area.getPathIterator(null);
+        double[] dcoords = new double[6];
+        Set<Point2D> coords = new HashSet<>();
+        for(int curSeg = pi.currentSegment(dcoords);pi.isDone();pi.next()) {
+            System.out.println(Arrays.toString(dcoords));
+        }
+    }
+    
     @After
     public void tearDown() {
-    }
-
-    @Test
-    public void getRectangleGeneratesRectangleAt_n1_1_withRotationOf0() {
-        Rectangle2D rect = robot.getRectangle();
-        assertEquals("center x",0,rect.getCenterX(),0.001);
-        assertEquals("center y",0,rect.getCenterY(),0.001);
-        assertEquals("top left x",-1,rect.getX(),0.001);
-        assertEquals("top left y",1,rect.getY(),0.001);
     }
 
     class MockRobotController implements IRobotController {

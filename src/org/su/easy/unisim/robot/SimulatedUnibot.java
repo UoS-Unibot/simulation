@@ -1,9 +1,12 @@
 package org.su.easy.unisim.robot;
 
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Area;
 import java.awt.geom.Rectangle2D;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.su.easy.unisim.sim.world.SimulationWorld;
 import org.su.easy.unisim.sim.world.WorldObj;
+import org.su.easy.unisim.util.Shape2D;
 
 /**
  * The SimulatedUnibot class implements IRobot with a simulated differential
@@ -14,11 +17,11 @@ import org.su.easy.unisim.sim.world.WorldObj;
 public class SimulatedUnibot implements IRobot {
 
     private float timeStepLength = 1f / 60f,
-            angularVelocity,heading, forwardVelocity;
-    private Vector2D currentPos;
+            angularVelocity,forwardVelocity;
     private final IRobotController controller;
     private final RangeFinder rangeFinder;
     private final Vector2D size;
+    private Shape2D shape;
 
     /**
      * Initialises a default SimulatedUnibot with initial position of 0,0,
@@ -39,8 +42,7 @@ public class SimulatedUnibot implements IRobot {
      * @param initialHeading Initial heading of the robot in radians.
      */
     public SimulatedUnibot(IRobotController controller, Vector2D initialPosition, Vector2D size, float initialHeading) {
-        currentPos = initialPosition;
-        heading = initialHeading;
+        shape = Shape2D.createRectangleFromCenter(initialPosition, size, initialHeading);
         forwardVelocity = 0;
         this.size = size;
         this.controller = controller;
@@ -57,9 +59,9 @@ public class SimulatedUnibot implements IRobot {
      */
     @Override
     public void step(RobotInput input) {
-        currentPos = currentPos.add(new Vector2D(forwardVelocity, 0).scalarMultiply(timeStepLength));
         controller.step(input);
         setVelocity(controller.getVelocity(), controller.getAngularVelocity());
+        shape.move(forwardVelocity*timeStepLength,angularVelocity*timeStepLength);
     }
 
     /**
@@ -85,8 +87,7 @@ public class SimulatedUnibot implements IRobot {
      *
      * @return Rectangle2D object with current size and position.
      */
-    @Override
-    public Rectangle2D getRectangle() {
+    private Rectangle2D getRectangle() {
         double halfW = getSize().getX() / 2,
                 halfH = getSize().getY() / 2;
         Rectangle2D rect = new Rectangle2D.Double();
@@ -97,6 +98,7 @@ public class SimulatedUnibot implements IRobot {
                 -getSize().getY());
         return rect;
     }
+    
 
     /**
      * @return Where the base of the rangefinder is currently located.
@@ -109,7 +111,7 @@ public class SimulatedUnibot implements IRobot {
      * Processes a collision with an object in the world.
      * @param collidedObj Object that is colliding with this robot.
      */
-    public void doCollision(WorldObj collidedObj) {
+    public void doCollision(Shape2D collidedObj) {
         setVelocity(0);
     }
 
@@ -141,7 +143,7 @@ public class SimulatedUnibot implements IRobot {
     }
 
     @Override
-    public float getAngularVelocity() {
+    public double getAngularVelocity() {
         return angularVelocity;
     }
 
@@ -151,18 +153,23 @@ public class SimulatedUnibot implements IRobot {
     }
 
     @Override
-    public float getHeading() {
-        return heading;
+    public double getHeading() {
+        return shape.getRotation();
     }
 
     @Override
     public Vector2D getPosition() {
-        return currentPos;
+        return shape.getCenter();
     }
 
+    public Shape2D getShape() {
+        return shape;
+    }
+
+    
 
     @Override
-    public float getVelocity() {
+    public double getVelocity() {
         return forwardVelocity;
     }
 

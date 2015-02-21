@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.LinkedList;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.su.easy.unisim.robot.SimulatedUnibot;
+import org.su.easy.unisim.util.Line;
+import org.su.easy.unisim.util.Shape2D;
 
 /**
  * The SimulationWorld represents a collection of objects making up the world,
@@ -14,7 +16,7 @@ import org.su.easy.unisim.robot.SimulatedUnibot;
  */
 public class SimulationWorld {
 
-    private final LinkedList<WorldObj> objects = new LinkedList<>();
+    private final LinkedList<Shape2D> objects = new LinkedList<>();
 
     /**
      * Creates a new SimulationWorld with specified bounds. LineObjs are
@@ -26,10 +28,10 @@ public class SimulationWorld {
         float pi2 = (float) Math.PI / 2;
         float w = (float) bounds.getX(),
                 h = (float) bounds.getY();
-        objects.add(new LineObj(new Vector2D(0, h / 2), w, 0));
-        objects.add(new LineObj(new Vector2D(w / 2, 0), h, pi2));
-        objects.add(new LineObj(new Vector2D(0, -h / 2), w, 0));
-        objects.add(new LineObj(new Vector2D(-w / 2, 0), w, pi2));
+        objects.add(Line.fromCenterPoint(0, h/2, 0, w));
+        objects.add(Line.fromCenterPoint(w/2, 0, Math.PI/2, h));
+        objects.add(Line.fromCenterPoint(0, -h/2, 0, w));
+        objects.add(Line.fromCenterPoint(-w/2, 0, Math.PI/2, h));
 
     }
 
@@ -43,16 +45,9 @@ public class SimulationWorld {
     }
 
     public void checkCollisions(SimulatedUnibot robot) {
-        for (WorldObj obj : objects) {
-            if (obj instanceof LineObj) {
-                if (robot.getRectangle().intersectsLine(((LineObj) obj).getLine())) {
-                    robot.doCollision(obj);
-                }
-            } else if (obj instanceof RectangleObj) {
-                if (robot.getRectangle().intersects(((RectangleObj) obj).getRectangle())) {
-                    robot.doCollision(obj);
-                }
-            }
+        for (Shape2D obj : objects) {
+            if(obj.intersectsWith(robot.getShape()))
+                robot.doCollision(obj);
         }
     }
 
@@ -68,7 +63,7 @@ public class SimulationWorld {
     /**
      * @return a collection of the current objects in the world.
      */
-    public Collection<WorldObj> getObjects() {
+    public Collection<Shape2D> getObjects() {
         return objects;
     }
 
