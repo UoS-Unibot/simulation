@@ -42,7 +42,6 @@ public class SandPitCamera {
 
     public void move(Vector2D changeVector) {
         currentPosWorldCoord = currentPosWorldCoord.add(changeVector);
-        System.out.println(currentPosWorldCoord);
     }
 
     public void changeScale(double scaleDiff) {

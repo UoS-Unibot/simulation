@@ -28,10 +28,10 @@ public class SimulationWorld {
         float pi2 = (float) Math.PI / 2;
         float w = (float) bounds.getX(),
                 h = (float) bounds.getY();
-        objects.add(Line.fromCenterPoint(0, h/2, 0, w));
-        objects.add(Line.fromCenterPoint(w/2, 0, Math.PI/2, h));
-        objects.add(Line.fromCenterPoint(0, -h/2, 0, w));
-        objects.add(Line.fromCenterPoint(-w/2, 0, Math.PI/2, h));
+        objects.add(Line.fromCenterPoint(0, h / 2, w, 0));
+        objects.add(Line.fromCenterPoint(w / 2, 0, h, pi2));
+        objects.add(Line.fromCenterPoint(0, -h / 2, w, 0));
+        objects.add(Line.fromCenterPoint(-w / 2, 0, h, pi2));
 
     }
 
@@ -40,14 +40,15 @@ public class SimulationWorld {
      *
      * @param objects Collection of WorldObjs
      */
-    public void addWorldObjects(Collection<WorldObj> objects) {
+    public void addWorldObjects(Collection<Shape2D> objects) {
         objects.addAll(objects);
     }
 
     public void checkCollisions(SimulatedUnibot robot) {
         for (Shape2D obj : objects) {
-            if(obj.intersectsWith(robot.getShape()))
+            if (obj.intersectsWith(robot.getShape())) {
                 robot.doCollision(obj);
+            }
         }
     }
 
@@ -56,7 +57,7 @@ public class SimulationWorld {
      *
      * @param object WorldObj to add.
      */
-    public void createWorldObject(WorldObj object) {
+    public void createWorldObject(Shape2D object) {
         objects.add(object);
     }
 

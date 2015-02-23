@@ -32,7 +32,7 @@ public class LineTest {
             parallelA, parallelB,
             interAt1_1A, interAt1_1B,
             interAt4_4A, interAt4_4B,
-            notIntersectingA, notIntersectingB,rotationLine;
+            notIntersectingA, notIntersectingB,rotationLine,lineDist4A,lineDist4B;
 
     @BeforeClass
     public static void setUpClass() {
@@ -55,6 +55,10 @@ public class LineTest {
         notIntersectingB = Line.fromCoords(0, 3, 2, 9);
         
         rotationLine = Line.fromCoords(0,0,4,4);
+        
+        lineDist4A = Line.fromCoords(0, 0, 0, 5);
+        lineDist4B = Line.fromCoords(-2, 4, 2, 4);
+        
     }
 
     @AfterClass
@@ -67,6 +71,20 @@ public class LineTest {
 
     @After
     public void tearDown() {
+    }
+    
+    
+    @Test
+    public void lineFromCentreWith0RotationHasP1_n1_0_AndP2_1_0(){
+        Line l = Line.fromCenterPoint(0, 0, 2, 0);
+        assertThat(l.p1,vEquals(-1,0));
+        assertThat(l.p2,vEquals(1,0));
+    }
+    @Test
+    public void lineFromCentreWithPI2RotationHasP1_0_n1_AndP2_0_1(){
+        Line l = Line.fromCenterPoint(0, 0, 2, Math.PI/2);
+        assertThat(l.p1,vEquals(0,-1));
+        assertThat(l.p2,vEquals(0,1));
     }
 
     @Test
@@ -100,6 +118,12 @@ public class LineTest {
     @Test
     public void line2IntersectionDistanceAt1_1isRoot2() {
         assertEquals(Math.sqrt(2), interAt1_1A.getIntersection(interAt1_1B).line2DistToIntersect,0.0001);
+    }
+    
+    @Test
+    public void rotatedLine1DistIs4() {
+        assertThat(lineDist4A.getIntersection(lineDist4B).intersectionPoint, vEquals(0,4));
+        assertEquals(4,lineDist4A.getIntersection(lineDist4B).line1DistToIntersect, 0.0001);
     }
 
 

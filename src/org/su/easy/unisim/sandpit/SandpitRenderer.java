@@ -9,6 +9,8 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
+import java.awt.geom.Ellipse2D;
+import java.awt.geom.Line2D;
 import org.su.easy.unisim.robot.SimulatedUnibot;
 import org.su.easy.unisim.sim.world.SimulationWorld;
 import org.su.easy.unisim.util.Line;
@@ -19,7 +21,7 @@ import org.su.easy.unisim.util.Shape2D;
  * @author miles
  */
 public class SandpitRenderer {
-    private static final Stroke bstroke = new BasicStroke(0.1f);
+    private static final Stroke bstroke = new BasicStroke(0.05f);
     
     
     public static void drawWorld(Graphics2D g2,SimulationWorld world) {
@@ -32,13 +34,23 @@ public class SandpitRenderer {
             } else {
                 g2.setColor(Color.red);
                 g2.setStroke(bstroke);
+                //g2.draw(obj.toJava2DShape());
                 g2.fill(obj.toJava2DShape());
             }
         }
     }
     public static void drawRobot(Graphics2D g2,SimulatedUnibot robot) {
-        g2.setColor(Color.GREEN);
+        g2.setColor(new Color(45,45,45));
+        //g2.draw(robot.getShape().toJava2DShape());
         g2.fill(robot.getShape().toJava2DShape());
+        g2.setColor(Color.RED);
+        g2.setStroke(bstroke);
+        g2.draw(new Line2D.Double(
+                robot.getRangeFinderBase().getX(),
+                robot.getRangeFinderBase().getY(),
+                robot.getRangeFinder().getLastIntersectionPoint().getX(),
+                robot.getRangeFinder().getLastIntersectionPoint().getY()
+        ));
     }
     
     

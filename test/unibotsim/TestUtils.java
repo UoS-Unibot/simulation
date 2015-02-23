@@ -21,6 +21,10 @@ public class TestUtils {
     
     public static final double EPS = 1E-5;
     
+    public static Matcher<Vector2D> vEquals(double x, double y) {
+        return vEquals(new Vector2D(x,y));
+    }
+    
     public static Matcher<Vector2D> vEquals(final Vector2D v) {
         return new BaseMatcher<Vector2D>() {
 

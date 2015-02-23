@@ -5,8 +5,6 @@
  */
 package org.su.easy.unisim.robot;
 
-import org.su.easy.unisim.sim.world.RectangleObj;
-import org.su.easy.unisim.robot.RangeFinder;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
@@ -14,7 +12,7 @@ import org.junit.After;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
-import org.su.easy.unisim.sim.world.WorldObj;
+import org.su.easy.unisim.util.Shape2D;
 
 /**
  *
@@ -25,19 +23,19 @@ public class RangeFinderTest {
     public RangeFinderTest() {
     }
 
-    private RectangleObj create22obj(float x, float y) {
-        return new RectangleObj(new Vector2D(x, y), new Vector2D(2, 2), 0);
+    private Shape2D create22obj(float x, float y) {
+        return Shape2D.createRectangleFromCenter(new Vector2D(x, y), new Vector2D(2, 2), 0);
     }
 
-    Collection<WorldObj> objects = new ArrayList<>();
-    RectangleObj objOfSize2_2At4_0 = create22obj(4, 0);
-    RectangleObj objOfSize2_2At4_4 = create22obj(4, 4);
-    RectangleObj objOfSize2_2At0_8 = create22obj(0, 8);
-    RectangleObj objOfSize2_2Atn6_6 = create22obj(-6, 6);
-    RectangleObj objOfSize2_2Atn9_0 = create22obj(-9, 0);
-    RectangleObj objOfSize2_2Atn5_n5 = create22obj(-5, -5);
-    RectangleObj objOfSize2_2At0_n3 = create22obj(0, -3);
-    RectangleObj objOfSize2_2At3_n3 = create22obj(3, -3);
+    Collection<Shape2D> objects = new ArrayList<>();
+    Shape2D objOfSize2_2At4_0 = create22obj(4, 0);
+    Shape2D objOfSize2_2At4_4 = create22obj(4, 4);
+    Shape2D objOfSize2_2At0_8 = create22obj(0, 8);
+    Shape2D objOfSize2_2Atn6_6 = create22obj(-6, 6);
+    Shape2D objOfSize2_2Atn9_0 = create22obj(-9, 0);
+    Shape2D objOfSize2_2Atn5_n5 = create22obj(-5, -5);
+    Shape2D objOfSize2_2At0_n3 = create22obj(0, -3);
+    Shape2D objOfSize2_2At3_n3 = create22obj(3, -3);
     RangeFinder rangeFinder;
 
     @Override

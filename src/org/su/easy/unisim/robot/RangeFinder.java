@@ -1,11 +1,9 @@
 package org.su.easy.unisim.robot;
 
-import java.awt.geom.Line2D;
-import java.util.ArrayList;
 import java.util.Collection;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
-import org.su.easy.unisim.sim.world.WorldObj;
 import org.su.easy.unisim.util.Line;
+import org.su.easy.unisim.util.Line.LineIntersection;
 import org.su.easy.unisim.util.Shape2D;
 
 /**
@@ -19,7 +17,9 @@ import org.su.easy.unisim.util.Shape2D;
  */
 public class RangeFinder {
 
-    private final Line line;
+    private Line line;
+    private final float maxRayLength;
+    private Vector2D lastIntersectionPoint = Vector2D.ZERO;
 
     /**
      * Initialises a new RangeFinder with specified base point, angle and
@@ -35,6 +35,7 @@ public class RangeFinder {
      */
     public RangeFinder(Vector2D basePoint, float angle, float maxRayLength) {
         this.line = Line.fromPolarVec(basePoint, angle, maxRayLength);
+        this.maxRayLength = maxRayLength;
     }
 
     /**
@@ -51,22 +52,36 @@ public class RangeFinder {
         double lowestDist = 0; //will return this if no intersection found
 
         for (Shape2D obj : objects) {
-            Double dist = obj.getSmallestLineIntersectionDist(line);
-            if(!dist.isNaN()) {
-                if (lowestDist == 0 | dist < lowestDist) {
-                    lowestDist = dist;
+            LineIntersection li = obj.getSmallestLineIntersection(line);
+            if (li.isIntersection) {
+                if (lowestDist == 0 | li.line1DistToIntersect < lowestDist) {
+                    lowestDist = li.line1DistToIntersect;
+                    lastIntersectionPoint = li.intersectionPoint;
                 }
             }
         }
-
         return (float) lowestDist;
     }
+    
+    public void setAngle(double angle) {
+        line = Line.fromPolarVec(line.p1, angle, maxRayLength);
+    }
 
-   public void move(double distance, double deltaAngle) {
-       line.move(distance, deltaAngle);
-   }
+    public void move(double distance, double newHeading) {
+        line.move(distance, newHeading);
+    }
+    
+    public void setPosition(Vector2D p1) {
+        line.p1 = p1;
+    }
 
     public void rotate(double deltaAngle) {
         line.rotate(line.p1, deltaAngle);
     }
+
+    public Vector2D getLastIntersectionPoint() {
+        return lastIntersectionPoint;
+    }
+    
+    
 }

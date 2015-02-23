@@ -8,6 +8,8 @@ package org.su.easy.unisim.util;
 import java.awt.Graphics2D;
 import java.awt.geom.Line2D;
 import static java.lang.Double.NaN;
+import java.util.Collection;
+import java.util.LinkedList;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 /**
@@ -26,6 +28,13 @@ public class Line extends Shape2D {
     public Line(Vector2D p1, Vector2D p2) {
         this.p1 = p1;
         this.p2 = p2;
+    }
+
+    @Override
+    public Collection<Line> getLines() {
+        LinkedList<Line> lines = new LinkedList<>();
+        lines.add(this);
+        return lines; //To change body of generated methods, choose Tools | Templates.
     }
 
     public static Line fromCoords(double x1, double y1, double x2, double y2) {
@@ -50,19 +59,29 @@ public class Line extends Shape2D {
         return fromPolarVec(new Vector2D(x1, y1), angle, length);
     }
 
-    public static Line fromCenterPoint(Vector2D center, double angle, double length) {
+    public static Line fromCenterPoint(Vector2D center, double length, double angle) {
         return new Line(
                 translatePolar(center, (angle + Math.PI) % (2 * Math.PI), length / 2),
                 translatePolar(center, angle, length / 2)
         );
     }
 
-    public static Line fromCenterPoint(double c1, double c2, double angle, double length) {
+    public static Line fromCenterPoint(double c1, double c2, double length, double angle) {
         return fromCenterPoint(new Vector2D(c1, c2), length, angle);
+    }
+    
+    public void setFromPolar(Vector2D p1, double angle) {
+        this.p1 = p1;
+        this.p2 = translatePolar(p1, angle, getLength());
     }
 
     public LineIntersection getIntersection(Line line2) {
         return new LineIntersection(this, line2);
+    }
+    
+    @Override
+    public void rotate(double deltaAngle) {
+        p2 = getRotatedPoint(p1, p2, deltaAngle);
     }
 
     public void rotate(Vector2D pivot, double deltaAngle) {
@@ -93,19 +112,34 @@ public class Line extends Shape2D {
 
     @Override
     public void translate(Vector2D deltaMovement) {
-        p1.add(deltaMovement);
-        p2.add(deltaMovement);
+        p1 = p1.add(deltaMovement);
+        p2 = p2.add(deltaMovement);
     }
 
     private static double cross2D(Vector2D v1, Vector2D v2) {
         return v1.getX() * v2.getY() - v1.getY() * v2.getX();
     }
+    
+    public static LineIntersection NoIntersection() {
+        return LineIntersection.noIntersection();
+    }
 
-    public class LineIntersection {
+    public static class LineIntersection {
 
         public final boolean isIntersection;
         public final double line1DistToIntersect, line2DistToIntersect;
         public final Vector2D intersectionPoint;
+        
+        public static LineIntersection noIntersection() {
+            return new LineIntersection();
+        }
+
+        private LineIntersection() {
+            isIntersection = false;
+            line1DistToIntersect = NaN;
+            line2DistToIntersect = NaN;
+            intersectionPoint = Vector2D.NaN;
+        }
 
         public LineIntersection(Line line1, Line line2) {
             /**
@@ -118,7 +152,8 @@ public class Line extends Shape2D {
                     qp = q.subtract(p);
             double rs = cross2D(r, s),
                     qpCrossR = cross2D(qp, r),
-                    t = qpCrossR / rs,
+                    qpCrossS = cross2D(qp, s),
+                    t = qpCrossS / rs,
                     u = qpCrossR / rs;
             if (rs == 0) {
                 isIntersection = false;
@@ -138,8 +173,8 @@ public class Line extends Shape2D {
                 //lines intersect, return p + tr
                 intersectionPoint = p.add(t, r);
                 isIntersection = true;
-                line1DistToIntersect = line1.getLength() * t;
-                line2DistToIntersect = line2.getLength() * u;
+                line1DistToIntersect = t * r.getNorm();
+                line2DistToIntersect = u * s.getNorm();
             } else {
                 //non parallel and not intersecting
                 intersectionPoint = Vector2D.NaN;

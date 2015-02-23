@@ -7,7 +7,7 @@ import org.su.easy.unisim.robot.IRobot;
 import org.su.easy.unisim.robot.IRobotController;
 import org.su.easy.unisim.robot.SimulatedUnibot;
 import org.su.easy.unisim.sim.world.SimulationWorld;
-import org.su.easy.unisim.sim.world.WorldObj;
+import org.su.easy.unisim.util.Shape2D;
 
 /**
  * Controls the simulation. A new simulation is instantiated using the builder
@@ -33,7 +33,7 @@ public class SimulationController {
     private SimulationController(SimulationBuilder builder) {
         world = new SimulationWorld(builder.worldSize);
         world.addWorldObjects(builder.worldObjects);
-        robot = new SimulatedUnibot(builder.controller, builder.robotPosition, builder.robotSize, builder.robotInitialHeading);
+        robot = new SimulatedUnibot(builder.controller, builder.robotPosition, builder.robotSize, builder.robotInitialHeading,(float)builder.worldSize.getNorm());
         robot.setTimeStepLength(builder.timeStepLength);
     }
 
@@ -75,7 +75,7 @@ public class SimulationController {
         private Vector2D robotPosition = Vector2D.ZERO;
         private float robotInitialHeading = 0;
         private float timeStepLength = 1f / 60f;
-        private Collection<WorldObj> worldObjects = new ArrayList<>(0);
+        private Collection<Shape2D> worldObjects = new ArrayList<>(0);
         private IRobotController controller;
 
         /**
@@ -165,7 +165,7 @@ public class SimulationController {
          * @return SimulationBuilder instance for further parameter setting or
          * building.
          */
-        public SimulationBuilder setWorldObjects(Collection<WorldObj> worldObjects) {
+        public SimulationBuilder setWorldObjects(Collection<Shape2D> worldObjects) {
             this.worldObjects = worldObjects;
             return this;
         }

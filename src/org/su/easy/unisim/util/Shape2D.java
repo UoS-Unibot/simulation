@@ -6,7 +6,6 @@
 package org.su.easy.unisim.util;
 
 import java.awt.Graphics2D;
-import java.awt.Polygon;
 import java.awt.Shape;
 import java.awt.geom.Path2D;
 import java.util.Collection;
@@ -32,7 +31,7 @@ public class Shape2D {
         lines = new LinkedList<>();
         this.center = center;
     }
-    
+
     public static Shape2D createRectangleFromCenter(Vector2D center, Vector2D size, double rotation) {
         Shape2D shape = new Shape2D();
         double halfW = size.getX() / 2,
@@ -48,11 +47,11 @@ public class Shape2D {
         shape.rotate(rotation);
         return shape;
     }
-    
+
     public Shape toJava2DShape() {
         Path2D s = new Path2D.Double();
-        for(Line line : lines) {
-            s.append(line.toLine2D(), false);
+        for (Line line : lines) {
+            s.append(line.toLine2D(), true);
         }
         s.closePath();
         return s;
@@ -62,7 +61,7 @@ public class Shape2D {
         lines.add(line);
     }
 
-    public void addLine(double x1, double y1,double x2, double y2) {
+    public void addLine(double x1, double y1, double x2, double y2) {
         addLine(Line.fromCoords(x1, y1, x2, y2));
     }
 
@@ -77,57 +76,88 @@ public class Shape2D {
         }
     }
 
+    public Vector2D getLocalToWorldCoords(Vector2D localCoords) {
+        return getCenter().add(
+                new Vector2D(
+                        localCoords.getX() * Math.cos(rotation),
+                        localCoords.getY() * Math.sin(rotation)
+                )
+        );
+    }
+
     public void move(double distance, double deltaAngle) {
-        translate(new Vector2D(distance * Math.cos(deltaAngle),distance * Math.sin(deltaAngle)));
+        translate(new Vector2D(distance * Math.cos(getRotation()), distance * Math.sin(getRotation())));
+        rotate(deltaAngle);
     }
-    
+
     public void translate(Vector2D deltaMovement) {
-        for(Line l : lines)
+        center = center.add(deltaMovement);
+        for (Line l : getLines()) {
             l.translate(deltaMovement);
+        }
     }
-    
+
     public Collection<Line> getLines() {
         return lines;
     }
-    
+
     public Collection<Vector2D> getIntersectionPoints(Shape2D shape) {
         LinkedList<Vector2D> ips = new LinkedList<>();
-        for(Line l1 : lines) {
-            for(Line l2 : shape.getLines()) {
+        for (Line l1 : getLines()) {
+            for (Line l2 : shape.getLines()) {
                 LineIntersection result = l1.getIntersection(l2);
-                if(result.isIntersection)
+                if (result.isIntersection) {
                     ips.add(result.intersectionPoint);
+                }
             }
         }
         return ips;
     }
-    
-    public double getSmallestLineIntersectionDist(Line line) {
-        double lowestDist = Double.NaN;
-        for(Line shapeLine : getLines()) {
+
+    public LineIntersection getSmallestLineIntersection(Line line) {
+        LineIntersection lowestLine = Line.NoIntersection();
+        for (Line shapeLine : getLines()) {
             LineIntersection li = line.getIntersection(shapeLine);
-            if(li.isIntersection) {
-                if(lowestDist == Double.NaN | li.line1DistToIntersect < lowestDist) {
+            if (li.isIntersection) {
+                if (!lowestLine.isIntersection) {
+                    lowestLine = li;
+                } else if (li.line1DistToIntersect < lowestLine.line1DistToIntersect) {
+                    lowestLine = li;
+                }
+            }
+        }
+        return lowestLine;
+    }
+
+    public double getSmallestLineIntersectionDist(Line line) {
+        Double lowestDist = Double.NaN;
+        for (Line shapeLine : getLines()) {
+            LineIntersection li = line.getIntersection(shapeLine);
+            if (li.isIntersection) {
+                if (lowestDist.isNaN()) {
+                    lowestDist = li.line1DistToIntersect;
+                } else if (li.line1DistToIntersect < lowestDist) {
                     lowestDist = li.line1DistToIntersect;
                 }
             }
         }
         return lowestDist;
     }
-    
+
     public void fill(Graphics2D g2) {
         Path2D path = new Path2D.Double();
-        for(Line l : lines) {
-            path.append(l.toLine2D(),false);
+        for (Line l : lines) {
+            path.append(l.toLine2D(), false);
         }
         g2.fill(path);
     }
-    
+
     public boolean intersectsWith(Shape2D shape) {
-        for(Line l1 : lines) {
-            for(Line l2 : shape.getLines()) {
-                if(l1.getIntersection(l2).isIntersection)
+        for (Line l1 : getLines()) {
+            for (Line l2 : shape.getLines()) {
+                if (l1.getIntersection(l2).isIntersection) {
                     return true;
+                }
             }
         }
         return false;
@@ -144,8 +174,5 @@ public class Shape2D {
     public double getRotation() {
         return rotation;
     }
-
-    
-    
 
 }
