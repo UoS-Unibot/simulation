@@ -5,9 +5,9 @@
  */
 package org.su.easy.unisim.simulation.robot.ctrnn;
 
-import org.mb459.easy.premca.genesis.RobotGenotype;
-import org.mb459.easy.premca.exp.ExpParam;
 import java.util.ArrayList;
+import org.su.easy.unisim.exp.ExpParam;
+import org.su.easy.unisim.genesis.RobotGenotype;
 import org.su.easy.unisim.simulation.robot.IRobotController;
 import org.su.easy.unisim.simulation.robot.RobotInput;
 

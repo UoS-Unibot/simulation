@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.mb459.easy.premca.exp;
+package org.su.easy.unisim.exp;
 
 import org.su.easy.unisim.simulation.core.SimulationController;
 import org.su.easy.unisim.simulation.core.SimulationEventListener;
@@ -40,14 +40,17 @@ public class Trial implements SimulationEventListener {
     }
     
 
-    public float run() {
-        for (float t = 0; t < trialLength * 60 * simulation.getTimeStep(); t += simulation.getTimeStep()) {
+    public double run() {
+        float velocitySum = 0;
+        double trialLengthMsec = trialLength * 60 * simulation.getTimeStep();
+        for (float t = 0; t < trialLengthMsec; t += simulation.getTimeStep()) {
             if (trialTerminated()) {
                 return 0;
             }
             simulation.step();
+            velocitySum += simulation.getRobot().getVelocity();
         }
-        return 1;
+        return velocitySum / trialLengthMsec;
     }
 
 }

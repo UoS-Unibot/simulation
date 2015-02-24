@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.mb459.easy.premca.genesis;
+package org.su.easy.unisim.genesis;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -13,7 +13,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.mb459.easy.premca.exp.ExperimentController;
+import org.su.easy.unisim.exp.ExperimentController;
 
 /**
  *

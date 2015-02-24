@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.mb459.easy.premca.genesis;
+package org.su.easy.unisim.genesis;
 
 import org.su.easy.unisim.simulation.robot.ctrnn.CTRNNLayout;
 import java.io.FileInputStream;

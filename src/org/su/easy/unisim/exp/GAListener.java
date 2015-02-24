@@ -3,9 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.mb459.easy.premca.exp;
+package org.su.easy.unisim.exp;
 
-import org.mb459.easy.premca.genesis.Stats;
+import org.su.easy.unisim.genesis.Stats;
 
 /**
  *
