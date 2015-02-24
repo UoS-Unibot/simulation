@@ -66,16 +66,16 @@
                     "tau": "g8",
                     "gain": "g9",
                     "bias": "g10",
-                    "conns": [],
-                    "weights": []
+                    "conns": ["m0","m1"],
+                    "weights": ["g11","g12"]
                 },
                 {
                     "name": "m1",
-                    "tau": "g4",
-                    "gain": "g5",
-                    "bias": "g6",
-                    "conns": [],
-                    "weights": []
+                    "tau": "g8",
+                    "gain": "g9",
+                    "bias": "g10",
+                    "conns": ["m0","m1"],
+                    "weights": ["g11","g12"]
                 }
             ]
         }

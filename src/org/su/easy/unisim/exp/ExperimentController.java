@@ -3,10 +3,8 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.mb459.easy.premca.exp;
+package org.su.easy.unisim.exp;
 
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,9 +17,9 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
-import org.mb459.easy.premca.genesis.Stats;
 import org.su.easy.unisim.simulation.robot.ctrnn.CTRNNLayout;
 import org.su.easy.ui.exprun.TextOutput;
+import org.su.easy.unisim.genesis.Stats;
 
 /**
  *

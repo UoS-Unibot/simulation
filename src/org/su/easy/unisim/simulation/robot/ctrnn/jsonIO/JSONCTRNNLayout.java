@@ -78,7 +78,6 @@ public class JSONCTRNNLayout {
                     neuron.biasGID = -1;
                 }
                 if(neuron.name.equals("m0"))
-                    System.out.println("bleh");
                 if (letter1(n.getGain()).equals("g")) {
                     neuron.gainG = 0;
                     neuron.gainGID = Integer.parseInt(n.getGain().substring(1));

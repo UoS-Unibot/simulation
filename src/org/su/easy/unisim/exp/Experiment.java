@@ -3,14 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.mb459.easy.premca.exp;
+package org.su.easy.unisim.exp;
 
-import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.mb459.easy.premca.genesis.RobotGenotype;
-import org.mb459.easy.premca.genesis.MicrobialGA;
-import org.mb459.easy.premca.genesis.Stats;
+import org.su.easy.unisim.genesis.MicrobialGA;
+import org.su.easy.unisim.genesis.RobotGenotype;
+import org.su.easy.unisim.genesis.Stats;
 import org.su.easy.unisim.simulation.robot.ctrnn.CTRNNLayout;
 
 /**

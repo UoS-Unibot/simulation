@@ -1,9 +1,8 @@
-package org.mb459.easy.premca.genesis;
+package org.su.easy.unisim.genesis;
 
-import org.mb459.easy.premca.exp.ExpParam;
 import org.su.easy.unisim.simulation.robot.ctrnn.CTRNNLayout;
-import java.util.ArrayList;
 import java.util.Random;
+import org.su.easy.unisim.exp.ExpParam;
 
 /**
  * This class independently runs the GA, and provides access to per generation

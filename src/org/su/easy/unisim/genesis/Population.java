@@ -3,21 +3,21 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.mb459.easy.premca.genesis;
+package org.su.easy.unisim.genesis;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import org.mb459.easy.premca.exp.ExpParam;
 import org.su.easy.unisim.simulation.robot.ctrnn.CTRNNLayout;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.mb459.easy.premca.exp.ExperimentController;
+import org.su.easy.unisim.exp.ExpParam;
+import org.su.easy.unisim.exp.ExperimentController;
 
 /**
  *

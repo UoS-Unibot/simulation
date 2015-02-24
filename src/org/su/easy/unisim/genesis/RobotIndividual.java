@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.mb459.easy.premca.genesis;
+package org.su.easy.unisim.genesis;
 
-import org.mb459.easy.premca.exp.Trial;
-import org.mb459.easy.premca.exp.ExpParam;
 import org.su.easy.unisim.simulation.robot.ctrnn.CTRNNLayout;
 import java.util.Random;
+import org.su.easy.unisim.exp.ExpParam;
+import org.su.easy.unisim.exp.Trial;
 import org.su.easy.unisim.simulation.core.SimulationController;
 import org.su.easy.unisim.simulation.robot.ctrnn.CTRNN;
 
@@ -60,7 +60,7 @@ public class RobotIndividual implements Comparable<RobotIndividual> {
         for (int i = 0; i < nTrials; i++) {
 
             Trial t = new Trial(sc, 30, false, true);
-            float fitness = t.run();
+            double fitness = t.run();
             sum += fitness;
         }
 
