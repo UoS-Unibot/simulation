@@ -5,6 +5,7 @@
  */
 package org.su.easy.unisim.robot;
 
+import org.su.easy.unisim.simulation.robot.RangeFinder;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
