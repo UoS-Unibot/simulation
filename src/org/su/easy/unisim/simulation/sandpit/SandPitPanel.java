@@ -7,11 +7,7 @@ package org.su.easy.unisim.simulation.sandpit;
 
 import java.awt.CardLayout;
 import java.awt.Dimension;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
 import javax.swing.JPanel;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 /**
  *

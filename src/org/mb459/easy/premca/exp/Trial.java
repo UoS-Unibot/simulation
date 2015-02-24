@@ -17,7 +17,7 @@ public class Trial implements SimulationEventListener {
     private final SimulationController simulation;
     private final double trialLength;
     private final boolean terminateOnCollision;
-    private volatile  boolean terminateTrial = false;
+    private  boolean terminateTrial = false;
 
     public Trial(SimulationController simulation, double trialLength, boolean loggingEnabled, boolean terminateOnCollision) {
         this.simulation = simulation;

@@ -9,6 +9,8 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
@@ -28,6 +30,7 @@ import org.su.easy.unisim.simulation.core.SimulationWorld;
 import org.su.easy.unisim.simulation.robot.ctrnn.CTRNN;
 import org.su.easy.unisim.simulation.robot.ctrnn.CTRNNLayout;
 import org.su.easy.unisim.simulation.robot.ctrnn.jsonIO.JSONCTRNNLayout;
+import org.su.easy.unisim.util.Shape2D;
 
 /**
  * Renders the simulation.
@@ -43,20 +46,6 @@ public class SandPitCanvas extends Canvas implements Runnable {
     SimulationController controller;
 
     public SandPitCanvas() {
-
-        try {
-            layout = JSONCTRNNLayout.fromFile(new File(System.getProperty("user.dir") + "/user/CTRNN Layouts/Simple5Neuron3LayerController.json")).toCTRNNLayout();
-        } catch (IOException ex) {
-            Logger.getLogger(SandPitCanvas.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        ind = new RobotIndividual(layout, new ExpParam());
-        controller = new SimulationController.SimulationBuilder(new CTRNN(ind.getGenotype(), new ExpParam())).build();
-
-        robot = controller.getRobot();
-        world = controller.getWorld();
-
-        path = new PathTracer(robot.getPosition());
-        robot.setVelocity(1);
 
         MouseAdapter mouseAdapter = new MouseAdapter() {
             private Vector2D prevCoord = Vector2D.NaN;
@@ -87,9 +76,52 @@ public class SandPitCanvas extends Canvas implements Runnable {
         addMouseListener(mouseAdapter);
         addMouseMotionListener(mouseAdapter);
         addMouseWheelListener(mouseAdapter);
+
+        addKeyListener(new KeyListener() {
+
+            @Override
+            public void keyTyped(KeyEvent ke) {
+            }
+
+            @Override
+            public void keyPressed(KeyEvent ke) {
+                if (ke.getKeyCode() == KeyEvent.VK_SPACE) {
+                    System.out.println("restarting");
+                    restart = true;
+                    start();
+                }
+
+            }
+
+            @Override
+            public void keyReleased(KeyEvent ke) {
+
+            }
+        });
+        
+        start();
     }
 
     private BufferStrategy buffer;
+
+    public void start() {
+        try {
+            layout = JSONCTRNNLayout.fromFile(new File(System.getProperty("user.dir") + "/user/CTRNN Layouts/Simple5Neuron3LayerController.json")).toCTRNNLayout();
+        } catch (IOException ex) {
+            Logger.getLogger(SandPitCanvas.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        ind = new RobotIndividual(layout, new ExpParam());
+        controller = new SimulationController.SimulationBuilder(new CTRNN(ind.getGenotype(), new ExpParam()))
+                .setWorldSize(new Vector2D(10,10))
+                .addWorldObject(Shape2D.createRectangleFromCenter(new Vector2D(3, 3), new Vector2D(2,2), 0))
+                .build();
+
+        robot = controller.getRobot();
+        world = controller.getWorld();
+
+        path = new PathTracer(robot.getPosition());
+        restart = false;
+    }
 
     public void draw() {
         if (buffer == null) {
@@ -121,23 +153,15 @@ public class SandPitCanvas extends Canvas implements Runnable {
         return camera;
     }
 
-    private final IRobot robot;
-    private final PathTracer path;
-    private final SimulationWorld world;
+    private IRobot robot;
+    private PathTracer path;
+    private SimulationWorld world;
     private final SandPitCamera camera = new SandPitCamera(Vector2D.ZERO, Vector2D.ZERO, 50);
     private final Grid grid = new Grid(camera);
 
     private void step() {
         controller.step();
         path.step(robot.getPosition());
-        //randomiseRobot();
-    }
-
-    private void randomiseRobot() {
-        if (Math.random() < 0.16) {
-            robot.setAngularVelocity((float) (robot.getAngularVelocity() + ((Math.random() - 0.5) * 0.5)));
-        }
-        robot.setVelocity((float) (robot.getVelocity() + Math.random() * 0.001));
     }
 
     @Override
@@ -148,6 +172,7 @@ public class SandPitCanvas extends Canvas implements Runnable {
     }
 
     private final long DELAY = (long) (10);
+    private boolean restart = false;
 
     @Override
     public void run() {
@@ -161,6 +186,9 @@ public class SandPitCanvas extends Canvas implements Runnable {
         setVisible(true);
 
         while (true) {
+            if(restart)
+                start();
+            
             step();
             draw();
             render();
