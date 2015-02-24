@@ -110,7 +110,7 @@ public class SimulationController implements CollisionListener{
         private Vector2D robotPosition = Vector2D.ZERO;
         private float robotInitialHeading = 0;
         private float timeStepLength = 1f / 60f;
-        private Collection<Shape2D> worldObjects = new ArrayList<>();
+        private Collection<Shape2D> worldObjects = new ArrayList<>(0);
         private IRobotController controller;
         private boolean loggingEnabled = false;
 
@@ -203,11 +203,6 @@ public class SimulationController implements CollisionListener{
          */
         public SimulationBuilder setWorldObjects(Collection<Shape2D> worldObjects) {
             this.worldObjects = worldObjects;
-            return this;
-        }
-        
-        public SimulationBuilder addWorldObject(Shape2D object) {
-            this.worldObjects.add(object);
             return this;
         }
         
