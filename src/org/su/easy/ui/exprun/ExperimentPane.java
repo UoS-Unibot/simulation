@@ -7,14 +7,10 @@ package org.su.easy.ui.exprun;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JFileChooser;
-import org.mb459.easy.premca.exp.ExpParam;
+import org.su.easy.unisim.exp.ExpParam;
 import org.su.easy.unisim.simulation.robot.ctrnn.CTRNNLayout;
 
 /**

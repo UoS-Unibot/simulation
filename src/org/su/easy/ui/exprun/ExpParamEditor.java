@@ -5,7 +5,6 @@
  */
 package org.su.easy.ui.exprun;
 
-import org.mb459.easy.premca.exp.ExpParam;
 import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -13,6 +12,7 @@ import javax.swing.JFileChooser;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
+import org.su.easy.unisim.exp.ExpParam;
 
 /**
  *

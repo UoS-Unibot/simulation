@@ -22,6 +22,6 @@ public class SandPitPanel extends JPanel {
         this.add(sandpitCanvas);
     }
     
-    SandPitCanvas sandpitCanvas = new SandPitCanvas();
+    SandPitCanvas sandpitCanvas = new TrialViewer();
     //Thread sandpitThread = new Thread(sandpitCanvas);
 }

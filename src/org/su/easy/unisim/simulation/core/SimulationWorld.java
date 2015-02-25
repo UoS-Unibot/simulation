@@ -50,7 +50,7 @@ public class SimulationWorld {
      * @param objects Collection of WorldObjs
      */
     public void addWorldObjects(Collection<Shape2D> objects) {
-        objects.addAll(objects);
+        this.objects.addAll(objects);
     }
 
     public void checkCollisions(SimulatedUnibot robot) {
@@ -80,5 +80,12 @@ public class SimulationWorld {
     public Collection<Shape2D> getObjects() {
         return objects;
     }
+
+    @Override
+    public String toString() {
+        return "SimulationWorld{" + "objects=" + objects + ", listeners=" + listeners + '}';
+    }
+    
+    
 
 }

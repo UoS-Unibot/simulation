@@ -3,65 +3,38 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.su.easy.ui.exprun;
+package org.su.easy.unisim.ui.GASetup;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintStream;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JFileChooser;
-import org.su.easy.unisim.exp.ExperimentController;
+import org.su.easy.unisim.ui.UIUtils;
 
 /**
  *
- * @author Miles
+ * @author miles
  */
-public class RunExpPane extends javax.swing.JPanel implements TextOutput {
+public class GARunPanel extends javax.swing.JPanel {
 
     /**
-     * Creates new form RunExpPane
+     * Creates new form GARunPanel
      */
-    public RunExpPane() {
+    public GARunPanel() {
         initComponents();
         lblDir.setText(generateUniqueFilename());
-        lblOutputSaved.setText("");
-        control.addTextOutput(this);
     }
     
-    ExperimentController control = new ExperimentController();
-    private ExpParamProvider provider;
-
     private String generateUniqueFilename() {
         StringBuilder sb = new StringBuilder();
         sb.append(System.getProperty("user.dir"));
-        sb.append("\\user\\experiments\\");
+        sb.append("/user/experiments/");
         SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy.HHmmss");
         sb.append(sdf.format(new Date()));
         sb.append("\\");
         return sb.toString();
     }
-    
-    private void startPressed() {
-        if(btnStart.isSelected()) {
-            btnStart.setText("Pause");
-            btnReset.setEnabled(true);
-            control.setParams(provider.getParams());
-            control.setLayout(provider.getCTRNNLayout());
-            control.setWorkingDir(Paths.get(lblDir.getText()));
-            control.run((int)spnNRuns.getValue(), (int)spnNThreads.getValue());
-        } else {
-            btnStart.setText("Start");
-            btnReset.setEnabled(false);
-            control.stop();
-        }
-    }
-    
-    private boolean outputWritten = false;
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -70,7 +43,6 @@ public class RunExpPane extends javax.swing.JPanel implements TextOutput {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-        bindingGroup = new org.jdesktop.beansbinding.BindingGroup();
 
         jPanel4 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -83,20 +55,12 @@ public class RunExpPane extends javax.swing.JPanel implements TextOutput {
         btnReset = new javax.swing.JButton();
         spnNRuns = new javax.swing.JSpinner();
         spnNThreads = new javax.swing.JSpinner();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        txtOut = new javax.swing.JTextPane();
-        btnSaveOut = new javax.swing.JButton();
-        lblOutputSaved = new javax.swing.JLabel();
 
         jLabel1.setText("Number of times to run");
 
         jLabel2.setText("Maximum number of threads");
 
         chkSaveReports.setText("Save reports and logs to folder");
-
-        org.jdesktop.beansbinding.Binding binding = org.jdesktop.beansbinding.Bindings.createAutoBinding(org.jdesktop.beansbinding.AutoBinding.UpdateStrategy.READ_WRITE, btnSaveOut, org.jdesktop.beansbinding.ELProperty.create("${enabled}"), chkSaveReports, org.jdesktop.beansbinding.BeanProperty.create("selected"));
-        bindingGroup.addBinding(binding);
-
         chkSaveReports.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 chkSaveReportsActionPerformed(evt);
@@ -131,19 +95,6 @@ public class RunExpPane extends javax.swing.JPanel implements TextOutput {
 
         spnNThreads.setModel(new javax.swing.SpinnerNumberModel(1, 1, 255, 1));
 
-        txtOut.setEditable(false);
-        txtOut.setFont(new java.awt.Font("Courier New", 0, 11)); // NOI18N
-        jScrollPane1.setViewportView(txtOut);
-
-        btnSaveOut.setText("Save Output");
-        btnSaveOut.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSaveOutActionPerformed(evt);
-            }
-        });
-
-        lblOutputSaved.setText("jLabel3");
-
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -160,23 +111,18 @@ public class RunExpPane extends javax.swing.JPanel implements TextOutput {
                         .addGap(15, 15, 15))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, 193, Short.MAX_VALUE)
                             .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(spnNRuns)
-                            .addComponent(spnNThreads))
+                            .addComponent(spnNThreads, javax.swing.GroupLayout.DEFAULT_SIZE, 81, Short.MAX_VALUE))
                         .addGap(314, 314, 314))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
                         .addComponent(btnStart)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnReset)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnSaveOut, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(10, 10, 10)
-                        .addComponent(lblOutputSaved, javax.swing.GroupLayout.PREFERRED_SIZE, 336, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addContainerGap())
-                    .addComponent(jScrollPane1)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                     .addComponent(prgProgress, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
         );
         jPanel4Layout.setVerticalGroup(
@@ -198,13 +144,9 @@ public class RunExpPane extends javax.swing.JPanel implements TextOutput {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnStart)
-                    .addComponent(btnReset)
-                    .addComponent(btnSaveOut)
-                    .addComponent(lblOutputSaved))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 238, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(prgProgress, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(btnReset))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 120, Short.MAX_VALUE)
+                .addComponent(prgProgress, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -217,76 +159,42 @@ public class RunExpPane extends javax.swing.JPanel implements TextOutput {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
-
-        bindingGroup.bind();
     }// </editor-fold>//GEN-END:initComponents
-
-    private void btnChooseDirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChooseDirActionPerformed
-        final JFileChooser fc = new JFileChooser(new File(lblDir.getText()));
-        int returnVal = fc.showOpenDialog(this);
-    }//GEN-LAST:event_btnChooseDirActionPerformed
-
-    private void btnStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStartActionPerformed
-        startPressed();
-    }//GEN-LAST:event_btnStartActionPerformed
-
-    private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
-        btnStart.doClick();
-        control = new ExperimentController();
-    }//GEN-LAST:event_btnResetActionPerformed
 
     private void chkSaveReportsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkSaveReportsActionPerformed
 
     }//GEN-LAST:event_chkSaveReportsActionPerformed
 
-    private void btnSaveOutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveOutActionPerformed
-        if(outputWritten) {
-            try {
-                new File(lblDir.getText()).mkdirs();
-                File file = new File(lblDir.getText() + "explog.txt");
-                PrintStream out = new PrintStream(file);
-                out.print(txtOut.getText());
-            } catch (FileNotFoundException ex) {
-                Logger.getLogger(RunExpPane.class.getName()).log(Level.SEVERE, null, ex);
-            }
+    private void btnChooseDirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnChooseDirActionPerformed
+        final JFileChooser fc = new JFileChooser(new File(lblDir.getText()));
+        fc.setCurrentDirectory(UIUtils.getUserDir("/experiments/"));
+        fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        int returnVal = fc.showOpenDialog(this);
+        if(returnVal == JFileChooser.APPROVE_OPTION) {
+            lblDir.setText(fc.getSelectedFile().getAbsolutePath());
         }
-    }//GEN-LAST:event_btnSaveOutActionPerformed
+    }//GEN-LAST:event_btnChooseDirActionPerformed
+
+    private void btnStartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStartActionPerformed
+        
+    }//GEN-LAST:event_btnStartActionPerformed
+
+    private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
+        
+    }//GEN-LAST:event_btnResetActionPerformed
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnChooseDir;
     private javax.swing.JButton btnReset;
-    private javax.swing.JButton btnSaveOut;
     private javax.swing.JToggleButton btnStart;
     private javax.swing.JCheckBox chkSaveReports;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField lblDir;
-    private javax.swing.JLabel lblOutputSaved;
     private javax.swing.JProgressBar prgProgress;
     private javax.swing.JSpinner spnNRuns;
     private javax.swing.JSpinner spnNThreads;
-    private javax.swing.JTextPane txtOut;
-    private org.jdesktop.beansbinding.BindingGroup bindingGroup;
     // End of variables declaration//GEN-END:variables
-
-    @Override
-    public void addLine(String newLine) {
-        txtOut.setText(newLine.concat(txtOut.getText()));
-    }
-
-    
-    /**
-     * @param provider the provider to set
-     */
-    public void setProvider(ExpParamProvider provider) {
-        this.provider = provider;
-    }
-
-    @Override
-    public void updateProgress(int newProgress) {
-        prgProgress.setValue(newProgress);
-    }
 }

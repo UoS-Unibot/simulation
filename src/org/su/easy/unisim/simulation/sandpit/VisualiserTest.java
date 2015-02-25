@@ -20,7 +20,6 @@ public class VisualiserTest extends JFrame {
         this.setLayout(new CardLayout());
         this.add(simViewer);
         this.pack();
-        simViewer.postInitialise();
         simViewer.loadRandomControllerWithDefaultLayout();
     }
     

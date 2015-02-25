@@ -5,7 +5,7 @@
  */
 package org.su.easy.ui.exprun;
 
-import org.mb459.easy.premca.exp.ExpParam;
+import org.su.easy.unisim.exp.ExpParam;
 import org.su.easy.unisim.simulation.robot.ctrnn.CTRNNLayout;
 
 /**

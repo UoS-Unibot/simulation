@@ -1,0 +1,10 @@
+{
+  "controller_timestep" : 0.1,
+  "fitness_n_trials" : 1,
+  "fitness_terminate_trial_on_collision" : true,
+  "ga_mutrate" : 0.4,
+  "ga_crossrate" : 0.05,
+  "ga_population" : 200,
+  "ga_generations" : 100,
+  "ga_demesize" : 5
+}

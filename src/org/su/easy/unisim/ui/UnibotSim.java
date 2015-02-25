@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.su.easy.simulation.unisim;
+package org.su.easy.unisim.ui;
 
 import org.su.easy.unisim.simulation.core.SimulationWorld;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;

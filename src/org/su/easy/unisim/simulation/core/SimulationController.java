@@ -35,7 +35,11 @@ public class SimulationController implements CollisionListener{
      * @param builder
      */
     private SimulationController(SimulationBuilder builder) {
-        world = new SimulationWorld(builder.worldSize);
+        if(builder.world == null) {        
+            world = new SimulationWorld(builder.worldSize);
+        } else {
+            world = builder.world;
+        }
         world.addWorldObjects(builder.worldObjects);
         robot = new SimulatedUnibot(builder.controller, builder.robotPosition, builder.robotSize, builder.robotInitialHeading,(float)builder.worldSize.getNorm());
         timeStep = builder.timeStepLength;
@@ -43,6 +47,7 @@ public class SimulationController implements CollisionListener{
         loggingEnabled = builder.loggingEnabled;
         world.addListener(this);
     }
+    
 
     /**
      * Steps the simulation one timestep.
@@ -113,6 +118,7 @@ public class SimulationController implements CollisionListener{
         private Collection<Shape2D> worldObjects = new ArrayList<>(0);
         private IRobotController controller;
         private boolean loggingEnabled = false;
+        private SimulationWorld world;
 
         /**
          * Instantiates the builder - optional parameters are set to their
@@ -123,7 +129,12 @@ public class SimulationController implements CollisionListener{
         public SimulationBuilder(IRobotController controller) {
             this.controller = controller;
         }
-
+        
+        public SimulationBuilder(IRobotController controller, SimulationWorld world) {
+            this.controller = controller;
+            this.world = world;
+        }
+        
         /**
          * Sets the world bounds in metres, 5mx5m by default.
          *
@@ -136,6 +147,12 @@ public class SimulationController implements CollisionListener{
             this.worldSize = worldSize;
             return this;
         }
+
+        public void setWorld(SimulationWorld world) {
+            this.world = world;
+        }
+        
+        
 
         /**
          * Sets the size of the robot in metres, 0.6mx0.6m by default.
