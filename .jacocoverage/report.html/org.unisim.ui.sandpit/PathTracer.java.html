@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>PathTracer.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;UnibotSim&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">org.unisim.ui.sandpit</a> &gt; <span class="el_source">PathTracer.java</span></div><h1>PathTracer.java</h1><pre class="source lang-java linenums">package org.unisim.ui.sandpit;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.geom.Path2D;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+
+/**
+ * Traces the path of a robot throughout a simulation, rendering it.
+ * @author Miles Bryant &lt;mb459 at sussex.ac.uk&gt;
+ */
+public class PathTracer {
+<span class="nc" id="L13">    Path2D curPath = new Path2D.Double();</span>
+
+<span class="nc" id="L15">    public PathTracer(Vector2D initPosition) {</span>
+<span class="nc" id="L16">        curPath.moveTo(initPosition.getX(), initPosition.getY());</span>
+<span class="nc" id="L17">    }</span>
+    
+    public void step(Vector2D newPosition) {
+<span class="nc" id="L20">        curPath.lineTo(newPosition.getX(), newPosition.getY());</span>
+<span class="nc" id="L21">    }</span>
+    
+    public void draw(Graphics2D g2) {
+<span class="nc" id="L24">        g2.setColor(Color.DARK_GRAY);</span>
+<span class="nc" id="L25">        g2.setStroke(new BasicStroke(0.01f,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));</span>
+<span class="nc" id="L26">        g2.draw(curPath);</span>
+<span class="nc" id="L27">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

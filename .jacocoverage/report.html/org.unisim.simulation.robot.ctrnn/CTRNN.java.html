@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>CTRNN.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;UnibotSim&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">org.unisim.simulation.robot.ctrnn</a> &gt; <span class="el_source">CTRNN.java</span></div><h1>CTRNN.java</h1><pre class="source lang-java linenums">package org.unisim.simulation.robot.ctrnn;
+
+import java.util.ArrayList;
+import org.unisim.exp.params.Parameters;
+import org.unisim.genesis.RobotGenotype;
+import org.unisim.simulation.robot.IRobotController;
+import org.unisim.simulation.robot.RobotInput;
+
+/**
+ * Simulates a CTRNN. Loads neurons into an array from a CTRNNLayout. Every
+ * timestep the simulation updates the CTRNN, providing sensory input. The
+ * network is then integrated, providing motor output from the relevant neurons.
+ *
+ * @author Miles Bryant &lt;mb459 at sussex.ac.uk&gt;
+ */
+public class CTRNN implements IRobotController {
+
+    int n; //number of neurons
+    int nSensors; //number of sensory inputs in the agent. The first nSensor neurons will receive input
+    public Neuron[] neurons; //array of neurons
+    public ArrayList&lt;ArrayList&lt;Neuron&gt;&gt; neuronLayers; //stores layers of neurons
+    public float[] taus, biases, gains, states, outputs;
+    public float[][] weights;
+    public int outIndL, outIndR;
+    public ArrayList&lt;Integer&gt; sensNeurIndices;
+    Parameters params;
+
+    /**
+     * Creates a new CTRNN with specified number of sensors and genotype
+     *
+     * @param nSensors
+     * @param g
+     */
+<span class="nc" id="L34">    public CTRNN(RobotGenotype g, Parameters params) {</span>
+<span class="nc" id="L35">        this.n = g.layout.getTotalN(); //get number of neurons</span>
+
+<span class="nc" id="L37">        taus = new float[n];</span>
+<span class="nc" id="L38">        biases = new float[n];</span>
+<span class="nc" id="L39">        gains = new float[n];</span>
+<span class="nc" id="L40">        states = new float[n];</span>
+<span class="nc" id="L41">        outputs = new float[n];</span>
+<span class="nc" id="L42">        weights = new float[n][n];</span>
+
+<span class="nc" id="L44">        nSensors = g.layout.sensorInputs.size();</span>
+
+<span class="nc" id="L46">        sensNeurIndices = g.layout.sensorInputs;</span>
+
+<span class="nc" id="L48">        ArrayList&lt;org.unisim.simulation.robot.ctrnn.Neuron&gt; neurs = g.layout.getAllNeurons();</span>
+<span class="nc bnc" id="L49" title="All 2 branches missed.">        for (int i = 0; i &lt; n; i++) {</span>
+<span class="nc" id="L50">            org.unisim.simulation.robot.ctrnn.Neuron neuron = neurs.get(i);</span>
+<span class="nc" id="L51">            taus[i] = neuron.getMappedTau();</span>
+<span class="nc" id="L52">            gains[i] = neuron.getMappedGain();</span>
+<span class="nc" id="L53">            biases[i] = neuron.getMappedBias();</span>
+<span class="nc" id="L54">            ArrayList&lt;Float&gt; mappedWeights = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L55">            mappedWeights.addAll(neuron.getMappedWeights());</span>
+<span class="nc bnc" id="L56" title="All 2 branches missed.">            for (int j = 0; j &lt; n; j++) {</span>
+<span class="nc bnc" id="L57" title="All 2 branches missed.">                if (neuron.conns.contains(j)) {</span>
+<span class="nc" id="L58">                    weights[i][j] = mappedWeights.get(neuron.conns.indexOf(j));</span>
+                } else {
+<span class="nc" id="L60">                    weights[i][j] = 0;</span>
+                }
+            }
+<span class="nc" id="L63">            states[i] = 0.5f;</span>
+<span class="nc" id="L64">            outputs[i] = 0f;</span>
+        }
+<span class="nc" id="L66">        outIndL = g.layout.getMotorNeuron(true).ID;</span>
+<span class="nc" id="L67">        outIndR = g.layout.getMotorNeuron(false).ID;</span>
+
+<span class="nc" id="L69">        this.params = params;</span>
+<span class="nc" id="L70">    }</span>
+
+    /**
+     * Integrates one time step
+     *
+     * @param inputs
+     */
+    public void step(float[] inputs) {
+<span class="nc" id="L78">        float stepSize = (float) params.getController_timestep();</span>
+<span class="nc" id="L79">        EulerStep(stepSize, inputs);</span>
+<span class="nc" id="L80">    }</span>
+
+    /**
+     * Integrates one step using Euler's method (see any CTRNN resource)
+     *
+     * @param stepSize
+     * @param inputs
+     */
+    public void EulerStep(float stepSize, float[] inputs) {
+<span class="nc bnc" id="L89" title="All 2 branches missed.">        for (int i = 0; i &lt; n; i++) {</span>
+            float input;
+<span class="nc" id="L91">            int sensInd = sensNeurIndices.indexOf(i);</span>
+<span class="nc bnc" id="L92" title="All 2 branches missed.">            if (sensInd != -1) {</span>
+<span class="nc" id="L93">                input = inputs[sensInd];</span>
+            } else {
+<span class="nc" id="L95">                input = 0;</span>
+            }
+<span class="nc bnc" id="L97" title="All 2 branches missed.">            for (int j = 0; j &lt; n; j++) {</span>
+<span class="nc" id="L98">                input += weights[j][i] * outputs[j];</span>
+            }
+<span class="nc" id="L100">            states[i] += stepSize * taus[i] * (input - states[i]);</span>
+<span class="nc" id="L101">            outputs[i] = sigmoid(gains[i] * (states[i] + biases[i]));</span>
+        }
+<span class="nc" id="L103">    }</span>
+
+    /**
+     * @return motor output: relative difference between motor neurons (last two
+     * neurons)
+     */
+    public float getMotorLOutput() {
+<span class="nc" id="L110">        return outputs[outIndL];</span>
+    }
+
+    /**
+     * @return motor output: relative difference between motor neurons (last two
+     * neurons)
+     */
+    public float getMotorROutput() {
+<span class="nc" id="L118">        return outputs[outIndR];</span>
+    }
+
+    /**
+     * Standard sigmoid function.
+     *
+     * @param x
+     * @return
+     */
+    protected float sigmoid(float x) {
+<span class="nc" id="L128">        return 1.0f / (1 + (float) Math.exp(-x));</span>
+    }
+
+    /**
+     * Inverse standard sigmoid function.
+     *
+     * @param x
+     * @return
+     */
+    private float invSigmoid(float x) {
+<span class="nc" id="L138">        return (float) Math.log(x / (1 - x));</span>
+    }
+
+    @Override
+    public void step(RobotInput input) {
+<span class="nc" id="L143">        step(new float[]{input.getRange()});</span>
+<span class="nc" id="L144">    }</span>
+
+    @Override
+    public float getVelocity() {
+<span class="nc" id="L148">        return (getMotorLOutput() + getMotorROutput()) / 2;</span>
+    }
+
+    @Override
+    public float getAngularVelocity(float axleWidth) {
+<span class="nc" id="L153">        return (getMotorROutput() - getMotorLOutput()) / axleWidth;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

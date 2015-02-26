@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>CSVPopulation.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;UnibotSim&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">org.unisim.io</a> &gt; <span class="el_source">CSVPopulation.java</span></div><h1>CSVPopulation.java</h1><pre class="source lang-java linenums">package org.unisim.io;
+
+import com.fasterxml.jackson.databind.MappingIterator;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Map;
+import org.unisim.genesis.RobotGenotype;
+import org.unisim.simulation.robot.ctrnn.CTRNNLayout;
+import org.unisim.io.ctrnn.JSONCTRNNLayout;
+
+/**
+ * Loads a population from a CSV file.
+ *
+ * @author Miles Bryant (mb459 at sussex.ac.uk)
+ */
+<span class="fc" id="L19">public class CSVPopulation {</span>
+
+<span class="fc" id="L21">    private final ArrayList&lt;Map&lt;String, String&gt;&gt; individuals = new ArrayList&lt;&gt;();</span>
+    private CTRNNLayout layout;
+    String filename;
+
+    public String getFilename() {
+<span class="nc" id="L26">        return filename;</span>
+    }
+
+    public static CSVPopulation fromFile(File file) throws IOException {
+<span class="fc" id="L30">        CSVPopulation pop = new CSVPopulation();</span>
+<span class="fc" id="L31">        CsvMapper mapper = new CsvMapper();</span>
+<span class="fc" id="L32">        CsvSchema schema = CsvSchema.emptySchema().withHeader(); // use first row as header; otherwise defaults are fine</span>
+<span class="fc" id="L33">        MappingIterator&lt;Map&lt;String, String&gt;&gt; it = mapper.reader(Map.class)</span>
+                .with(schema)
+                .readValues(file);
+<span class="fc bfc" id="L36" title="All 2 branches covered.">        while (it.hasNext()) {</span>
+<span class="fc" id="L37">            Map&lt;String, String&gt; rowAsMap = it.next();</span>
+
+<span class="fc" id="L39">            pop.individuals.add(rowAsMap);</span>
+<span class="fc" id="L40">        }</span>
+
+<span class="fc" id="L42">        pop.layout = JSONCTRNNLayout.fromFile(new File(file.getParent() + &quot;/layout.json&quot;)).toCTRNNLayout();</span>
+<span class="fc" id="L43">        pop.filename = file.getAbsolutePath();</span>
+<span class="fc" id="L44">        return pop;</span>
+    }
+
+    public int getIDAt(int id) {
+<span class="nc" id="L48">        return id;</span>
+    }
+
+    public double getFitnessAt(int id) {
+<span class="fc" id="L52">        return Double.valueOf(individuals.get(id).get(&quot;Fitness&quot;));</span>
+    }
+
+    public RobotGenotype getGenotypeAt(int id) {
+<span class="nc" id="L56">        float[] genes = new float[layout.genomeLength];</span>
+<span class="nc bnc" id="L57" title="All 2 branches missed.">        if (layout == null) {</span>
+<span class="nc" id="L58">            return null;</span>
+        }
+<span class="nc bnc" id="L60" title="All 2 branches missed.">        for (int i = 0; i &lt; layout.genomeLength; i++) {</span>
+<span class="nc" id="L61">            genes[i] = Float.valueOf(individuals.get(id).get(&quot;gene &quot; + i));</span>
+        }
+<span class="nc" id="L63">        return new RobotGenotype(layout, genes);</span>
+    }
+
+    public int getSize() {
+<span class="nc" id="L67">        return individuals.size();</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

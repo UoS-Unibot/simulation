@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Parameters.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;UnibotSim&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">org.unisim.exp.params</a> &gt; <span class="el_source">Parameters.java</span></div><h1>Parameters.java</h1><pre class="source lang-java linenums">package org.unisim.exp.params;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
+import java.io.IOException;
+
+/**
+ * Stores GA and experimental parameters.
+ *
+ * @author Miles Bryant (mb459 at sussex.ac.uk)
+ */
+<span class="nc" id="L12">public class Parameters {</span>
+
+    public static Parameters fromJSONFile(File file) throws IOException {
+<span class="nc" id="L15">        return new ObjectMapper().readValue(file, Parameters.class);</span>
+    }
+
+    public void saveToFile(File file) throws IOException {
+<span class="nc" id="L19">        new ObjectMapper().writerWithDefaultPrettyPrinter().writeValue(file, this);</span>
+<span class="nc" id="L20">    }</span>
+
+<span class="nc" id="L22">    private double controller_timestep = 0.1;</span>
+<span class="nc" id="L23">    private int fitness_n_trials = 1;</span>
+<span class="nc" id="L24">    private boolean fitness_terminate_trial_on_collision = true;</span>
+<span class="nc" id="L25">    private double ga_mutrate = 0.4;</span>
+<span class="nc" id="L26">    private double ga_crossrate = 0.05;</span>
+<span class="nc" id="L27">    private int ga_population = 100;</span>
+<span class="nc" id="L28">    private int ga_generations = 100;</span>
+<span class="nc" id="L29">    private int ga_demesize = 5;</span>
+
+    public double getController_timestep() {
+<span class="nc" id="L32">        return controller_timestep;</span>
+    }
+
+    public void setController_timestep(double controller_timestep) {
+<span class="nc" id="L36">        this.controller_timestep = controller_timestep;</span>
+<span class="nc" id="L37">    }</span>
+
+    public int getFitness_n_trials() {
+<span class="nc" id="L40">        return fitness_n_trials;</span>
+    }
+
+    public void setFitness_n_trials(int fitness_n_trials) {
+<span class="nc" id="L44">        this.fitness_n_trials = fitness_n_trials;</span>
+<span class="nc" id="L45">    }</span>
+
+    public boolean isFitness_terminate_trial_on_collision() {
+<span class="nc" id="L48">        return fitness_terminate_trial_on_collision;</span>
+    }
+
+    public void setFitness_terminate_trial_on_collision(boolean fitness_terminate_trial_on_collision) {
+<span class="nc" id="L52">        this.fitness_terminate_trial_on_collision = fitness_terminate_trial_on_collision;</span>
+<span class="nc" id="L53">    }</span>
+
+    public double getGa_mutrate() {
+<span class="nc" id="L56">        return ga_mutrate;</span>
+    }
+
+    public void setGa_mutrate(double ga_mutrate) {
+<span class="nc" id="L60">        this.ga_mutrate = ga_mutrate;</span>
+<span class="nc" id="L61">    }</span>
+
+    public double getGa_crossrate() {
+<span class="nc" id="L64">        return ga_crossrate;</span>
+    }
+
+    public void setGa_crossrate(double ga_crossrate) {
+<span class="nc" id="L68">        this.ga_crossrate = ga_crossrate;</span>
+<span class="nc" id="L69">    }</span>
+
+    public int getGa_population() {
+<span class="nc" id="L72">        return ga_population;</span>
+    }
+
+    public void setGa_population(int ga_population) {
+<span class="nc" id="L76">        this.ga_population = ga_population;</span>
+<span class="nc" id="L77">    }</span>
+
+    public int getGa_generations() {
+<span class="nc" id="L80">        return ga_generations;</span>
+    }
+
+    public void setGa_generations(int ga_generations) {
+<span class="nc" id="L84">        this.ga_generations = ga_generations;</span>
+<span class="nc" id="L85">    }</span>
+
+    public int getGa_demesize() {
+<span class="nc" id="L88">        return ga_demesize;</span>
+    }
+
+    public void setGa_demesize(int ga_demesize) {
+<span class="nc" id="L92">        this.ga_demesize = ga_demesize;</span>
+<span class="nc" id="L93">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

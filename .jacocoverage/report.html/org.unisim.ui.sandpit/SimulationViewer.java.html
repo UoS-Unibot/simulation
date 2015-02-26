@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SimulationViewer.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;UnibotSim&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">org.unisim.ui.sandpit</a> &gt; <span class="el_source">SimulationViewer.java</span></div><h1>SimulationViewer.java</h1><pre class="source lang-java linenums">/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package org.unisim.ui.sandpit;
+
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JPanel;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.unisim.exp.Experiment;
+import org.unisim.exp.params.Parameters;
+import org.unisim.genesis.RobotGenotype;
+import org.unisim.genesis.RobotIndividual;
+import org.unisim.simulation.core.SimulationController;
+import org.unisim.simulation.core.SimulationWorld;
+import org.unisim.simulation.robot.ctrnn.CTRNN;
+import org.unisim.simulation.robot.ctrnn.CTRNNLayout;
+import org.unisim.io.ctrnn.JSONCTRNNLayout;
+
+/**
+ *
+ * @author mb459
+ */
+public class SimulationViewer extends JPanel {
+
+    private TrialViewer cv;
+
+<span class="nc" id="L35">    public SimulationViewer() {</span>
+<span class="nc" id="L36">        this.setLayout(new GridBagLayout());</span>
+
+<span class="nc" id="L38">        GridBagConstraints gbc = new GridBagConstraints();</span>
+<span class="nc" id="L39">        gbc.gridx = 1;</span>
+<span class="nc" id="L40">        gbc.gridy = 1;</span>
+<span class="nc" id="L41">        gbc.fill = GridBagConstraints.BOTH;</span>
+
+<span class="nc" id="L43">        cv = new TrialViewer();</span>
+<span class="nc" id="L44">        cv.setPreferredSize(new Dimension(800, 600));</span>
+<span class="nc" id="L45">        this.add(cv, gbc);</span>
+        
+<span class="nc" id="L47">        gbc.gridy = 2;</span>
+<span class="nc" id="L48">        SandPitControls ctrl = new SandPitControls();</span>
+<span class="nc" id="L49">        this.add(ctrl, gbc);</span>
+        
+<span class="nc" id="L51">        ctrl.addListener(new VisualiserListener() {</span>
+
+            @Override
+            public void setRunning(boolean isRunning) {
+<span class="nc bnc" id="L55" title="All 2 branches missed.">                if(isRunning)</span>
+<span class="nc" id="L56">                    cv.start();</span>
+                else
+<span class="nc" id="L58">                    cv.stop();</span>
+<span class="nc" id="L59">            }</span>
+
+            @Override
+            public void restart() {
+<span class="nc" id="L63">                cv.stop();</span>
+<span class="nc" id="L64">                loadRandomControllerWithDefaultLayout();</span>
+<span class="nc" id="L65">            }</span>
+
+            @Override
+            public void speedChanged(double newSpeed) {
+<span class="nc" id="L69">                cv.setDelay(newSpeed);</span>
+<span class="nc" id="L70">            }</span>
+        });
+        
+<span class="nc" id="L73">    }</span>
+    
+    public void loadSimulation(Experiment exp,RobotGenotype geno) {
+<span class="nc" id="L76">        SimulationController controller = new SimulationController.SimulationBuilder(new CTRNN(geno, exp.getParam())).setWorld(exp.getWorld()).build();</span>
+<span class="nc" id="L77">        cv.loadSimulation(controller);</span>
+<span class="nc" id="L78">    }</span>
+    
+    public void loadRandomControllerWithDefaultLayout() {
+        CTRNNLayout layout;
+        RobotIndividual ind;
+        try {
+<span class="nc" id="L84">            layout = JSONCTRNNLayout.fromFile(new File(System.getProperty(&quot;user.dir&quot;) + &quot;/user/CTRNN Layouts/Simple5Neuron3LayerController.json&quot;)).toCTRNNLayout();</span>
+<span class="nc" id="L85">        } catch (IOException ex) {</span>
+<span class="nc" id="L86">            Logger.getLogger(SandPitCanvas.class.getName()).log(Level.SEVERE, null, ex);</span>
+<span class="nc" id="L87">            return;</span>
+<span class="nc" id="L88">        }</span>
+<span class="nc" id="L89">        Experiment exp = new Experiment();</span>
+<span class="nc" id="L90">        exp.setLayout(layout);</span>
+<span class="nc" id="L91">        exp.setParam(new Parameters());</span>
+<span class="nc" id="L92">        ind = new RobotIndividual(exp);</span>
+<span class="nc" id="L93">        SimulationController controller = new SimulationController.SimulationBuilder(new CTRNN(ind.getGenotype(), new Parameters())).setWorldSize(new Vector2D(10,10)).build();</span>
+<span class="nc" id="L94">        cv.loadSimulation(controller);</span>
+<span class="nc" id="L95">    }</span>
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

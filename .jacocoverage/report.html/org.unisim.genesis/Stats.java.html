@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Stats.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;UnibotSim&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">org.unisim.genesis</a> &gt; <span class="el_source">Stats.java</span></div><h1>Stats.java</h1><pre class="source lang-java linenums">package org.unisim.genesis;
+
+import java.util.ArrayList;
+
+/**
+ * Generates and stores statistics of the population for one generation in time.
+ * @author Miles Bryant (mb459 at sussex.ac.uk)
+ */
+public class Stats {
+        public int n;
+        public RobotIndividual bestInd;
+        public float maxFit,minFit,avgFit,varFit;
+        public ArrayList&lt;Float&gt; fitnesses;
+        public ArrayList&lt;String&gt; genotypes;
+
+<span class="nc" id="L16">        public Stats(int n, Population pop) {</span>
+<span class="nc" id="L17">            this.n = n; maxFit = 0.0f; minFit = 0.0f; avgFit = 0.0f; varFit = 0.0f;</span>
+<span class="nc" id="L18">            float total = 0;</span>
+            float raw;
+<span class="nc" id="L20">            int bestIndex = 0;</span>
+<span class="nc" id="L21">            ArrayList&lt;Float&gt; fitnesses = pop.getFitnesses();</span>
+<span class="nc" id="L22">            minFit = fitnesses.get(0);</span>
+<span class="nc" id="L23">            maxFit = fitnesses.get(0);</span>
+<span class="nc" id="L24">            int size = pop.size();</span>
+<span class="nc bnc" id="L25" title="All 2 branches missed.">            for(int i = 0; i&lt; size; i++) {</span>
+<span class="nc" id="L26">                raw = fitnesses.get(i);</span>
+<span class="nc bnc" id="L27" title="All 2 branches missed.">                if(raw &gt; maxFit) {</span>
+<span class="nc" id="L28">                    maxFit = raw;</span>
+<span class="nc" id="L29">                    bestIndex = i;</span>
+<span class="nc bnc" id="L30" title="All 2 branches missed.">                } else if(raw &lt; minFit) {</span>
+<span class="nc" id="L31">                    minFit = raw;</span>
+                }
+<span class="nc" id="L33">                total += raw;</span>
+            }
+<span class="nc" id="L35">            avgFit = total / size;</span>
+<span class="nc bnc" id="L36" title="All 2 branches missed.">            if(avgFit &lt; minFit)</span>
+<span class="nc" id="L37">                avgFit = minFit;</span>
+<span class="nc bnc" id="L38" title="All 2 branches missed.">            else if(avgFit &gt; maxFit)</span>
+<span class="nc" id="L39">                avgFit = maxFit;</span>
+
+<span class="nc bnc" id="L41" title="All 2 branches missed.">            if(pop.size() &gt; 1) {</span>
+<span class="nc" id="L42">                total = 0.0f;</span>
+<span class="nc bnc" id="L43" title="All 2 branches missed.">                for(int i = 1; i &lt; size; i++) {</span>
+<span class="nc" id="L44">                    float d = fitnesses.get(i) - avgFit;</span>
+<span class="nc" id="L45">                    total += d * d;</span>
+                }
+<span class="nc" id="L47">                varFit = total / (size - 1);</span>
+<span class="nc" id="L48">            } else {varFit = 0.0f;}</span>
+
+<span class="nc" id="L50">            bestInd = pop.getIndividual(bestIndex);</span>
+<span class="nc" id="L51">        }</span>
+        
+        
+        @Override
+        public String toString() {
+<span class="nc" id="L56">            return String.format(&quot;%4d\t%.6f\t\t%.6f\t\t%.6f\t\t%.6f&quot;, n,maxFit,minFit,avgFit,varFit);</span>
+        }
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

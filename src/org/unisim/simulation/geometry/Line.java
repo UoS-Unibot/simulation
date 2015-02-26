@@ -69,8 +69,9 @@ public class Line extends Shape2D {
     }
 
     public void setFromPolar(Vector2D p1, double angle) {
-        this.p1 = p1;
+        //we must set p2 first otherwise the call to getLength() will be wrong
         this.p2 = translatePolar(p1, angle, getLength());
+        this.p1 = p1;
     }
 
     public LineIntersection getIntersection(Line line2) {

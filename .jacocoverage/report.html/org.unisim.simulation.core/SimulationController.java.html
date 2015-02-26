@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SimulationController.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;UnibotSim&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">org.unisim.simulation.core</a> &gt; <span class="el_source">SimulationController.java</span></div><h1>SimulationController.java</h1><pre class="source lang-java linenums">package org.unisim.simulation.core;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedList;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.unisim.simulation.robot.IRobot;
+import org.unisim.simulation.robot.IRobotController;
+import org.unisim.simulation.robot.SimulatedUnibot;
+import org.unisim.simulation.geometry.Shape2D;
+
+/**
+ * Controls the simulation. A new simulation is instantiated using the builder
+ * pattern, calling
+ * &lt;pre&gt;&lt;code&gt;new SimulationController.SimulationBuilder(IRobotController).build() &lt;/code&gt;&lt;/pre&gt;for
+ * the default values, or e.g.
+ * &lt;pre&gt;&lt;code&gt; new SimulationController.SimulationBuilder(null).setWorldSize(new Vector2D(5,5)).build();&lt;/code&gt;&lt;/pre&gt;
+ * to specify optional parameters. See the SimulationBuilder javadoc for more
+ * details.
+ *
+ * @author Miles Bryant &lt;mb459 at sussex.ac.uk&gt;
+ */
+public class SimulationController implements CollisionListener{
+
+    private final SimulationWorld world;
+    private final SimulatedUnibot robot;
+<span class="nc" id="L27">    private final LinkedList&lt;SimulationEventListener&gt; listeners = new LinkedList&lt;&gt;();</span>
+    private final boolean loggingEnabled;
+<span class="nc" id="L29">    private final SimLogger dataLogger = new SimLogger();</span>
+    private final double timeStep;
+
+    /**
+     * Called by the SimulationBuilder to create a new instance.
+     *
+     * @param builder
+     */
+<span class="nc" id="L37">    private SimulationController(SimulationBuilder builder) {</span>
+<span class="nc bnc" id="L38" title="All 2 branches missed.">        if(builder.world == null) {        </span>
+<span class="nc" id="L39">            world = new SimulationWorld(builder.worldSize);</span>
+        } else {
+<span class="nc" id="L41">            world = builder.world;</span>
+        }
+<span class="nc" id="L43">        world.addWorldObjects(builder.worldObjects);</span>
+<span class="nc" id="L44">        robot = new SimulatedUnibot(builder.controller, builder.robotPosition, builder.robotSize, builder.robotInitialHeading,(float)builder.worldSize.getNorm());</span>
+<span class="nc" id="L45">        timeStep = builder.timeStepLength;</span>
+<span class="nc" id="L46">        robot.setTimeStepLength(builder.timeStepLength);</span>
+<span class="nc" id="L47">        loggingEnabled = builder.loggingEnabled;</span>
+<span class="nc" id="L48">        world.addListener(this);</span>
+<span class="nc" id="L49">    }</span>
+    
+
+    /**
+     * Steps the simulation one timestep.
+     */
+    public void step() {
+<span class="nc" id="L56">        robot.step(robot.calculateInput(world));</span>
+<span class="nc" id="L57">        world.checkCollisions(robot);</span>
+<span class="nc bnc" id="L58" title="All 2 branches missed.">        if(loggingEnabled)</span>
+<span class="nc" id="L59">            dataLogger.update(robot);</span>
+<span class="nc" id="L60">    }</span>
+
+    /**
+     * Get the value of robot
+     *
+     * @return the value of robot
+     */
+    public IRobot getRobot() {
+<span class="nc" id="L68">        return robot;</span>
+    }
+
+    /**
+     * Get the value of world
+     *
+     * @return the value of world
+     */
+    public SimulationWorld getWorld() {
+<span class="nc" id="L77">        return world;</span>
+    }
+
+    public SimLogger getDataLogger() {
+<span class="nc" id="L81">        return dataLogger;</span>
+    }
+
+    public double getTimeStep() {
+<span class="nc" id="L85">        return timeStep;</span>
+    }
+    
+    
+    
+    public void addListener(SimulationEventListener listener) {
+<span class="nc" id="L91">        listeners.add(listener);</span>
+<span class="nc" id="L92">    }</span>
+    
+    public void removeListener(SimulationEventListener listener) {
+<span class="nc" id="L95">        listeners.remove(listener);</span>
+<span class="nc" id="L96">    }</span>
+
+    @Override
+    public boolean collisionOccured() {
+<span class="nc bnc" id="L100" title="All 2 branches missed.">        for(SimulationEventListener sel : listeners)</span>
+<span class="nc bnc" id="L101" title="All 2 branches missed.">            if(sel.collisionOccured())</span>
+<span class="nc" id="L102">                return true;</span>
+<span class="nc" id="L103">        return false;</span>
+    }
+
+    /**
+     * Builds an SimulationController instance, specifying an IRobotController
+     * and any optional parameters. Call &lt;code&gt;build()&lt;/code&gt; to get the
+     * instance.
+     */
+    public static class SimulationBuilder {
+
+<span class="nc" id="L113">        private Vector2D worldSize = new Vector2D(5, 5);</span>
+<span class="nc" id="L114">        private Vector2D robotSize = new Vector2D(0.6, 0.6);</span>
+<span class="nc" id="L115">        private Vector2D robotPosition = Vector2D.ZERO;</span>
+<span class="nc" id="L116">        private float robotInitialHeading = 0;</span>
+<span class="nc" id="L117">        private float timeStepLength = 1f / 60f;</span>
+<span class="nc" id="L118">        private Collection&lt;Shape2D&gt; worldObjects = new ArrayList&lt;&gt;(0);</span>
+        private IRobotController controller;
+<span class="nc" id="L120">        private boolean loggingEnabled = false;</span>
+        private SimulationWorld world;
+
+        /**
+         * Instantiates the builder - optional parameters are set to their
+         * defaults.
+         *
+         * @param controller IRobotController used to control the robot.
+         */
+<span class="nc" id="L129">        public SimulationBuilder(IRobotController controller) {</span>
+<span class="nc" id="L130">            this.controller = controller;</span>
+<span class="nc" id="L131">        }</span>
+        
+<span class="nc" id="L133">        public SimulationBuilder(IRobotController controller, SimulationWorld world) {</span>
+<span class="nc" id="L134">            this.controller = controller;</span>
+<span class="nc" id="L135">            this.world = world;</span>
+<span class="nc" id="L136">        }</span>
+        
+        /**
+         * Sets the world bounds in metres, 5mx5m by default.
+         *
+         * @param worldSize Vector2D with dimensions of the world's bounds in
+         * metres.
+         * @return SimulationBuilder instance for further parameter setting or
+         * building.
+         */
+        public SimulationBuilder setWorldSize(Vector2D worldSize) {
+<span class="nc" id="L147">            this.worldSize = worldSize;</span>
+<span class="nc" id="L148">            return this;</span>
+        }
+
+        public SimulationBuilder setWorld(SimulationWorld world) {
+<span class="nc" id="L152">            this.world = world;</span>
+<span class="nc" id="L153">            return this;</span>
+        }
+        
+        
+
+        /**
+         * Sets the size of the robot in metres, 0.6mx0.6m by default.
+         *
+         * @param robotSize Vector2D with dimensions of the robot's size in
+         * metres.
+         * @return SimulationBuilder instance for further parameter setting or
+         * building.
+         */
+        public SimulationBuilder setRobotSize(Vector2D robotSize) {
+<span class="nc" id="L167">            this.robotSize = robotSize;</span>
+<span class="nc" id="L168">            return this;</span>
+        }
+
+        /**
+         * Sets the initial position of the robot in metres - [0,0] by default.
+         *
+         * @param robotPosition Vector2D with the robot's initial position in
+         * world coordinates
+         * @return SimulationBuilder instance for further parameter setting or
+         * building.
+         */
+        public SimulationBuilder setRobotPosition(Vector2D robotPosition) {
+<span class="nc" id="L180">            this.robotPosition = robotPosition;</span>
+<span class="nc" id="L181">            return this;</span>
+        }
+
+        /**
+         * Sets the initial heading of the robot in radians - 0 by default.
+         *
+         * @param robotInitialHeading Angle in radians specifying initial
+         * heading of the robot.
+         * @return SimulationBuilder instance for further parameter setting or
+         * building.
+         */
+        public SimulationBuilder setRobotInitialHeading(float robotInitialHeading) {
+<span class="nc" id="L193">            this.robotInitialHeading = robotInitialHeading;</span>
+<span class="nc" id="L194">            return this;</span>
+        }
+
+        /**
+         * Sets the length of each timestep for integration - 1/60s by default,
+         * but can be set for finer or coarser integration of the velocity,
+         * controller etc. Note that this is entirely independent of the actual
+         * speed the simulation runs at, which is determined by how regularly
+         * the step() function is called.
+         *
+         * @param timeStepLength Length of the integration timestep in seconds.
+         * @return SimulationBuilder instance for further parameter setting or
+         * building.
+         */
+        public SimulationBuilder setTimeStepLength(float timeStepLength) {
+<span class="nc" id="L209">            this.timeStepLength = timeStepLength;</span>
+<span class="nc" id="L210">            return this;</span>
+        }
+
+        /**
+         * Sets the collection of WorldObjs that this simulated world will
+         * contain. Note that Bounding LineObjs are generated automatically by
+         * the SimulatedWorld on instantiation.
+         *
+         * @param worldObjects Collection of fully formed WorldObjs
+         * @return SimulationBuilder instance for further parameter setting or
+         * building.
+         */
+        public SimulationBuilder setWorldObjects(Collection&lt;Shape2D&gt; worldObjects) {
+<span class="nc" id="L223">            this.worldObjects = worldObjects;</span>
+<span class="nc" id="L224">            return this;</span>
+        }
+        
+        public SimulationBuilder setLogging(boolean enabled) {
+<span class="nc" id="L228">            loggingEnabled = enabled;</span>
+<span class="nc" id="L229">            return this;</span>
+        }
+
+        /**
+         * Builds an instance of SimulationController including any parameters
+         * set.
+         *
+         * @return final SimulationController
+         */
+        public SimulationController build() {
+<span class="nc" id="L239">            return new SimulationController(this);</span>
+        }
+
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

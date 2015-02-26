@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SerialCommunicator.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;UnibotSim&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">org.unisim.reality</a> &gt; <span class="el_source">SerialCommunicator.java</span></div><h1>SerialCommunicator.java</h1><pre class="source lang-java linenums">package org.unisim.reality;
+
+import java.awt.Component;
+import java.io.UnsupportedEncodingException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import jssc.SerialPort;
+import jssc.SerialPortEvent;
+import jssc.SerialPortEventListener;
+import jssc.SerialPortException;
+
+/**
+ * Communicates with a real serial port.
+ *
+ * @author Miles Bryant (mb459@sussex.ac.uk)
+ */
+public class SerialCommunicator implements SerialPortEventListener, ISerialCommunicator {
+
+<span class="nc" id="L20">    private static final Logger LOG = Logger.getLogger(SerialCommunicator.class.getName());</span>
+    private final SerialPort serialPort;
+    private DataReceivedListener listener;
+
+    /**
+     * Instantiates this, opening the serial port on COM4.
+     *
+     * @throws SerialPortException Thrown if serial port is missing, busy or
+     * otherwise unavailable.
+     */
+    public SerialCommunicator() throws SerialPortException {
+<span class="nc" id="L31">        this(&quot;COM4&quot;);</span>
+<span class="nc" id="L32">    }</span>
+
+    /**
+     * Instantiates this, opening the specified serial port.
+     * @param serialPortName Name of serial port, e.g. COM4
+     * @throws SerialPortException Thrown if serial port is missing, busy or
+     * otherwise unavailable.
+     */
+<span class="nc" id="L40">    public SerialCommunicator(String serialPortName) throws SerialPortException {</span>
+<span class="nc" id="L41">        serialPort = new SerialPort(serialPortName);</span>
+<span class="nc" id="L42">        openSerialPort();</span>
+<span class="nc" id="L43">    }</span>
+
+    private void openSerialPort() throws SerialPortException {
+<span class="nc" id="L46">        serialPort.openPort();</span>
+
+        // set params as per unibot protocol
+<span class="nc" id="L49">        serialPort.setParams(</span>
+                SerialPort.BAUDRATE_57600,
+                SerialPort.DATABITS_8,
+                SerialPort.STOPBITS_1,
+                SerialPort.PARITY_NONE
+        );
+
+<span class="nc" id="L56">        serialPort.addEventListener(this); //listen for data</span>
+<span class="nc" id="L57">    }</span>
+
+    /**
+     * Sends the raw command to the serial port.
+     *
+     * @param command String with raw command, e.g. &quot;#D 0.2 0.2&quot;
+     * @throws jssc.SerialPortException
+     */
+    @Override
+    public void sendCommand(String command) throws SerialPortException {
+<span class="nc" id="L67">        serialPort.writeBytes(command.getBytes());</span>
+<span class="nc" id="L68">    }</span>
+
+    /**
+     * 
+     * @param spe 
+     */
+    @Override
+    public void serialEvent(SerialPortEvent spe) {
+<span class="nc bnc" id="L76" title="All 4 branches missed.">        if (spe.isRXCHAR() &amp; listener != null) {</span>
+            try {
+<span class="nc" id="L78">                byte[] buffer = serialPort.readBytes();</span>
+<span class="nc" id="L79">                String data = new String(buffer, &quot;UTF-8&quot;);</span>
+<span class="nc" id="L80">                listener.dataReceivedEvent(data);</span>
+<span class="nc" id="L81">            } catch (SerialPortException | UnsupportedEncodingException ex) {</span>
+<span class="nc" id="L82">                LOG.log(Level.SEVERE, null, ex);</span>
+<span class="nc" id="L83">            }</span>
+        }
+<span class="nc" id="L85">    }</span>
+
+    @Override
+    public void setListener(DataReceivedListener listener) {
+<span class="nc" id="L89">        this.listener = listener;</span>
+<span class="nc" id="L90">    }</span>
+    
+    public static void showErrorDialog(SerialPortException ex, Component parent) {
+<span class="nc" id="L93">        Logger.getLogger(CalibrationUI.class.getName()).log(Level.SEVERE, null, ex);</span>
+<span class="nc" id="L94">            String errmsg = &quot;&quot;,</span>
+<span class="nc" id="L95">                    errtitle = &quot;&quot;;</span>
+<span class="nc bnc" id="L96" title="All 14 branches missed.">            switch (ex.getExceptionType()) {</span>
+                case SerialPortException.TYPE_PORT_ALREADY_OPENED:
+<span class="nc" id="L98">                    errtitle = &quot;Port already opened&quot;;</span>
+<span class="nc" id="L99">                    errmsg = &quot;Serial port &quot; + ex.getPortName() + &quot; is already open. Check that another instance/application is not using it.&quot;;</span>
+<span class="nc" id="L100">                    break;</span>
+                case SerialPortException.TYPE_PORT_BUSY:
+<span class="nc" id="L102">                    errtitle = &quot;Port busy&quot;;</span>
+<span class="nc" id="L103">                    errmsg = &quot;Serial port &quot; + ex.getPortName() + &quot; is busy. Check that another instance/application is not using it.&quot;;</span>
+<span class="nc" id="L104">                    break;</span>
+                case SerialPortException.TYPE_PORT_NOT_FOUND:
+<span class="nc" id="L106">                    errtitle = &quot;Port not found&quot;;</span>
+<span class="nc" id="L107">                    errmsg = &quot;Serial port &quot; + ex.getPortName() + &quot; was not found. Check that serial interface is plugged in.&quot;;</span>
+                default:
+                    break;
+            }
+<span class="nc" id="L111">            JOptionPane.showMessageDialog(parent,</span>
+                    errmsg,
+                    errtitle,
+                    JOptionPane.ERROR_MESSAGE);
+<span class="nc" id="L115">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

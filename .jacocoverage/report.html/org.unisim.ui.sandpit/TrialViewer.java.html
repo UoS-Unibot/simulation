@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>TrialViewer.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;UnibotSim&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">org.unisim.ui.sandpit</a> &gt; <span class="el_source">TrialViewer.java</span></div><h1>TrialViewer.java</h1><pre class="source lang-java linenums">/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package org.unisim.ui.sandpit;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.geom.AffineTransform;
+import java.awt.image.BufferStrategy;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.unisim.genesis.RobotIndividual;
+import org.unisim.simulation.core.SimulationController;
+import org.unisim.simulation.robot.IRobot;
+import org.unisim.simulation.robot.SimulatedUnibot;
+import org.unisim.simulation.robot.ctrnn.CTRNNLayout;
+
+/**
+ *
+ * @author miles
+ */
+<span class="nc" id="L25">public class TrialViewer extends SandPitCanvas implements Runnable {</span>
+    CTRNNLayout layout;
+    RobotIndividual ind;
+    SimulationController controller;
+<span class="nc" id="L29">    private boolean simulationLoaded = false;</span>
+    private IRobot robot;
+    private PathTracer path;
+<span class="nc" id="L32">    private volatile long DELAY = Math.round(1000 / 60);</span>
+<span class="nc" id="L33">    private volatile boolean simulationStopped = false;</span>
+
+    public boolean isSimulationLoaded() {
+<span class="nc" id="L36">        return simulationLoaded;</span>
+    }
+
+    public void loadSimulation(SimulationController controller) {
+<span class="nc" id="L40">        this.controller = controller;</span>
+<span class="nc" id="L41">        robot = this.controller.getRobot();</span>
+<span class="nc" id="L42">        world = this.controller.getWorld();</span>
+<span class="nc" id="L43">        path = new PathTracer(robot.getPosition());</span>
+<span class="nc" id="L44">        simulationLoaded = true;</span>
+<span class="nc" id="L45">    }</span>
+
+    private void step() {
+<span class="nc" id="L48">        controller.step();</span>
+<span class="nc" id="L49">        path.step(robot.getPosition());</span>
+        //randomiseRobot();
+<span class="nc" id="L51">    }</span>
+
+    @Override
+    public void addNotify() {
+<span class="nc" id="L55">        super.addNotify();</span>
+<span class="nc" id="L56">        Thread canvas = new Thread(this);</span>
+<span class="nc" id="L57">        canvas.start();</span>
+<span class="nc" id="L58">    }</span>
+
+    public void setDelay(double newDelay) {
+<span class="nc" id="L61">        DELAY = Math.round(1000 / (60 * newDelay));</span>
+<span class="nc" id="L62">    }</span>
+
+    public void run() {
+<span class="nc bnc" id="L65" title="All 2 branches missed.">        if (!simulationLoaded) {</span>
+<span class="nc" id="L66">            return;</span>
+        }
+<span class="nc" id="L68">        postInitialise();</span>
+        long beforeTime;
+        long timeDiff;
+        long sleep;
+<span class="nc" id="L72">        draw();</span>
+<span class="nc" id="L73">        render();</span>
+<span class="nc" id="L74">        beforeTime = System.currentTimeMillis();</span>
+<span class="nc" id="L75">        setVisible(true);</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">        while (!simulationStopped) {</span>
+<span class="nc" id="L77">            step();</span>
+<span class="nc" id="L78">            draw();</span>
+<span class="nc" id="L79">            render();</span>
+<span class="nc" id="L80">            timeDiff = System.currentTimeMillis() - beforeTime;</span>
+<span class="nc" id="L81">            sleep = DELAY - timeDiff;</span>
+<span class="nc bnc" id="L82" title="All 2 branches missed.">            if (sleep &lt; 0) {</span>
+<span class="nc" id="L83">                sleep = 2;</span>
+            }
+            try {
+<span class="nc" id="L86">                Thread.sleep(sleep);</span>
+<span class="nc" id="L87">            } catch (InterruptedException e) {</span>
+<span class="nc" id="L88">                System.out.println(&quot;Interrupted: &quot; + e.getMessage());</span>
+<span class="nc" id="L89">            }</span>
+<span class="nc" id="L90">            beforeTime = System.currentTimeMillis();</span>
+        }
+        
+<span class="nc" id="L93">    }</span>
+
+    public void postInitialise() {
+<span class="nc" id="L96">        createBufferStrategy(3);</span>
+<span class="nc" id="L97">        buffer = getBufferStrategy();</span>
+<span class="nc" id="L98">    }</span>
+    
+    protected BufferStrategy buffer;
+    public void stop() {
+<span class="nc" id="L102">        simulationStopped = true;</span>
+<span class="nc" id="L103">    }</span>
+
+    public void start() {
+<span class="nc" id="L106">        simulationStopped = false;</span>
+<span class="nc" id="L107">        new Thread(this).start();</span>
+<span class="nc" id="L108">    }</span>
+
+    public void draw() {
+<span class="nc bnc" id="L111" title="All 2 branches missed.">        if (buffer == null) {</span>
+<span class="nc" id="L112">            return;</span>
+        }
+<span class="nc" id="L114">        Graphics2D g2 = (Graphics2D) buffer.getDrawGraphics();</span>
+<span class="nc" id="L115">        camera.setWindowSize(new Vector2D(this.getWidth(), this.getHeight()));</span>
+<span class="nc" id="L116">        g2.setColor(Color.WHITE);</span>
+<span class="nc" id="L117">        g2.fillRect(0, 0, getWidth(), getHeight());</span>
+<span class="nc" id="L118">        AffineTransform prevTrans = g2.getTransform();</span>
+<span class="nc" id="L119">        g2.setTransform(camera.getTransform());</span>
+<span class="nc" id="L120">        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);</span>
+<span class="nc" id="L121">        grid.draw(g2);</span>
+<span class="nc bnc" id="L122" title="All 2 branches missed.">        if (world != null) {</span>
+<span class="nc" id="L123">            SandpitRenderer.drawWorld(g2, world);</span>
+        }
+<span class="nc bnc" id="L125" title="All 2 branches missed.">        if (path != null) {</span>
+<span class="nc" id="L126">            path.draw(g2);</span>
+        }
+<span class="nc bnc" id="L128" title="All 2 branches missed.">        if (robot != null) {</span>
+<span class="nc" id="L129">            SandpitRenderer.drawRobot(g2, (SimulatedUnibot) robot);</span>
+        }
+<span class="nc" id="L131">        g2.setTransform(prevTrans);</span>
+<span class="nc" id="L132">    }</span>
+
+    public void render() {
+<span class="nc bnc" id="L135" title="All 2 branches missed.">        if (buffer != null) {</span>
+<span class="nc" id="L136">            buffer.show();</span>
+        }
+<span class="nc" id="L138">    }</span>
+    
+    @Override
+    public void paint(Graphics grphcs) {
+<span class="nc" id="L142">        draw();</span>
+<span class="nc" id="L143">        render();</span>
+<span class="nc" id="L144">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

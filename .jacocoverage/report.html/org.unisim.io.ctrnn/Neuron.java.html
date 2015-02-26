@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Neuron.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;UnibotSim&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">org.unisim.io.ctrnn</a> &gt; <span class="el_source">Neuron.java</span></div><h1>Neuron.java</h1><pre class="source lang-java linenums">package org.unisim.io.ctrnn;
+
+import java.util.Arrays;
+
+/**
+ *
+ * @author Miles Bryant (mb459 at sussex.ac.uk)
+ */
+<span class="fc" id="L9">public class Neuron {</span>
+
+    private String name;
+    private String tau;
+    private String gain;
+    private String bias;
+    private String[] conns;
+    private String[] weights;
+
+    public String getName() {
+<span class="fc" id="L19">        return name;</span>
+    }
+
+    public void setName(String name) {
+<span class="fc" id="L23">        this.name = name;</span>
+<span class="fc" id="L24">    }</span>
+
+    public String getTau() {
+<span class="fc" id="L27">        return tau;</span>
+    }
+
+    public void setTau(String tau) {
+<span class="fc" id="L31">        this.tau = tau;</span>
+<span class="fc" id="L32">    }</span>
+
+    public String getGain() {
+<span class="fc" id="L35">        return gain;</span>
+    }
+
+    public void setGain(String gain) {
+<span class="fc" id="L39">        this.gain = gain;</span>
+<span class="fc" id="L40">    }</span>
+
+    public String getBias() {
+<span class="fc" id="L43">        return bias;</span>
+    }
+
+    public void setBias(String bias) {
+<span class="fc" id="L47">        this.bias = bias;</span>
+<span class="fc" id="L48">    }</span>
+
+    public String[] getConns() {
+<span class="fc" id="L51">        return conns;</span>
+    }
+
+    public void setConns(String[] conns) {
+<span class="fc" id="L55">        this.conns = conns;</span>
+<span class="fc" id="L56">    }</span>
+
+    public String[] getWeights() {
+<span class="fc" id="L59">        return weights;</span>
+    }
+
+    public void setWeights(String[] weights) {
+<span class="fc" id="L63">        this.weights = weights;</span>
+<span class="fc" id="L64">    }</span>
+
+    @Override
+    public String toString() {
+<span class="fc" id="L68">        return &quot;Neuron{&quot; + &quot;name=&quot; + name + &quot;, tau=&quot; + tau + &quot;, gain=&quot; + gain + &quot;, bias=&quot; + bias + &quot;, conns=&quot; + Arrays.toString(conns) + &quot;, weights=&quot; + Arrays.toString(weights) + '}';</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

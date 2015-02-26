@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>LayoutBuilder.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;UnibotSim&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">org.unisim.simulation.robot.ctrnn</a> &gt; <span class="el_source">LayoutBuilder.java</span></div><h1>LayoutBuilder.java</h1><pre class="source lang-java linenums">package org.unisim.simulation.robot.ctrnn;
+
+import java.util.ArrayList;
+
+/**
+ *
+ * @author miles
+ */
+public class LayoutBuilder {
+
+<span class="fc" id="L11">    private String filename = &quot;&quot;;</span>
+<span class="fc" id="L12">    private int genomeLength = 0;</span>
+
+<span class="fc" id="L14">    private final ArrayList&lt;Layer&gt; layers = new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L16">    private final ArrayList&lt;Integer&gt; motorOutputs = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L17">    private final ArrayList&lt;Integer&gt; sensorInputs = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L18">    private final GeneMapping geneMapping = new GeneMapping();</span>
+
+<span class="fc" id="L20">    public LayoutBuilder() {</span>
+<span class="fc" id="L21">    }</span>
+
+    public LayoutBuilder addNewLayer() {
+<span class="fc" id="L24">        getLayers().add(new Layer());</span>
+<span class="fc" id="L25">        return this;</span>
+    }
+
+    public LayoutBuilder addNeuronToLastLayer(Neuron neuron) {
+<span class="fc" id="L29">        getLayers().get(getLayers().size() - 1).neurons.add(neuron);</span>
+<span class="pc bpc" id="L30" title="1 of 2 branches missed.">        if (neuron.tauGID != -1) {</span>
+<span class="fc" id="L31">            getGeneMapping().add(neuron.tauGID, neuron.ID, GeneMapping.Parameter.TAU);</span>
+        }
+<span class="pc bpc" id="L33" title="1 of 2 branches missed.">        if (neuron.biasGID != -1) {</span>
+<span class="fc" id="L34">            getGeneMapping().add(neuron.biasGID, neuron.ID, GeneMapping.Parameter.BIAS);</span>
+        }
+<span class="pc bpc" id="L36" title="1 of 2 branches missed.">        if (neuron.gainGID != -1) {</span>
+<span class="fc" id="L37">            getGeneMapping().add(neuron.gainGID, neuron.ID, GeneMapping.Parameter.GAIN);</span>
+        }
+<span class="fc bfc" id="L39" title="All 2 branches covered.">        for (int i : neuron.weightsGID) {</span>
+<span class="fc" id="L40">            getGeneMapping().add(i, neuron.ID, GeneMapping.Parameter.WEIGHT);</span>
+<span class="fc" id="L41">        }</span>
+<span class="fc" id="L42">        return this;</span>
+    }
+
+    public LayoutBuilder addSensorInput(int neuronID) {
+<span class="fc" id="L46">        getSensorInputs().add(neuronID);</span>
+<span class="fc" id="L47">        return this;</span>
+    }
+
+    public LayoutBuilder addMotorOutput(int neuronID) {
+<span class="fc" id="L51">        getMotorOutputs().add(neuronID);</span>
+<span class="fc" id="L52">        return this;</span>
+    }
+
+    public LayoutBuilder setFilename(String filename) {
+<span class="fc" id="L56">        this.filename = filename;</span>
+<span class="fc" id="L57">        return this;</span>
+    }
+
+    public LayoutBuilder build() {
+<span class="fc" id="L61">        genomeLength = getGeneMapping().getHighestGeneID() + 1;</span>
+<span class="fc" id="L62">        return this;</span>
+    }
+
+    /**
+     * @return the filename
+     */
+    public String getFilename() {
+<span class="fc" id="L69">        return filename;</span>
+    }
+
+    /**
+     * @return the genomeLength
+     */
+    public int getGenomeLength() {
+<span class="fc" id="L76">        return genomeLength;</span>
+    }
+
+    /**
+     * @return the layers
+     */
+    public ArrayList&lt;Layer&gt; getLayers() {
+<span class="fc" id="L83">        return layers;</span>
+    }
+
+    /**
+     * @return the motorOutputs
+     */
+    public ArrayList&lt;Integer&gt; getMotorOutputs() {
+<span class="fc" id="L90">        return motorOutputs;</span>
+    }
+
+    /**
+     * @return the sensorInputs
+     */
+    public ArrayList&lt;Integer&gt; getSensorInputs() {
+<span class="fc" id="L97">        return sensorInputs;</span>
+    }
+
+    /**
+     * @return the geneMapping
+     */
+    public GeneMapping getGeneMapping() {
+<span class="fc" id="L104">        return geneMapping;</span>
+    }
+    
+    public Neuron getNeuronByName(String name) {
+<span class="pc bpc" id="L108" title="1 of 2 branches missed.">        for(Layer l : layers) {</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">            for(Neuron n : l.neurons) {</span>
+<span class="fc bfc" id="L110" title="All 2 branches covered.">                if(n.name.equals(name))</span>
+<span class="fc" id="L111">                    return n;</span>
+<span class="fc" id="L112">            }</span>
+<span class="fc" id="L113">        }</span>
+<span class="nc" id="L114">        return null;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

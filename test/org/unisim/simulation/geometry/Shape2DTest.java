@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.unisim.util;
+package org.unisim.simulation.geometry;
 
 import org.unisim.simulation.geometry.Shape2D;
 import org.unisim.simulation.geometry.Line;
