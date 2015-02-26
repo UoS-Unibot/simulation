@@ -14,6 +14,9 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import jssc.SerialPortException;
 
 /**
  *
@@ -101,7 +104,7 @@ public class SimpleUnibotController implements DataReceivedListener {
         }
     }
 
-    public SimpleUnibotController() {
+    public SimpleUnibotController() throws SerialPortException {
         unibot = new UnibotComms();
         unibot.setDataReceivedListener(this);
         unibot.sendCommand(UnibotCommands.SET_PAUSE_STATE, "1");
@@ -118,7 +121,7 @@ public class SimpleUnibotController implements DataReceivedListener {
         listeners.add(listener);
     }
 
-    public void driveDiff(int timeMSec, float velocity, float wheelDiff) {
+    public void driveDiff(int timeMSec, float velocity, float wheelDiff) throws SerialPortException {
 
         unibot.doDifferentialDrive(velocity, wheelDiff);
 
@@ -128,14 +131,18 @@ public class SimpleUnibotController implements DataReceivedListener {
                 new TimerTask() {
                     @Override
                     public void run() {
-                        unibot.doDifferentialDrive(0, 0);
+                        try {
+                            unibot.doDifferentialDrive(0, 0);
+                        } catch (SerialPortException ex) {
+                            Logger.getLogger(SimpleUnibotController.class.getName()).log(Level.SEVERE, null, ex);
+                        }
                     }
                 },
                 endTime
         );
     }
 
-    public void requestData(PacketType type) {
+    public void requestData(PacketType type) throws SerialPortException {
         if (type == PacketType.RANGE_SINGLE) {
             throw new IllegalArgumentException("Cannot request single rangefinder data through requestData(PacketType.RANGE_SINGLE); use requestRange() instead.");
         } else {
@@ -144,7 +151,7 @@ public class SimpleUnibotController implements DataReceivedListener {
         }
     }
 
-    public void requestRange() {
+    public void requestRange() throws SerialPortException {
         unibot.sendCommand(UnibotCommands.RANGEFINDER_GET_RANGE);
         lastDataRequest = PacketType.RANGE_SINGLE;
     }

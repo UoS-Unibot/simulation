@@ -65,7 +65,7 @@ public class RobotIndividual implements Comparable<RobotIndividual> {
 
         for (int i = 0; i < nTrials; i++) {
 
-            Trial t = new Trial(sc, 30, false, true);
+            Trial t = new Trial(sc, 60, false, true);
             double fitness = t.run();
             sum += fitness;
         }

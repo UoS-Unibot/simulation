@@ -7,6 +7,9 @@ package org.unisim.reality;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import jssc.SerialPortException;
 
 /**
  *
@@ -14,13 +17,17 @@ import java.util.TimerTask;
  */
 public class RobotInputReader extends javax.swing.JFrame {
 
-    private final SimpleUnibotController unibot = new SimpleUnibotController();
+    private SimpleUnibotController unibot;
 
     private final long timerUpdateInterval = Math.round(1.0 / 60.0);
 
     public void updateData() {
-        unibot.requestRange();
-        unibot.requestData(SimpleUnibotController.PacketType.SONAR);
+        try {
+            unibot.requestRange();
+            unibot.requestData(SimpleUnibotController.PacketType.SONAR);
+        } catch (SerialPortException ex) {
+            SerialCommunicator.showErrorDialog(ex, this);
+        }
         lblRange.setText(String.valueOf(unibot.getLastData(SimpleUnibotController.PacketType.RANGE_SINGLE)[0]));
 
         double[] sonarVals = unibot.getLastData(SimpleUnibotController.PacketType.RANGE_SINGLE);
@@ -35,6 +42,12 @@ public class RobotInputReader extends javax.swing.JFrame {
      */
     public RobotInputReader() {
         initComponents();
+        try {
+            unibot = new SimpleUnibotController();
+        } catch (SerialPortException ex) {
+            SerialCommunicator.showErrorDialog(ex, this);
+            System.exit(0);
+        }
     }
 
     /**

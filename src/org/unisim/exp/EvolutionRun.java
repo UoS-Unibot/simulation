@@ -13,7 +13,7 @@ import org.unisim.genesis.RobotGenotype;
 import org.unisim.genesis.Stats;
 
 /**
- *
+ * Represents a single evolutionary run, running the GA for the specified number of generations.
  * @author Miles
  */
 public class EvolutionRun extends Thread {

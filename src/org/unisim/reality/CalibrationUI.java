@@ -25,19 +25,30 @@
  */
 package org.unisim.reality;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JOptionPane;
+import jssc.SerialPortException;
+
 /**
  *
  * @author Miles Bryant <mb459 at sussex.ac.uk>
  */
 public class CalibrationUI extends javax.swing.JFrame {
-    
-    private final SimpleUnibotController unibot = new SimpleUnibotController();
+
+    private SimpleUnibotController unibot;
 
     /**
      * Creates new form CalibrationUI
      */
     public CalibrationUI() {
         initComponents();
+        try {
+            unibot = new SimpleUnibotController();
+        } catch (SerialPortException ex) {
+            SerialCommunicator.showErrorDialog(ex, this);
+            System.exit(0);
+        }
     }
 
     /**
@@ -172,11 +183,16 @@ public class CalibrationUI extends javax.swing.JFrame {
     }//GEN-LAST:event_formKeyPressed
 
     private void btnRunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRunActionPerformed
-        unibot.driveDiff((int)spnTime.getValue(), (float)spnVelocity.getValue(), (float)spnWheelDiff.getValue());
+        try {
+            unibot.driveDiff((int) spnTime.getValue(), (float) spnVelocity.getValue(), (float) spnWheelDiff.getValue());
+        } catch (SerialPortException ex) {
+            SerialCommunicator.showErrorDialog(ex, this);
+            System.exit(0);
+        }
     }//GEN-LAST:event_btnRunActionPerformed
 
     private void btnStopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStopActionPerformed
-        
+
     }//GEN-LAST:event_btnStopActionPerformed
 
     /**

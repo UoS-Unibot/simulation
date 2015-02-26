@@ -6,7 +6,7 @@
 package org.unisim.reality;
 
 /**
- *
+ * Signals that data has been received on the serial port, and passes it through.
  * @author Miles Bryant (mb459@sussex.ac.uk)
  */
 public interface DataReceivedListener {
