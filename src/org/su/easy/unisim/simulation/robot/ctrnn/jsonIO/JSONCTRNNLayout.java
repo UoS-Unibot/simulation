@@ -27,13 +27,16 @@ public class JSONCTRNNLayout {
     public JSONCTRNNLayout() {
     }
 
+    public void saveToFile(File file) throws IOException {
+        new ObjectMapper().writerWithDefaultPrettyPrinter().writeValue(file, this);
+    }
     public static JSONCTRNNLayout fromFile(File file) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         JSONCTRNNLayout layout = mapper.readValue(file, JSONCTRNNLayout.class);
         layout.filename = file.getAbsolutePath();
         return layout;
     }
-
+    
     public CTRNNLayout toCTRNNLayout() {
         LayoutBuilder lb = new LayoutBuilder();
         lb.setFilename(filename);
@@ -132,10 +135,6 @@ public class JSONCTRNNLayout {
         return str.substring(1);
     }
 
-    public void saveToFile(File file) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.writerWithDefaultPrettyPrinter().writeValue(file, this);
-    }
 
     private ParamRanges findParamRange(String name) {
         for (ParamRanges pr : paramranges) {

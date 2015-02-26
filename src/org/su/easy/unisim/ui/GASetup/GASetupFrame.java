@@ -29,7 +29,7 @@ public class GASetupFrame extends javax.swing.JInternalFrame {
 
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
-        parameters1 = new org.su.easy.unisim.ui.GASetup.Parameters();
+        parameters1 = new org.su.easy.unisim.ui.GASetup.ParametersPanel();
         btnSelectC = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         controllerLoad1 = new org.su.easy.unisim.ui.GASetup.ControllerLoad();
@@ -40,8 +40,17 @@ public class GASetupFrame extends javax.swing.JInternalFrame {
         jPanel4 = new javax.swing.JPanel();
         gARunPanel1 = new org.su.easy.unisim.ui.GASetup.GARunPanel();
 
+        setClosable(true);
         setMaximizable(true);
         setResizable(true);
+        setTitle("Set up experiment");
+        setToolTipText("");
+
+        jTabbedPane1.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                jTabbedPane1StateChanged(evt);
+            }
+        });
 
         btnSelectC.setText("Select controller");
         btnSelectC.addActionListener(new java.awt.event.ActionListener() {
@@ -118,7 +127,7 @@ public class GASetupFrame extends javax.swing.JInternalFrame {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(worldLoad1, javax.swing.GroupLayout.PREFERRED_SIZE, 926, Short.MAX_VALUE)
+                    .addComponent(worldLoad1, javax.swing.GroupLayout.DEFAULT_SIZE, 926, Short.MAX_VALUE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(btnSelectR)))
@@ -158,11 +167,11 @@ public class GASetupFrame extends javax.swing.JInternalFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 943, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jTabbedPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 503, Short.MAX_VALUE)
+            .addComponent(jTabbedPane1)
         );
 
         pack();
@@ -182,6 +191,12 @@ public class GASetupFrame extends javax.swing.JInternalFrame {
         jTabbedPane1.setSelectedComponent(jPanel4);
     }//GEN-LAST:event_selectRun
 
+    private void jTabbedPane1StateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_jTabbedPane1StateChanged
+        if(jTabbedPane1.getSelectedIndex()==3) {
+            gARunPanel1.setUpExperiment(parameters1.getParam(), worldLoad1.getWorld(), controllerLoad1.getCTRNNLayout());
+        }
+    }//GEN-LAST:event_jTabbedPane1StateChanged
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnSelectC;
@@ -194,7 +209,7 @@ public class GASetupFrame extends javax.swing.JInternalFrame {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JTabbedPane jTabbedPane1;
-    private org.su.easy.unisim.ui.GASetup.Parameters parameters1;
+    private org.su.easy.unisim.ui.GASetup.ParametersPanel parameters1;
     private org.su.easy.unisim.ui.GASetup.WorldLoad worldLoad1;
     // End of variables declaration//GEN-END:variables
 }

@@ -7,6 +7,7 @@ package org.su.easy.unisim.simulation.robot.ctrnn;
 
 import java.util.ArrayList;
 import org.su.easy.unisim.exp.ExpParam;
+import org.su.easy.unisim.exp.params.Parameters;
 import org.su.easy.unisim.genesis.RobotGenotype;
 import org.su.easy.unisim.simulation.robot.IRobotController;
 import org.su.easy.unisim.simulation.robot.RobotInput;
@@ -25,14 +26,14 @@ public class CTRNN implements IRobotController{
     public float[][] weights;
     public int outIndL,outIndR;
     public ArrayList<Integer> sensNeurIndices;
-    ExpParam params;
+    Parameters params;
     
     /**
      * Creates a new CTRNN with specified number of sensors and genotype
      * @param nSensors
      * @param g 
      */
-    public CTRNN(RobotGenotype g, ExpParam params) {
+    public CTRNN(RobotGenotype g, Parameters params) {
         this.n = g.layout.getTotalN(); //get number of neurons
         
         taus = new float[n];
@@ -73,7 +74,7 @@ public class CTRNN implements IRobotController{
      * @param inputs 
      */
     public void step(float[] inputs) {
-        float stepSize = (float)(double)params.get("EULER_TIMESTEP");
+        float stepSize = (float)params.getController_timestep();
         EulerStep(stepSize,inputs);
     }
     

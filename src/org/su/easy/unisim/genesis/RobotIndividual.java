@@ -7,9 +7,11 @@ package org.su.easy.unisim.genesis;
 
 import org.su.easy.unisim.simulation.robot.ctrnn.CTRNNLayout;
 import java.util.Random;
-import org.su.easy.unisim.exp.ExpParam;
+import org.su.easy.unisim.exp.Experiment;
 import org.su.easy.unisim.exp.Trial;
+import org.su.easy.unisim.exp.params.Parameters;
 import org.su.easy.unisim.simulation.core.SimulationController;
+import org.su.easy.unisim.simulation.core.SimulationWorld;
 import org.su.easy.unisim.simulation.robot.ctrnn.CTRNN;
 
 /**
@@ -19,14 +21,18 @@ import org.su.easy.unisim.simulation.robot.ctrnn.CTRNN;
 public class RobotIndividual implements Comparable<RobotIndividual> {
 
     protected RobotGenotype genotype;
-    protected ExpParam params;
+    protected Parameters params;
+    protected SimulationWorld world;
     protected int nTrials;
 
-    public RobotIndividual(CTRNNLayout layout, ExpParam params) {
-        genotype = new RobotGenotype(layout);
-        this.params = params;
-        nTrials = (int) params.get("N_SCRIPTED_RUNS");
+    public RobotIndividual(Experiment exp) {
+        genotype = new RobotGenotype(exp.getLayout());
+        params = exp.getParam();
+        world = exp.getWorld();
+        nTrials = params.getFitness_n_trials();
     }
+    
+    
 
     public RobotGenotype getGenotype() {
         return genotype;
@@ -51,11 +57,11 @@ public class RobotIndividual implements Comparable<RobotIndividual> {
     public float calcRawFitness() {
         float sum = 0.0f;
 
-        int nTrials = (int) params.get("FITNESS_EVAL_NTRIALS");
+        int nTrials = params.getFitness_n_trials();
 
         //float[] angs = {1,-3,-2,-4,4,-6,5,-5,-1,2,6,3};
         SimulationController sc
-                = new SimulationController.SimulationBuilder(new CTRNN(genotype, params)).build();
+                = new SimulationController.SimulationBuilder(new CTRNN(genotype, params)).setWorld(world).build();
 
         for (int i = 0; i < nTrials; i++) {
 

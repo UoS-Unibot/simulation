@@ -6,10 +6,7 @@
 package org.su.easy.unisim.simulation.sandpit;
 
 import java.awt.Canvas;
-import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
@@ -41,7 +38,6 @@ public abstract class SandPitCanvas extends Canvas {
                     Vector2D sub = newCoord.subtract(prevCoord);
                     getCamera().move(sub);
                     draw();
-                    render();
                 }
             }
 
@@ -54,7 +50,6 @@ public abstract class SandPitCanvas extends Canvas {
             public void mouseWheelMoved(MouseWheelEvent mwe) {
                 getCamera().changeScale(-0.5 * mwe.getUnitsToScroll());
                 draw();
-                render();
             }
 
         };
@@ -65,26 +60,11 @@ public abstract class SandPitCanvas extends Canvas {
 
     }
 
-    protected BufferStrategy buffer;
 
     public abstract void draw();
 
-    public void render() {
-        if (buffer != null) {
-            buffer.show();
-        }
-    }
 
-    public void postInitialise() {
-        createBufferStrategy(3);
-        buffer = getBufferStrategy();
-    }
 
-    @Override
-    public void paint(Graphics grphcs) {
-        draw();
-        render();
-    }
 
     public SandPitCamera getCamera() {
         return camera;

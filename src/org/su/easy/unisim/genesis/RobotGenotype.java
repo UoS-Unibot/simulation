@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Random;
 /**
  *
@@ -38,6 +39,15 @@ public class RobotGenotype implements Serializable{
         len = layout.getGenomeLength();
         n = layout.getTotalN();
         randomiseGenome();
+        updateLayout();
+    }
+    
+    
+    public RobotGenotype(CTRNNLayout layout, float[] genes) {
+        this(layout);
+        if(layout.genomeLength != genes.length)
+            throw new IllegalArgumentException(String.format("Genes provided (n=%d) do not match specified layout (n=%d)",genes.length, layout.genomeLength));
+        this.genes = genes;
         updateLayout();
     }
     

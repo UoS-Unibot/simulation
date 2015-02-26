@@ -5,6 +5,9 @@
  */
 package org.su.easy.unisim.ui;
 
+import org.su.easy.unisim.exp.Experiment;
+import org.su.easy.unisim.genesis.RobotGenotype;
+
 /**
  *
  * @author miles
@@ -16,6 +19,10 @@ public class TrialViewerFrame extends javax.swing.JInternalFrame {
      */
     public TrialViewerFrame() {
         initComponents();
+    }
+    
+    public void loadSimulation(Experiment exp,RobotGenotype geno) {
+        simulationViewer1.loadSimulation(exp, geno);
     }
 
     /**
@@ -29,8 +36,10 @@ public class TrialViewerFrame extends javax.swing.JInternalFrame {
 
         simulationViewer1 = new org.su.easy.unisim.simulation.sandpit.SimulationViewer();
 
+        setClosable(true);
         setMaximizable(true);
         setResizable(true);
+        setTitle("Trial viewer");
         setDoubleBuffered(true);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());

@@ -25,6 +25,12 @@ public class WorldLoad extends javax.swing.JPanel {
         initComponents();
     }
     
+    SimulationWorld world;
+
+    public SimulationWorld getWorld() {
+        return world;
+    }
+    
     
 
     /**
@@ -37,6 +43,7 @@ public class WorldLoad extends javax.swing.JPanel {
     private void initComponents() {
 
         fcController = new javax.swing.JFileChooser();
+        worldViewer1 = new org.su.easy.unisim.simulation.sandpit.WorldViewer();
 
         fcController.setApproveButtonText("Open");
         fcController.setControlButtonsAreShown(false);
@@ -54,14 +61,20 @@ public class WorldLoad extends javax.swing.JPanel {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(fcController, javax.swing.GroupLayout.DEFAULT_SIZE, 555, Short.MAX_VALUE)
-                .addGap(185, 185, 185))
+                .addComponent(fcController, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(worldViewer1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(fcController, javax.swing.GroupLayout.DEFAULT_SIZE, 355, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(fcController, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(worldViewer1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -69,7 +82,8 @@ public class WorldLoad extends javax.swing.JPanel {
         try {
             if (fcController.getSelectedFile() != null) {
                 SimulationWorld jw = JSONWorld.fromFile(fcController.getSelectedFile());
-                //worldViewer1.loadWorld(jw);
+                worldViewer1.loadWorld(jw);
+                world = jw;
             }
         } catch (IOException ex) {
             System.out.println(ex);
@@ -79,5 +93,6 @@ public class WorldLoad extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JFileChooser fcController;
+    private org.su.easy.unisim.simulation.sandpit.WorldViewer worldViewer1;
     // End of variables declaration//GEN-END:variables
 }

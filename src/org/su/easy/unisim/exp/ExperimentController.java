@@ -5,6 +5,7 @@
  */
 package org.su.easy.unisim.exp;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -17,9 +18,11 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
+import org.apache.commons.io.FileUtils;
 import org.su.easy.unisim.simulation.robot.ctrnn.CTRNNLayout;
-import org.su.easy.ui.exprun.TextOutput;
+import org.su.easy.unisim.exp.params.Parameters;
 import org.su.easy.unisim.genesis.Stats;
+import org.su.easy.unisim.ui.TextOutput;
 
 /**
  *
@@ -29,9 +32,10 @@ public class ExperimentController {
 
     private static final Logger LOG = Logger.getLogger(ExperimentController.class.getName());
 
-    private ExpParam params = new ExpParam();
-    private CTRNNLayout layout = new CTRNNLayout();
-    private ArrayList<Experiment> experiments = new ArrayList<>();
+    private final Parameters params;
+    private final CTRNNLayout layout;
+    private final Experiment experiment;
+    private ArrayList<EvolutionRun> experiments = new ArrayList<>();
 
     private Path workingDir;
 
@@ -53,13 +57,16 @@ public class ExperimentController {
         this.workingDir = workingDir;
     }
 
-    public ExperimentController() {
+    public ExperimentController(Experiment exp) {
+        this.params = exp.getParam();
+        this.layout = exp.getLayout();
+        experiment = exp;
         try {
             FileHandler handler = new FileHandler("prog.%u.%g.txt", 1024 * 1024, 3, true);
             handler.setFormatter(new SimpleFormatter());
             LOG.addHandler(handler);
             LOG.setLevel(Level.ALL);
-        } catch (Exception e) {
+        } catch (IOException | SecurityException e) {
             LOG.throwing("ExperimentController", "Constructor", e);
             System.exit(1);
         }
@@ -106,49 +113,43 @@ public class ExperimentController {
         }
         isRunning = true;
         exe = Executors.newFixedThreadPool(nThreads);
-        saveParamAndLayout();
+        try {
+            experiment.saveToDir(workingDir.toString());
+        } catch (IOException ex) {
+            System.out.println(ex.toString());
+            Logger.getLogger(ExperimentController.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         addLineOut("Thread\tGen\tMax\tAvg\tMin\tVar");
 
-        totalGen = (int) params.get("GA_MAXGEN") * nThreads;
+        totalGen = (int) params.getGa_generations() * nThreads;
 
         for (int i = 0; i < nRuns; i++) {
-            final Experiment exp = new Experiment();
-            exp.start(params, layout);
+            final EvolutionRun evoRun = new EvolutionRun();
+            evoRun.start(experiment);
             final int curID = i + 1;
-            exp.setListener(new GAListener() {
+            evoRun.setListener(new GAListener() {
                 @Override
                 public void GAupdateSummary(Stats stats) {
                     addLineOut(String.format("%3d\t%3d\t%4.3f\t%4.3f\t%4.3f\t%4.3f", curID, stats.n, stats.maxFit, stats.avgFit, stats.minFit, stats.varFit));
-                    countGen((int) params.get("UPDATE_SUMMARY_FREQ"));
+                    countGen(1);
                 }
 
                 @Override
                 public void GAFinished() {
                     addLineOut(String.format("Run %d finished", curID));
-                    exp.GA.popStats.saveToCSV(getStatsFileName(curID));
-                    exp.GA.pop.saveToCSV(getPopFileName(curID));
+                    evoRun.GA.popStats.saveToCSV(getStatsFileName(curID));
+                    evoRun.GA.pop.saveToCSV(getPopFileName(curID));
                 }
             }
             );
-            experiments.add(exp);
-            exe.execute(exp);
+            experiments.add(evoRun);
+            exe.execute(evoRun);
             addLineOut(String.format("Run %d started", curID));
         }
 
     }
 
-    private void saveParamAndLayout() {
-        try {
-            Files.createDirectories(workingDir);
-            //params.saveToFile(new FileWriter(workingDir.toString() + "\\params.param"));
-            if(!layout.filename.isEmpty()) {
-                //FileUtils.copyFile(new File(layout.filename), new File(workingDir.toString() + "\\layout.nnl"));
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(ExperimentController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
 
     private String getStatsFileName(int run) {
         try {
@@ -156,7 +157,7 @@ public class ExperimentController {
         } catch (IOException ex) {
             Logger.getLogger(ExperimentController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return (workingDir.toString() + "\\stats-" + run + ".csv");
+        return (workingDir.toString() + "/stats-" + run + ".csv");
     }
 
     private String getPopFileName(int run) {
@@ -165,47 +166,19 @@ public class ExperimentController {
         } catch (IOException ex) {
             Logger.getLogger(ExperimentController.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return (workingDir.toString() + "\\population-" + run + ".csv");
+        return (workingDir.toString() + "/population-" + run + ".csv");
     }
 
     public void restart() {
-        for (Experiment e : experiments) {
+        for (EvolutionRun e : experiments) {
             e.setPaused(false);
         }
     }
 
     public void stop() {
-        for (Experiment e : experiments) {
+        for (EvolutionRun e : experiments) {
             e.setPaused(true);
         }
-    }
-
-    /**
-     * @return the params
-     */
-    public ExpParam getParams() {
-        return params;
-    }
-
-    /**
-     * @param params the params to set
-     */
-    public void setParams(ExpParam params) {
-        this.params = params;
-    }
-
-    /**
-     * @return the layout
-     */
-    public CTRNNLayout getLayout() {
-        return layout;
-    }
-
-    /**
-     * @param layout the layout to set
-     */
-    public void setLayout(CTRNNLayout layout) {
-        this.layout = layout;
     }
 
 }

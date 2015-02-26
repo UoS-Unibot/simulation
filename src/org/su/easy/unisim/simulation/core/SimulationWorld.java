@@ -18,6 +18,17 @@ public class SimulationWorld {
 
     private final LinkedList<Shape2D> objects = new LinkedList<>();
     private final LinkedList<CollisionListener> listeners = new LinkedList<>();
+    private String filename = "";
+
+    public String getFilename() {
+        return filename;
+    }
+
+    public void setFilename(String filename) {
+        this.filename = filename;
+    }
+    
+    
 
     /**
      * Creates a new SimulationWorld with specified bounds. LineObjs are

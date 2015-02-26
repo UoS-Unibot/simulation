@@ -14,9 +14,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JPanel;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
-import org.su.easy.unisim.exp.ExpParam;
+import org.su.easy.unisim.exp.Experiment;
+import org.su.easy.unisim.exp.params.Parameters;
+import org.su.easy.unisim.genesis.RobotGenotype;
 import org.su.easy.unisim.genesis.RobotIndividual;
 import org.su.easy.unisim.simulation.core.SimulationController;
+import org.su.easy.unisim.simulation.core.SimulationWorld;
 import org.su.easy.unisim.simulation.robot.ctrnn.CTRNN;
 import org.su.easy.unisim.simulation.robot.ctrnn.CTRNNLayout;
 import org.su.easy.unisim.simulation.robot.ctrnn.jsonIO.JSONCTRNNLayout;
@@ -69,6 +72,11 @@ public class SimulationViewer extends JPanel {
         
     }
     
+    public void loadSimulation(Experiment exp,RobotGenotype geno) {
+        SimulationController controller = new SimulationController.SimulationBuilder(new CTRNN(geno, exp.getParam())).setWorld(exp.getWorld()).build();
+        cv.loadSimulation(controller);
+    }
+    
     public void loadRandomControllerWithDefaultLayout() {
         CTRNNLayout layout;
         RobotIndividual ind;
@@ -78,10 +86,12 @@ public class SimulationViewer extends JPanel {
             Logger.getLogger(SandPitCanvas.class.getName()).log(Level.SEVERE, null, ex);
             return;
         }
-        ind = new RobotIndividual(layout, new ExpParam());
-        SimulationController controller = new SimulationController.SimulationBuilder(new CTRNN(ind.getGenotype(), new ExpParam())).setWorldSize(new Vector2D(10,10)).build();
+        Experiment exp = new Experiment();
+        exp.setLayout(layout);
+        exp.setParam(new Parameters());
+        ind = new RobotIndividual(exp);
+        SimulationController controller = new SimulationController.SimulationBuilder(new CTRNN(ind.getGenotype(), new Parameters())).setWorldSize(new Vector2D(10,10)).build();
         cv.loadSimulation(controller);
-        cv.postInitialise();
     }
 
 

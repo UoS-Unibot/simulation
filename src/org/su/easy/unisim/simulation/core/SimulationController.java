@@ -148,8 +148,9 @@ public class SimulationController implements CollisionListener{
             return this;
         }
 
-        public void setWorld(SimulationWorld world) {
+        public SimulationBuilder setWorld(SimulationWorld world) {
             this.world = world;
+            return this;
         }
         
         

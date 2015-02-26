@@ -20,34 +20,40 @@ import org.su.easy.unisim.util.Shape2D;
  * @author miles
  */
 public class JSONWorld {
-    
+
     private String filename;
     private double[] size;
+
+    public void saveToFile(File file) throws IOException {
+        new ObjectMapper().writerWithDefaultPrettyPrinter().writeValue(file, this);
+    }
+
+    public JSONWorld() {
+    }
+
     
-    public static  SimulationWorld fromFile(File file) throws IOException {
+    public static SimulationWorld fromFile(File file) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         JSONWorld jworld = mapper.readValue(file, JSONWorld.class);
         jworld.filename = file.getAbsolutePath();
-        
-        SimulationWorld world = new SimulationWorld(new Vector2D(jworld.size[0],jworld.size[1]));
+
+        SimulationWorld world = new SimulationWorld(new Vector2D(jworld.size[0], jworld.size[1]));
         world.addWorldObjects(jworld.getWorldObjects());
+        world.setFilename(file.getAbsolutePath());
         return world;
     }
-    
-    
+
     public Collection<Shape2D> getWorldObjects() {
         ArrayList<Shape2D> worldobjects = new ArrayList<>();
-        for(JSONWorldObject obj : objects) {
-            worldobjects.add(Shape2D.createRectangleFromCenter(new Vector2D(obj.getPosition()[0], obj.getPosition()[1]),new Vector2D(obj.getSize()[0],obj.getSize()[1]), 0));
+        for (JSONWorldObject obj : objects) {
+            worldobjects.add(Shape2D.createRectangleFromCenter(new Vector2D(obj.getPosition()[0], obj.getPosition()[1]), new Vector2D(obj.getSize()[0], obj.getSize()[1]), 0));
         }
         return worldobjects;
     }
-    
+
     private JSONWorldMetadata metadata;
     private JSONWorldObject[] objects;
 
-    
-    
     public String getFilename() {
         return filename;
     }
@@ -84,7 +90,5 @@ public class JSONWorld {
     public void setSize(double[] size) {
         this.size = size;
     }
-    
-    
-    
+
 }

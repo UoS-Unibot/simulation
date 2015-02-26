@@ -10,14 +10,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import org.su.easy.unisim.simulation.robot.ctrnn.CTRNNLayout;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.su.easy.unisim.exp.ExpParam;
+import org.su.easy.unisim.exp.Experiment;
 import org.su.easy.unisim.exp.ExperimentController;
+import org.su.easy.unisim.exp.params.Parameters;
 
 /**
  *
@@ -45,18 +45,18 @@ public class Population {
     public ArrayList<RobotIndividual> population = new ArrayList<>();
     protected float p_mutation; protected float pCross;
     protected Random rand = new Random();
-    ExpParam param;
+    Parameters param;
     
     Population() {     }
     
-    Population(int n_pop, float p_mutation, float pCross, ExpParam param,CTRNNLayout layout) {
-        population = new ArrayList<>(n_pop);
-        for(int i = 0; i < n_pop;i++) {
-            population.add(new RobotIndividual(layout,param));
+    Population(Experiment exp) {
+        param = exp.getParam();
+        population = new ArrayList<>(param.getGa_population());
+        for(int i = 0; i < param.getGa_population();i++) {
+            population.add(new RobotIndividual(exp));
         }
         
-        this.p_mutation = p_mutation; this.pCross = pCross;
-        this.param = param;
+        this.p_mutation = (float) param.getGa_mutrate(); this.pCross = (float) param.getGa_crossrate();
     }
     
     

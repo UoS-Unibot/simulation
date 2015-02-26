@@ -8,6 +8,7 @@ package org.su.easy.unisim.ui.GASetup;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.su.easy.unisim.simulation.robot.ctrnn.CTRNNLayout;
 import org.su.easy.unisim.simulation.robot.ctrnn.jsonIO.JSONCTRNNLayout;
 import org.su.easy.unisim.ui.UIUtils;
 
@@ -24,6 +25,14 @@ public class ControllerLoad extends javax.swing.JPanel {
         initComponents();
     }
 
+    
+    CTRNNLayout layout;
+
+    public CTRNNLayout getCTRNNLayout() {
+        return layout;
+    }
+    
+    
     
     /**
      * This method is called from within the constructor to initialize the form.
@@ -145,6 +154,7 @@ public class ControllerLoad extends javax.swing.JPanel {
             lblAuthor2.setText(jlayout.getMetadata().getAuthor());
             lblTitle2.setText(jlayout.getMetadata().getTitle());
             lblDesc2.setText(jlayout.getMetadata().getDescription());
+            layout=jlayout.toCTRNNLayout();
         } catch (Exception ex) {
             lblAuthor2.setText("<File not valid JSON CTRNN Layout file>");
         }

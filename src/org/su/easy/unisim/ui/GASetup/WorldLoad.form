@@ -18,8 +18,10 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" attributes="0">
               <EmptySpace min="-2" max="-2" attributes="0"/>
-              <Component id="fcController" pref="555" max="32767" attributes="0"/>
-              <EmptySpace min="-2" pref="185" max="-2" attributes="0"/>
+              <Component id="fcController" max="32767" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
+              <Component id="worldViewer1" max="32767" attributes="0"/>
+              <EmptySpace min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -27,7 +29,13 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" max="-2" attributes="0"/>
-              <Component id="fcController" pref="355" max="32767" attributes="0"/>
+              <Group type="103" groupAlignment="0" attributes="0">
+                  <Component id="fcController" max="32767" attributes="0"/>
+                  <Group type="102" attributes="0">
+                      <Component id="worldViewer1" max="32767" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                  </Group>
+              </Group>
           </Group>
       </Group>
     </DimensionLayout>
@@ -45,6 +53,8 @@
       <Events>
         <EventHandler event="propertyChange" listener="java.beans.PropertyChangeListener" parameters="java.beans.PropertyChangeEvent" handler="fcControllerPropertyChange"/>
       </Events>
+    </Component>
+    <Component class="org.su.easy.unisim.simulation.sandpit.WorldViewer" name="worldViewer1">
     </Component>
   </SubComponents>
 </Form>

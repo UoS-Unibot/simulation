@@ -1,0 +1,84 @@
+{
+    "metadata": {
+        "title": "Simple 5 neuron 3 layer robot controller",
+        "author": "Miles Bryant",
+        "description": "Simple network with 1 rangefinder input, 2 interneurons and 2 motor neurons"
+    },
+    "paramranges": [
+        {
+            "name": "sensory",
+            "tauR": [1, 2],
+            "gainR": [-2, 0],
+            "biasR": [-1, 1],
+            "weightsR": [-5,5]
+        },
+        {
+            "name": "circuit",
+            "tauR": [1, 1],
+            "gainR": [1, 1],
+            "biasR": [0, 0],
+            "weightsR": [-5,5]
+        }        
+    ],
+    "layers": [
+        {
+            "desc": "sensory",
+            "params": "sensory",
+            "neurons": [
+                {
+                    "name": "s0",
+                    "tau": "g0",
+                    "gain": "g1",
+                    "bias": "g2",
+                    "conns": ["i1","i2"],
+                    "weights": ["g3","g3"]
+                }
+            ]
+        },
+        {
+            "desc": "interneurons",
+            "params": "circuit",
+            "neurons": [
+                {
+                    "name": "i1",
+                    "tau": "g4",
+                    "gain": "g5",
+                    "bias": "g6",
+                    "conns": ["m0","m1"],
+                    "weights": ["g7","g7"]
+                },
+                {
+                    "name": "i2",
+                    "tau": "g4",
+                    "gain": "g5",
+                    "bias": "g6",
+                    "conns": ["m0","m1"],
+                    "weights": ["g7","g7"]
+                }
+            ]
+        },
+        {
+            "desc": "motors",
+            "params": "circuit",
+            "neurons": [
+                {
+                    "name": "m0",
+                    "tau": "g8",
+                    "gain": "g9",
+                    "bias": "g10",
+                    "conns": ["m0","m1"],
+                    "weights": ["g11","g12"]
+                },
+                {
+                    "name": "m1",
+                    "tau": "g8",
+                    "gain": "g9",
+                    "bias": "g10",
+                    "conns": ["m0","m1"],
+                    "weights": ["g11","g12"]
+                }
+            ]
+        }
+        
+    ]
+}

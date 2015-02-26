@@ -2,7 +2,8 @@ package org.su.easy.unisim.genesis;
 
 import org.su.easy.unisim.simulation.robot.ctrnn.CTRNNLayout;
 import java.util.Random;
-import org.su.easy.unisim.exp.ExpParam;
+import org.su.easy.unisim.exp.Experiment;
+import org.su.easy.unisim.exp.params.Parameters;
 
 /**
  * This class independently runs the GA, and provides access to per generation
@@ -13,16 +14,14 @@ import org.su.easy.unisim.exp.ExpParam;
 public class MicrobialGA {
     
     public volatile RobotGenotype lastFit;
-    ExpParam param;
     public volatile int curGen = 0;
-    CTRNNLayout layout;
     Random rand = new Random();
-    
+    Experiment experiment;
     public Population pop 
             = new Population();   //Stores our population.
     
-    public MicrobialGA(ExpParam param, CTRNNLayout layout){
-        this.param = param;this.layout = layout;
+    public MicrobialGA(Experiment exp){
+        experiment = exp;
     }
     
     public volatile PopulationStats popStats = new PopulationStats();
@@ -34,19 +33,13 @@ public class MicrobialGA {
     }
     
     public void initPop() {
-        pop = new Population(
-                (int)param.get("GA_NPOP"),
-                ((Number)param.get("GA_P_MUT")).floatValue(),
-                ((Number)param.get("GA_CROSSOVER_P_CROSS")).floatValue(), 
-                param,
-                layout
-        );
+        pop = new Population(experiment);
     }
     
     public void step() {
         curGen += 1;
-        int deme = (int)param.get("GA_DEME");
-        for(int i = 0; i < (int)param.get("GA_NPOP"); i++) {
+        int deme = experiment.getParam().getGa_demesize();
+        for(int i = 0; i < experiment.getParam().getGa_population(); i++) {
             int a = 0; int b = 0; int W,L;
             while (a == b)  {
                 a = pop.getRandIndex();

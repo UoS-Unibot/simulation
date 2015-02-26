@@ -6,6 +6,7 @@
 package org.su.easy.unisim.simulation.sandpit;
 
 import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
@@ -24,10 +25,7 @@ public class WorldViewer extends SandPitCanvas {
 
     @Override
     public void draw() {
-        if (buffer == null) {
-            return;
-        }
-        Graphics2D g2 = (Graphics2D) buffer.getDrawGraphics();
+        Graphics2D g2 = (Graphics2D) getGraphics();
         camera.setWindowSize(new Vector2D(this.getWidth(), this.getHeight()));
         g2.setColor(Color.WHITE);
         g2.fillRect(0, 0, getWidth(), getHeight());
@@ -40,5 +38,13 @@ public class WorldViewer extends SandPitCanvas {
         }
         g2.setTransform(prevTrans);
     }
+
+    @Override
+    public void paint(Graphics grphcs) {
+        super.paint(grphcs);
+        draw();
+    }
+    
+    
     
 }

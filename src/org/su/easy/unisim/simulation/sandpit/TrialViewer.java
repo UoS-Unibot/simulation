@@ -6,9 +6,11 @@
 package org.su.easy.unisim.simulation.sandpit;
 
 import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
+import java.awt.image.BufferStrategy;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.su.easy.unisim.genesis.RobotIndividual;
 import org.su.easy.unisim.simulation.core.SimulationController;
@@ -63,6 +65,7 @@ public class TrialViewer extends SandPitCanvas implements Runnable {
         if (!simulationLoaded) {
             return;
         }
+        postInitialise();
         long beforeTime;
         long timeDiff;
         long sleep;
@@ -86,8 +89,15 @@ public class TrialViewer extends SandPitCanvas implements Runnable {
             }
             beforeTime = System.currentTimeMillis();
         }
+        
     }
 
+    public void postInitialise() {
+        createBufferStrategy(3);
+        buffer = getBufferStrategy();
+    }
+    
+    protected BufferStrategy buffer;
     public void stop() {
         simulationStopped = true;
     }
@@ -120,5 +130,16 @@ public class TrialViewer extends SandPitCanvas implements Runnable {
         }
         g2.setTransform(prevTrans);
     }
+
+    public void render() {
+        if (buffer != null) {
+            buffer.show();
+        }
+    }
     
+    @Override
+    public void paint(Graphics grphcs) {
+        draw();
+        render();
+    }
 }

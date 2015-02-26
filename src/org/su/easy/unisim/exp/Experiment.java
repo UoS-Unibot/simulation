@@ -5,182 +5,92 @@
  */
 package org.su.easy.unisim.exp;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import org.su.easy.unisim.genesis.MicrobialGA;
-import org.su.easy.unisim.genesis.RobotGenotype;
-import org.su.easy.unisim.genesis.Stats;
+import java.io.File;
+import java.io.IOException;
+import org.apache.commons.io.FileUtils;
+import org.su.easy.unisim.exp.params.Parameters;
+import org.su.easy.unisim.sim.world.json.JSONWorld;
+import org.su.easy.unisim.simulation.core.SimulationWorld;
 import org.su.easy.unisim.simulation.robot.ctrnn.CTRNNLayout;
+import org.su.easy.unisim.simulation.robot.ctrnn.jsonIO.JSONCTRNNLayout;
 
 /**
  *
- * @author Miles
+ * @author miles
  */
-public class Experiment extends Thread {
+public class Experiment {
+    private Parameters param;
+    private CTRNNLayout layout;
+    private SimulationWorld world;
+    private String dir;
 
-    ExpParam param;
-    CTRNNLayout layout;
-    public MicrobialGA GA;
-    Thread GAthread;
-    public volatile boolean PAUSED = false;
-    public volatile boolean RESET = false;
-    public volatile boolean FINISHED = false;
-    private static final Logger LOG = Logger.getLogger(Experiment.class.getName());
-
-    public void start(ExpParam param, CTRNNLayout layout) {
+    public Experiment(Parameters param, CTRNNLayout layout, SimulationWorld world) {
         this.param = param;
         this.layout = layout;
-        GA = new MicrobialGA(param, layout);
+        this.world = world;
     }
 
-    @Override
-    public void run() {
-        LOG.log(Level.INFO, "Starting experiment in thread {0}", Thread.currentThread().getName());
-        GA.initPop();
-        while (!RESET & !FINISHED) {
-            if (GA != null) {
-                while (!PAUSED) {
-                    Stats stats = GA.getLastStats();
-                    if (stats != null) {
-                        if ((boolean) param.get("UPDATE_SUMMARY") & stats.n % (int) param.get("UPDATE_SUMMARY_FREQ") == 0) {
-                            if (listener != null) {
-                                listener.GAupdateSummary(stats);
-                            }
-                        }
-                    }
-                    GA.step();
-                    if (Thread.currentThread().isInterrupted()) {
-                        LOG.warning("Thread " + Thread.currentThread().getName() + " was interrupted");
-                        reset();
-                        break;
-                    }
-                    if (isFinished()) {
-                        FINISHED = true;
-                        LOG.log(Level.INFO, "Finishing experiment in thread {0}", Thread.currentThread().getName());
-                        if (listener != null) {
-                            listener.GAFinished();
-                        }
-                        break;
-                    }
-                }
-            }
-        }
+    public Experiment() {
+    }
+    
+    
+    
+    public static Experiment fromDirectory(String dirstr) throws IOException {
+        File dir = new File(dirstr);
+        if(!dir.exists())
+            throw new IOException("Directory " + dir + "not found");
+        if(!dir.isDirectory())
+            throw new IOException("Directory " + dir + "is not a directory");
+        
+        Experiment ex = new Experiment();
+        ex.param = Parameters.fromJSONFile(new File(dir.getAbsoluteFile() + "/params.json"));
+        ex.layout = JSONCTRNNLayout.fromFile(new File(dir.getAbsoluteFile() + "/layout.json")).toCTRNNLayout();
+        ex.world = JSONWorld.fromFile(new File(dir.getAbsoluteFile() + "/world.json"));
+        ex.dir = dirstr;
+        
+        return ex;
     }
 
-    public RobotGenotype getBestGenotype() {
-        return GA.getLastStats().bestInd.getGenotype();
+    public void saveToDir(String dirstr) throws IOException {
+        File dir = new File(dirstr);
+        dir.mkdirs();
+        param.saveToFile(new File(dirstr + "/params.json"));
+        if(world.getFilename().isEmpty())
+            throw new IllegalStateException("World filename is empty; cannot create world.json");
+        if(layout.filename.isEmpty())
+            throw new IllegalStateException("Layout filename is empty; cannot create layout.json");
+        FileUtils.copyFile(new File(layout.filename), new File(dirstr + "/layout.json"));
+        FileUtils.copyFile(new File(world.getFilename()), new File(dirstr + "/world.json"));
+    }
+    
+    public String getDir() {
+        return dir;
+    }
+    
+    public Parameters getParam() {
+        return param;
     }
 
-    GAListener listener;
-
-    public void setListener(GAListener listener) {
-        this.listener = listener;
+    public void setParam(Parameters param) {
+        this.param = param;
     }
 
-    public void pause() {
-        PAUSED = !PAUSED;
+    public CTRNNLayout getLayout() {
+        return layout;
     }
 
-    public void setPaused(boolean paused) {
-        this.PAUSED = paused;
+    public void setLayout(CTRNNLayout layout) {
+        this.layout = layout;
     }
 
-    public void reset() {
-        RESET = true;
-        param = null;
-        layout = null;
-        GA = null;
-        GAthread = null;
+    public SimulationWorld getWorld() {
+        return world;
     }
 
-    public boolean isFinished() {
-        if ((boolean) param.get("GA_RUNTOMAXGEN")) {
-            if (GA.curGen >= (int) param.get("GA_MAXGEN")) {
-                return true;
-            }
-        } else if (GA.getLastStats().maxFit >= (float) param.get("GA_MAXFIT")) {
-            return true;
-        }
-        return false;
+    public void setWorld(SimulationWorld world) {
+        this.world = world;
     }
-
-    public void infoToFile(String filename) {
-        StringBuilder out = new StringBuilder();
-        out.append("Experiment info\n");
-        out.append("Layout filename: " + layout.filename);
-        out.append("Params:\n");
-        out.append(param.toString());
-        //StringToFile.save(filename, out.toString());
-    }
-
-    public String getSummary() {
-        Stats laststats = GA.getLastStats();
-        if (laststats == null) {
-            return "";
-        }
-        StringBuilder report = new StringBuilder("---------------------------------------------------\n");
-        report.append("SUMMARY\n");
-        report.append("---------------------------------------------------\n");
-        report.append(String.format("Max fitness  : %f\n", laststats.maxFit));
-        report.append(String.format("Min fitness  : %f\n", laststats.minFit));
-        report.append(String.format("Avg fitness  : %f\n", laststats.avgFit));
-        report.append(String.format("Variance     : %f\n", laststats.varFit));
-        report.append(String.format("Best genotype: %s\n", laststats.bestInd.getGenotype().toString()));
-        return report.toString();
-    }
-
-    public String getGenerationsCSV() {
-        Stats laststats = GA.getLastStats();
-        if (laststats == null) {
-            return "";
-        }
-        StringBuilder report = new StringBuilder("---------------------------------------------------\n");
-        report.append("GENERATIONS\n");
-        report.append("---------------------------------------------------\n");
-        report.append("N\tMaxFitness\tMinFitness\tAverageFitness\tVariance\n");
-        for (Stats stats : GA.popStats.getAllStats()) {
-            report.append(stats.toString());
-            report.append("\n");
-        }
-        return report.toString();
-    }
-
-    public String getPopulationCSV() {
-        Stats laststats = GA.getLastStats();
-        if (laststats == null) {
-            return "";
-        }
-        StringBuilder report = new StringBuilder("---------------------------------------------------\n");
-        report.append("\n");
-        report.append("---------------------------------------------------\n");
-        report.append("POPULATION\n");
-        report.append("---------------------------------------------------\n");
-        report.append(GA.pop.toString());
-        return report.toString();
-    }
-
-    public String generateReport() {
-        Stats laststats = GA.getLastStats();
-        if (laststats == null) {
-            return "";
-        }
-        StringBuilder report = new StringBuilder();
-        report.append(getSummary());
-        report.append("\n");
-        report.append(getGenerationsCSV());
-        report.append("\n");
-        report.append(getPopulationCSV());
-        report.append("\n");
-        report.append("\n---------------------------------------------------\n");
-        report.append("TRIALS\n");
-        report.append("\n---------------------------------------------------\n");
-        report.append(param.getTrialsStr());
-        report.append("\n");
-        report.append("\n---------------------------------------------------\n");
-        report.append("PARAMS\n");
-        report.append("---------------------------------------------------\n");
-        report.append(param.toString());
-        return report.toString();
-    }
-
+    
+    
+    
 }
