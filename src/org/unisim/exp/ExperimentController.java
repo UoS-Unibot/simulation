@@ -1,11 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.unisim.exp;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,15 +12,17 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
-import org.apache.commons.io.FileUtils;
 import org.unisim.simulation.robot.ctrnn.CTRNNLayout;
 import org.unisim.exp.params.Parameters;
 import org.unisim.genesis.Stats;
 import org.unisim.ui.TextOutput;
 
 /**
+ * Is a multithreaded experiment controller. The number of evolutionary runs to
+ * make and the maximum number of threads is provided, and it controls execution
+ * of these experiment runs, reporting statistics and results as necessary.
  *
- * @author Miles
+ * @author Miles Bryant (mb459 at sussex.ac.uk)
  */
 public class ExperimentController {
 
@@ -149,7 +145,6 @@ public class ExperimentController {
         }
 
     }
-
 
     private String getStatsFileName(int run) {
         try {

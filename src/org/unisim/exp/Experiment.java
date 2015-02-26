@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.unisim.exp;
 
 import java.io.File;
@@ -15,10 +10,14 @@ import org.unisim.simulation.robot.ctrnn.CTRNNLayout;
 import org.unisim.io.ctrnn.JSONCTRNNLayout;
 
 /**
+ * Represents parameters, layout and world common to an experiment, along with
+ * the directory the respective JSON files ought to be found, plus any
+ * experimental results.
  *
- * @author miles
+ * @author Miles Bryant (mb459 at sussex.ac.uk)
  */
 public class Experiment {
+
     private Parameters param;
     private CTRNNLayout layout;
     private SimulationWorld world;
@@ -32,22 +31,22 @@ public class Experiment {
 
     public Experiment() {
     }
-    
-    
-    
+
     public static Experiment fromDirectory(String dirstr) throws IOException {
         File dir = new File(dirstr);
-        if(!dir.exists())
+        if (!dir.exists()) {
             throw new IOException("Directory " + dir + "not found");
-        if(!dir.isDirectory())
+        }
+        if (!dir.isDirectory()) {
             throw new IOException("Directory " + dir + "is not a directory");
-        
+        }
+
         Experiment ex = new Experiment();
         ex.param = Parameters.fromJSONFile(new File(dir.getAbsoluteFile() + "/params.json"));
         ex.layout = JSONCTRNNLayout.fromFile(new File(dir.getAbsoluteFile() + "/layout.json")).toCTRNNLayout();
         ex.world = JSONWorld.fromFile(new File(dir.getAbsoluteFile() + "/world.json"));
         ex.dir = dirstr;
-        
+
         return ex;
     }
 
@@ -55,18 +54,20 @@ public class Experiment {
         File dir = new File(dirstr);
         dir.mkdirs();
         param.saveToFile(new File(dirstr + "/params.json"));
-        if(world.getFilename().isEmpty())
+        if (world.getFilename().isEmpty()) {
             throw new IllegalStateException("World filename is empty; cannot create world.json");
-        if(layout.filename.isEmpty())
+        }
+        if (layout.filename.isEmpty()) {
             throw new IllegalStateException("Layout filename is empty; cannot create layout.json");
+        }
         FileUtils.copyFile(new File(layout.filename), new File(dirstr + "/layout.json"));
         FileUtils.copyFile(new File(world.getFilename()), new File(dirstr + "/world.json"));
     }
-    
+
     public String getDir() {
         return dir;
     }
-    
+
     public Parameters getParam() {
         return param;
     }
@@ -90,7 +91,5 @@ public class Experiment {
     public void setWorld(SimulationWorld world) {
         this.world = world;
     }
-    
-    
-    
+
 }

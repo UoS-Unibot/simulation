@@ -1,27 +1,22 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.unisim.simulation.robot.ctrnn;
 
 import org.unisim.util.Range;
 
 /**
+ * Stores a range for each parameter which specifies how each parameter should
+ * be mapped from gene to real parameter.
  *
- * @author Miles
+ * @author Miles Bryant <mb459 at sussex.ac.uk>
  */
-/**
-     * Stores mapping ranges for a CTRNN
-     */
 public class CTRNNParamRanges {
-    public Range tau,gain,bias,weights;
+
+    public Range tau, gain, bias, weights;
 
     public CTRNNParamRanges() {
-        this.tau = new Range(1,2);
-        this.gain = new Range(1,1);
-        this.bias = new Range(-5,5);
-        this.weights = new Range(-5,5);
+        this.tau = new Range(1, 2);
+        this.gain = new Range(1, 1);
+        this.bias = new Range(-5, 5);
+        this.weights = new Range(-5, 5);
     }
 
     public CTRNNParamRanges(Range tau, Range gain, Range bias, Range weights) {
@@ -30,6 +25,5 @@ public class CTRNNParamRanges {
         this.bias = bias;
         this.weights = weights;
     }
-        
-        
+
 }

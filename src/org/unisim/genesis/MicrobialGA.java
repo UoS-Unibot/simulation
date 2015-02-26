@@ -8,7 +8,7 @@ import org.unisim.exp.params.Parameters;
 /**
  * This class independently runs the GA, and provides access to per generation
  * statistics.
- * @author Miles
+ * @author Miles Bryant (mb459 at sussex.ac.uk)
  * @version 0.5
  */
 public class MicrobialGA {

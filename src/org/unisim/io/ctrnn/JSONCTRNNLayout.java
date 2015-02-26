@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.unisim.io.ctrnn;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,8 +12,10 @@ import org.unisim.simulation.robot.ctrnn.LayoutBuilder;
 import org.unisim.util.Range;
 
 /**
+ * Provides a POJO representation of CTRNNLayout, used for loading and saving
+ * JSON files
  *
- * @author miles
+ * @author Miles Bryant (mb459 at sussex.ac.uk)
  */
 public class JSONCTRNNLayout {
 
@@ -30,13 +27,14 @@ public class JSONCTRNNLayout {
     public void saveToFile(File file) throws IOException {
         new ObjectMapper().writerWithDefaultPrettyPrinter().writeValue(file, this);
     }
+
     public static JSONCTRNNLayout fromFile(File file) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         JSONCTRNNLayout layout = mapper.readValue(file, JSONCTRNNLayout.class);
         layout.filename = file.getAbsolutePath();
         return layout;
     }
-    
+
     public CTRNNLayout toCTRNNLayout() {
         LayoutBuilder lb = new LayoutBuilder();
         lb.setFilename(filename);
@@ -53,7 +51,8 @@ public class JSONCTRNNLayout {
                 org.unisim.simulation.robot.ctrnn.Neuron neuron = new org.unisim.simulation.robot.ctrnn.Neuron(idCount);
 
                 neuron.name = n.getName();
-                neuron.ID = idCount; idCount++;
+                neuron.ID = idCount;
+                idCount++;
                 neuron.ParamRanges = new CTRNNParamRanges(
                         new Range(pr.getTauR()[0], pr.getTauR()[1]),
                         new Range(pr.getBiasR()[0], pr.getBiasR()[1]),
@@ -80,13 +79,14 @@ public class JSONCTRNNLayout {
                     neuron.biasG = Float.parseFloat(n.getBias());
                     neuron.biasGID = -1;
                 }
-                if(neuron.name.equals("m0"))
-                if (letter1(n.getGain()).equals("g")) {
-                    neuron.gainG = 0;
-                    neuron.gainGID = Integer.parseInt(n.getGain().substring(1));
-                } else {
-                    neuron.gainG = Float.parseFloat(n.getGain());
-                    neuron.gainGID = -1;
+                if (neuron.name.equals("m0")) {
+                    if (letter1(n.getGain()).equals("g")) {
+                        neuron.gainG = 0;
+                        neuron.gainGID = Integer.parseInt(n.getGain().substring(1));
+                    } else {
+                        neuron.gainG = Float.parseFloat(n.getGain());
+                        neuron.gainGID = -1;
+                    }
                 }
 
                 if (n.getConns().length != n.getWeights().length) {
@@ -113,10 +113,11 @@ public class JSONCTRNNLayout {
         }
 
         for (org.unisim.simulation.robot.ctrnn.Neuron neuron : conns.keySet()) {
-            for(String conn : conns.get(neuron)) {
+            for (String conn : conns.get(neuron)) {
                 org.unisim.simulation.robot.ctrnn.Neuron neuron2 = lb.getNeuronByName(conn);
-                if(neuron2 == null)
+                if (neuron2 == null) {
                     throw new IllegalArgumentException("Neuron named " + conn + "not found in layout file");
+                }
                 neuron.conns.add(neuron2.ID);
             }
         }
@@ -124,8 +125,6 @@ public class JSONCTRNNLayout {
         return new CTRNNLayout(lb.build());
     }
 
-    
-    
     private String letter1(String str) {
         return str.substring(0, 1);
     }
@@ -134,7 +133,6 @@ public class JSONCTRNNLayout {
 
         return str.substring(1);
     }
-
 
     private ParamRanges findParamRange(String name) {
         for (ParamRanges pr : paramranges) {

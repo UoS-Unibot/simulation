@@ -1,11 +1,5 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.unisim.simulation.geometry;
 
-import org.unisim.simulation.geometry.Line;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.Path2D;
@@ -15,8 +9,10 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.unisim.simulation.geometry.Line.LineIntersection;
 
 /**
+ * Represents a shape as a collection of lines, allowing calculations of
+ * shape-line and shape-shape intersections.
  *
- * @author miles
+ * @author Miles Bryant <mb459 at sussex.ac.uk>
  */
 public class Shape2D {
 

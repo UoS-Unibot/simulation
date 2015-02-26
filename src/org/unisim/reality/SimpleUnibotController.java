@@ -1,8 +1,3 @@
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.unisim.reality;
 
 import com.google.common.base.Splitter;
@@ -19,8 +14,10 @@ import java.util.logging.Logger;
 import jssc.SerialPortException;
 
 /**
+ * Provides a higher level interface to the UnibotComms class, specifying which
+ * commands should be sent and listening for data.
  *
- * @author Miles Bryant (mb459@sussex.ac.uk)
+ * @author Miles Bryant <mb459 at sussex.ac.uk>
  */
 public class SimpleUnibotController implements DataReceivedListener {
 
@@ -31,6 +28,7 @@ public class SimpleUnibotController implements DataReceivedListener {
         boolean isEmptyPacket = false;
 
         DataPacket(PacketType type, String dataToParse) {
+            // TODO: move to UnibotComms, fairly low level so that is a more appropriate place for it
             this.type = type;
             if (dataToParse.isEmpty()) {
                 isEmptyPacket = true;
@@ -88,7 +86,7 @@ public class SimpleUnibotController implements DataReceivedListener {
     public double[] getLastData(PacketType key) {
         return lastData.get(key);
     }
-    
+
     public enum PacketType {
 
         ACK("0"), ENCODER_SONAR("1"), ENCODER("2"), SONAR("3"), RANGE_ALL("4"), IMU("5"), RANGE_SINGLE("");

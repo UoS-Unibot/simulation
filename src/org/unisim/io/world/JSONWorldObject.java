@@ -1,15 +1,12 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.unisim.io.world;
 
 /**
+ * POJO representation of an object in a world JSON file.
  *
- * @author miles
+ * @author Miles Bryant (mb459 at sussex.ac.uk)
  */
 public class JSONWorldObject {
+
     private double[] size;
     private double[] position;
 
@@ -28,5 +25,5 @@ public class JSONWorldObject {
     public void setPosition(double[] position) {
         this.position = position;
     }
-    
+
 }

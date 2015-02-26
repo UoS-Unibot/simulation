@@ -1,16 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.unisim.genesis;
 
 import java.util.ArrayList;
-import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 /**
- *
- * @author Miles
+ * Generates and stores statistics of the population for one generation in time.
+ * @author Miles Bryant (mb459 at sussex.ac.uk)
  */
 public class Stats {
         public int n;

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.unisim.genesis;
 
 import java.io.File;
@@ -20,14 +15,17 @@ import org.unisim.exp.ExperimentController;
 import org.unisim.exp.params.Parameters;
 
 /**
+ * Represents a population of individuals. A random individual can be pulled
+ * from the population, two individuals can be compared, and specified
+ * individuals can be mutated or crossed over.
  *
- * @author Miles
+ * @author Miles Bryant (mb459 at sussex.ac.uk)
  */
 public class Population {
 
     ArrayList<Float> getFitnesses() {
         ArrayList<Float> ar = new ArrayList<>();
-        for(RobotIndividual ind : population) {
+        for (RobotIndividual ind : population) {
             ar.add(ind.rawFitness());
         }
         return ar;
@@ -35,35 +33,36 @@ public class Population {
 
     ArrayList<String> getGenotypes() {
         ArrayList<String> ar = new ArrayList<>();
-        for(RobotIndividual ind : population) {
+        for (RobotIndividual ind : population) {
             ar.add(ind.genotype.toString());
         }
         return ar;
     }
-    
-    
+
     public ArrayList<RobotIndividual> population = new ArrayList<>();
-    protected float p_mutation; protected float pCross;
+    protected float p_mutation;
+    protected float pCross;
     protected Random rand = new Random();
     Parameters param;
-    
-    Population() {     }
-    
+
+    Population() {
+    }
+
     Population(Experiment exp) {
         param = exp.getParam();
         population = new ArrayList<>(param.getGa_population());
-        for(int i = 0; i < param.getGa_population();i++) {
+        for (int i = 0; i < param.getGa_population(); i++) {
             population.add(new RobotIndividual(exp));
         }
-        
-        this.p_mutation = (float) param.getGa_mutrate(); this.pCross = (float) param.getGa_crossrate();
+
+        this.p_mutation = (float) param.getGa_mutrate();
+        this.pCross = (float) param.getGa_crossrate();
     }
-    
-    
+
     public int getRandIndex() {
         return rand.nextInt(size());
     }
-    
+
     public RobotIndividual getIndividual(int index) {
         return population.get(index);
     }
@@ -71,11 +70,13 @@ public class Population {
     public int size() {
         return population.size();
     }
-    public boolean isABetterThanB(int a, int b)  {
+
+    public boolean isABetterThanB(int a, int b) {
         float aFit = population.get(a).rawFitness();
         float bFit = population.get(b).rawFitness();
-        if(aFit == bFit)
+        if (aFit == bFit) {
             return false;
+        }
         return aFit > bFit;
     }
 
@@ -83,10 +84,10 @@ public class Population {
         population.get(a).crossover(pCross, population.get(b));
     }
 
-    public void mutate(int a)  {
+    public void mutate(int a) {
         population.get(a).mutate(p_mutation);
     }
-    
+
     public void saveToCSV(String filename) {
         try {
             Files.createDirectories(Paths.get(filename).getParent());
@@ -94,44 +95,44 @@ public class Population {
             try (FileWriter out = new FileWriter(statsFile)) {
                 out.append("ID,Fitness,");
                 int nGenes = population.get(0).genotype.len;
-                
-                for(int i = 0; i < nGenes; i++) {
+
+                for (int i = 0; i < nGenes; i++) {
                     out.append("gene " + i);
-                    if(i < (nGenes - 1)) {
+                    if (i < (nGenes - 1)) {
                         out.append(",");
                     }
                 }
                 out.append("\n");
                 int i = 0;
-                for(RobotIndividual ind : population) {
+                for (RobotIndividual ind : population) {
                     out.append(i + ",");
                     out.append(ind.rawFitness() + ",");
-                    for(int j = 0; j < nGenes; j++) {
+                    for (int j = 0; j < nGenes; j++) {
                         out.append(String.valueOf(ind.genotype.genes[j]));
-                        if(j < (nGenes - 1))
+                        if (j < (nGenes - 1)) {
                             out.append(",");
+                        }
                     }
                     out.append("\n");
                     i++;
-                }                
-                                
+                }
+
                 out.flush();
             }
         } catch (IOException ex) {
             Logger.getLogger(ExperimentController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     @Override
     public String toString() {
         ArrayList<RobotIndividual> sortedPop = (ArrayList<RobotIndividual>) population.clone();
         Collections.sort(sortedPop);
         StringBuilder r = new StringBuilder("Fitness\tGenotype\n");
-        for(RobotIndividual ind : sortedPop) {
+        for (RobotIndividual ind : sortedPop) {
             r.append(String.format("%.6f\t%s\n", ind.rawFitness(), ind.genotype.toString()));
         }
         return r.toString();
     }
-        
-        
+
 }

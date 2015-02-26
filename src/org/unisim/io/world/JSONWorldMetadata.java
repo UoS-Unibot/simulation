@@ -1,15 +1,12 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.unisim.io.world;
 
 /**
+ * POJO representation of metadata in a world JSON file.
  *
- * @author miles
+ * @author Miles Bryant (mb459 at sussex.ac.uk)
  */
 public class JSONWorldMetadata {
+
     private String name;
     private String author;
     private String description;
@@ -37,6 +34,5 @@ public class JSONWorldMetadata {
     public void setDescription(String description) {
         this.description = description;
     }
-    
-    
+
 }

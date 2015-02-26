@@ -1,16 +1,14 @@
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.unisim.reality;
 
 import jssc.SerialPortEvent;
 import jssc.SerialPortException;
 
 /**
- * 
- * @author Miles Bryant (mb459@sussex.ac.uk)
+ * Represents an abstract serial port communicator, allowing sending of
+ * commands. Is notified by the serial port when a SerialEvent occurs (i.e. data
+ * received).
+ *
+ * @author Miles Bryant <mb459 at sussex.ac.uk>
  */
 public interface ISerialCommunicator {
 

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.unisim.exp;
 
 import java.util.logging.Level;
@@ -13,8 +8,10 @@ import org.unisim.genesis.RobotGenotype;
 import org.unisim.genesis.Stats;
 
 /**
- * Represents a single evolutionary run, running the GA for the specified number of generations.
- * @author Miles
+ * Represents a single evolutionary run, running the GA for the specified number
+ * of generations. 
+ *
+ * @author Miles Bryant <mb459 at sussex.ac.uk>
  */
 public class EvolutionRun extends Thread {
 

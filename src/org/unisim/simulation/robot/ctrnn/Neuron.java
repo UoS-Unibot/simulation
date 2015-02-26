@@ -1,24 +1,24 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.unisim.simulation.robot.ctrnn;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
 
 /**
+ * Represents a single CTRNN neuron, with each parameter having either a
+ * predetermined value or gene ID. Intended as a layer between the GA and the
+ * CTRNN; the GA can set actual gene values after e.g. mutation, and the CTRNN
+ * can load the mapped parameters.
  *
- * @author Miles
+ * @author Miles Bryant <mb459 at sussex.ac.uk>
  */
 public class Neuron {
+
     public int ID = -1;
     public ArrayList<Integer> conns = new ArrayList<>(); //stores IDs of neurons this connects to
     public CTRNNParamRanges ParamRanges;
-    
-    public float tauG,gainG,biasG;
-    public int tauGID,gainGID,biasGID;
+
+    public float tauG, gainG, biasG;
+    public int tauGID, gainGID, biasGID;
     public ArrayList<Integer> weightsGID = new ArrayList<>();
     public ArrayList<Float> weightsG = new ArrayList<>();
     public String name = "";
@@ -26,37 +26,51 @@ public class Neuron {
     public Neuron(int ID) {
         this.ID = ID;
     }
+
     public Neuron(int ID, CTRNNParamRanges params) {
-        this.ID = ID; this.ParamRanges = params;
+        this.ID = ID;
+        this.ParamRanges = params;
     }
-    public Neuron(int ID, CTRNNParamRanges params,ArrayList<Integer> conns) {
-        if(conns != null)
+
+    public Neuron(int ID, CTRNNParamRanges params, ArrayList<Integer> conns) {
+        if (conns != null) {
             this.conns = conns;
-        this.ID = ID; this.ParamRanges = params;
+        }
+        this.ID = ID;
+        this.ParamRanges = params;
     }
-    
+
     public void setGeneLoci(int tau, int gain, int bias, ArrayList<Integer> weights) {
-        tauGID = tau; gainGID= gain; biasGID = bias;
-        if(weights != null)
-            weightsGID = (ArrayList<Integer>)weights.clone();
+        tauGID = tau;
+        gainGID = gain;
+        biasGID = bias;
+        if (weights != null) {
+            weightsGID = (ArrayList<Integer>) weights.clone();
+        }
     }
-    
+
     public void setGenes(float tau, float bias, float gain, ArrayList<Float> weights) {
-        if(weights != null)
+        if (weights != null) {
             this.weightsG = (ArrayList<Float>) weights.clone();
-        this.tauG=tau;this.biasG=bias;this.gainG=gain;
+        }
+        this.tauG = tau;
+        this.biasG = bias;
+        this.gainG = gain;
     }
-    
+
     public float getMappedTau() {
         return ParamRanges.tau.map(tauG);
     }
+
     public float getMappedGain() {
         return ParamRanges.gain.map(gainG);
     }
+
     public float getMappedBias() {
         return ParamRanges.bias.map(biasG);
     }
-    public ArrayList<Float> getMappedWeights() {
+
+    public Collection<Float> getMappedWeights() {
         return ParamRanges.weights.map(weightsG);
     }
 
@@ -64,6 +78,5 @@ public class Neuron {
     public String toString() {
         return "\n\tNeuron{" + "ID=" + ID + ", conns=" + conns + ", ParamRanges=" + ParamRanges + ", tauG=" + tauG + ", gainG=" + gainG + ", biasG=" + biasG + ", tauGID=" + tauGID + ", gainGID=" + gainGID + ", biasGID=" + biasGID + ", weightsGID=" + weightsGID + ", weightsG=" + weightsG + ", name=" + name + '}';
     }
-    
-    
+
 }

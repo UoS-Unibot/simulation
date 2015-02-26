@@ -6,23 +6,21 @@
 package org.unisim.util;
 
 import java.util.ArrayList;
-import java.util.Random;
+import java.util.Collection;
 
 /**
  *
  * @author Miles
  */
 public class Range {
-    public int low,high;
+    private final int low, high;
         public Range(int low, int high) {
             this.low = low; this.high = high;
         }
-        public int getDiff() {
-            return high - low;
-        }
+        
         public float map(float x) {
             //maps a val of -1 to 1 to this range
-            return getDiff() * (x + 1) / 2 + low;
+            return (high - low) * (x + 1) / 2 + low;
         }
         public float[] map(float[] x) {
             //same with an array
@@ -32,22 +30,11 @@ public class Range {
             }
             return r;
         }
-        public ArrayList<Float> map(ArrayList<Float> x) {
+        public Collection<Float> map(Collection<Float> x) {
             ArrayList<Float> r = new ArrayList<>(x.size());
             for(float d : x)
                 r.add(map(d));
             return r;
         }
         
-        public float getRandDouble() {
-            Random rand = new Random();
-            return (float)rand.nextDouble() * getDiff() - low;
-        }
-        public float clip(float x) {
-            if(x < low)
-                return low;
-            if(x > high)
-                return high;
-            return x;
-        }
 }

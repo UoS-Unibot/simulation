@@ -1,0 +1,19 @@
+{
+    "metadata": {
+        "name": "5x5 World with 2 objects",
+        "author": "Miles Bryant",
+        "description": ""
+    },
+    "size" : [5,5],
+    "objects": [
+        {
+            "size":[0.4,0.4],
+            "position": [1,1]
+        },
+        {
+            "size":[0.4,0.4],
+            "position": [-1,-1]
+        }
+    ]
+    
+}

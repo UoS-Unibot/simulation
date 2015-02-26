@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.unisim.simulation.geometry;
 
 import java.awt.Graphics2D;
@@ -13,8 +8,11 @@ import java.util.LinkedList;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 /**
+ * Represents a line segment with two points, with a variety of construction
+ * methods and the ability to move and rotate. Calculates intersections with
+ * other lines.
  *
- * @author miles
+ * @author Miles Bryant <mb459 at sussex.ac.uk>
  */
 public class Line extends Shape2D {
 
@@ -69,7 +67,7 @@ public class Line extends Shape2D {
     public static Line fromCenterPoint(double c1, double c2, double length, double angle) {
         return fromCenterPoint(new Vector2D(c1, c2), length, angle);
     }
-    
+
     public void setFromPolar(Vector2D p1, double angle) {
         this.p1 = p1;
         this.p2 = translatePolar(p1, angle, getLength());
@@ -78,7 +76,7 @@ public class Line extends Shape2D {
     public LineIntersection getIntersection(Line line2) {
         return new LineIntersection(this, line2);
     }
-    
+
     @Override
     public void rotate(double deltaAngle) {
         p2 = getRotatedPoint(p1, p2, deltaAngle);
@@ -119,7 +117,7 @@ public class Line extends Shape2D {
     private static double cross2D(Vector2D v1, Vector2D v2) {
         return v1.getX() * v2.getY() - v1.getY() * v2.getX();
     }
-    
+
     public static LineIntersection NoIntersection() {
         return LineIntersection.noIntersection();
     }
@@ -129,7 +127,7 @@ public class Line extends Shape2D {
         public final boolean isIntersection;
         public final double line1DistToIntersect, line2DistToIntersect;
         public final Vector2D intersectionPoint;
-        
+
         public static LineIntersection noIntersection() {
             return new LineIntersection();
         }

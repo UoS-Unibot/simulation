@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.unisim.io.world;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,8 +11,10 @@ import org.unisim.simulation.core.SimulationWorld;
 import org.unisim.simulation.geometry.Shape2D;
 
 /**
+ * Provides a POJO representation of the world JSON file. Uses a Jackson Mapper
+ * to parse a JSON file and provides a SimulationWorld.
  *
- * @author miles
+ * @author Miles Bryant (mb459 at sussex.ac.uk)
  */
 public class JSONWorld {
 
@@ -31,7 +28,6 @@ public class JSONWorld {
     public JSONWorld() {
     }
 
-    
     public static SimulationWorld fromFile(File file) throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         JSONWorld jworld = mapper.readValue(file, JSONWorld.class);

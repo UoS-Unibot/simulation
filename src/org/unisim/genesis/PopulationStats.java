@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.unisim.genesis;
 
 import java.io.File;
@@ -16,39 +11,43 @@ import java.util.logging.Logger;
 import org.unisim.exp.ExperimentController;
 
 /**
+ * Tracks stats for a population over the course of the evolutionary run.
  *
- * @author Miles
+ * @author Miles Bryant (mb459 at sussex.ac.uk)
  */
 public class PopulationStats {
+
     private ArrayList<Stats> statses = new ArrayList<>();
-    
+
     public void addGeneration(Population pop) {
         statses.add(new Stats(statses.size(), pop));
     }
-    
+
     public Stats getLastGeneration() {
-        if(statses.isEmpty())
+        if (statses.isEmpty()) {
             return null;
-        return statses.get(statses.size()-1);
+        }
+        return statses.get(statses.size() - 1);
     }
-    
+
     public ArrayList<Stats> getAllStats() {
         return (ArrayList<Stats>) statses.clone();
     }
-    
+
     public String getLastGenerationOutput() {
-        if(statses.isEmpty())
+        if (statses.isEmpty()) {
             return "";
-        return statses.get(statses.size()-1).toString();
+        }
+        return statses.get(statses.size() - 1).toString();
     }
-    
+
     public void saveToCSV(String filename) {
         try {
             Files.createDirectories(Paths.get(filename).getParent());
             File statsFile = new File(filename);
             try (FileWriter out = new FileWriter(statsFile)) {
                 out.append("Generation,Maximum Fitness,Average Fitness,Variance" + "\n");
-                for(Stats stat : statses) {
+                for (Stats stat : statses) {
                     out.append(stat.n + ",");
                     out.append(stat.maxFit + ",");
                     out.append(stat.avgFit + ",");
@@ -60,5 +59,5 @@ public class PopulationStats {
             Logger.getLogger(ExperimentController.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
 }

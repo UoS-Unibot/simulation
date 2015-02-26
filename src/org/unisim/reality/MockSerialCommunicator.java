@@ -1,17 +1,17 @@
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.unisim.reality;
 
 import jssc.SerialPortEvent;
 
-
+/**
+ * A mock serial port communicator, intended for development and testing offline
+ * without a valid serial port connection.
+ *
+ * @author Miles Bryant <mb459 at sussex.ac.uk>
+ */
 public class MockSerialCommunicator implements ISerialCommunicator {
 
     public String lastCommand = "";
-    
+
     @Override
     public void sendCommand(String command) {
         lastCommand = command;
@@ -19,12 +19,12 @@ public class MockSerialCommunicator implements ISerialCommunicator {
 
     @Override
     public void serialEvent(SerialPortEvent spe) {
-        
+
     }
 
     @Override
     public void setListener(DataReceivedListener listener) {
-        
+
     }
 
 }

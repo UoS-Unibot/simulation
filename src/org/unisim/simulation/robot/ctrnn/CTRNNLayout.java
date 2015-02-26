@@ -1,16 +1,13 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.unisim.simulation.robot.ctrnn;
 
 import java.util.ArrayList;
 
 /**
- * Specifies a layout for a CTRNN, with multiple layers of neurons.
+ * Specifies a layout and parameters for a CTRNN. Contains layers, which in turn
+ * contain neurons. Is used by the CTRNN class to create a CTRNN with the
+ * specified connectivity and parameters.
  *
- * @author Miles
+ * @author Miles Bryant <mb459 at sussex.ac.uk>
  */
 public class CTRNNLayout {
 
@@ -115,7 +112,5 @@ public class CTRNNLayout {
     public String toString() {
         return "CTRNNLayout{" + "filename=" + filename + ", layers=" + layers + ", genomeLength=" + genomeLength + ", sensorInputs=" + sensorInputs + ", motorOutputs=" + motorOutputs + ", geneMapping=" + geneMapping + '}';
     }
-
-    
 
 }

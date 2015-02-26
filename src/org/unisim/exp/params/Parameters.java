@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.unisim.exp.params;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,19 +5,20 @@ import java.io.File;
 import java.io.IOException;
 
 /**
+ * Stores GA and experimental parameters.
  *
- * @author miles
+ * @author Miles Bryant (mb459 at sussex.ac.uk)
  */
 public class Parameters {
-    
+
     public static Parameters fromJSONFile(File file) throws IOException {
         return new ObjectMapper().readValue(file, Parameters.class);
     }
-    
+
     public void saveToFile(File file) throws IOException {
         new ObjectMapper().writerWithDefaultPrettyPrinter().writeValue(file, this);
     }
-    
+
     private double controller_timestep = 0.1;
     private int fitness_n_trials = 1;
     private boolean fitness_terminate_trial_on_collision = true;
@@ -95,8 +91,5 @@ public class Parameters {
     public void setGa_demesize(int ga_demesize) {
         this.ga_demesize = ga_demesize;
     }
-    
-    
-    
-    
+
 }

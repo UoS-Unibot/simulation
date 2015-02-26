@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.unisim.io;
 
 import com.fasterxml.jackson.databind.MappingIterator;
@@ -13,14 +8,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 import org.unisim.genesis.RobotGenotype;
-import org.unisim.io.world.JSONWorld;
-import org.unisim.simulation.core.SimulationWorld;
 import org.unisim.simulation.robot.ctrnn.CTRNNLayout;
 import org.unisim.io.ctrnn.JSONCTRNNLayout;
 
 /**
+ * Loads a population from a CSV file.
  *
- * @author miles
+ * @author Miles Bryant (mb459 at sussex.ac.uk)
  */
 public class CSVPopulation {
 
@@ -31,7 +25,6 @@ public class CSVPopulation {
     public String getFilename() {
         return filename;
     }
-    
 
     public static CSVPopulation fromFile(File file) throws IOException {
         CSVPopulation pop = new CSVPopulation();
@@ -42,10 +35,10 @@ public class CSVPopulation {
                 .readValues(file);
         while (it.hasNext()) {
             Map<String, String> rowAsMap = it.next();
-            
+
             pop.individuals.add(rowAsMap);
         }
-        
+
         pop.layout = JSONCTRNNLayout.fromFile(new File(file.getParent() + "/layout.json")).toCTRNNLayout();
         pop.filename = file.getAbsolutePath();
         return pop;
@@ -61,9 +54,10 @@ public class CSVPopulation {
 
     public RobotGenotype getGenotypeAt(int id) {
         float[] genes = new float[layout.genomeLength];
-        if(layout == null)
+        if (layout == null) {
             return null;
-        for(int i = 0; i < layout.genomeLength; i++) {
+        }
+        for (int i = 0; i < layout.genomeLength; i++) {
             genes[i] = Float.valueOf(individuals.get(id).get("gene " + i));
         }
         return new RobotGenotype(layout, genes);

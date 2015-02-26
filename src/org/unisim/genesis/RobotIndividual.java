@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.unisim.genesis;
 
 import org.unisim.simulation.robot.ctrnn.CTRNNLayout;
@@ -15,8 +10,9 @@ import org.unisim.simulation.core.SimulationWorld;
 import org.unisim.simulation.robot.ctrnn.CTRNN;
 
 /**
+ * Implements Individual, representing a robot individual in the population.
  *
- * @author Miles
+ * @author Miles Bryant (mb459 at sussex.ac.uk)
  */
 public class RobotIndividual implements Comparable<RobotIndividual> {
 
@@ -31,8 +27,6 @@ public class RobotIndividual implements Comparable<RobotIndividual> {
         world = exp.getWorld();
         nTrials = params.getFitness_n_trials();
     }
-    
-    
 
     public RobotGenotype getGenotype() {
         return genotype;

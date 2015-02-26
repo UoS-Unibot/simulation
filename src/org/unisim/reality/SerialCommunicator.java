@@ -1,8 +1,3 @@
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.unisim.reality;
 
 import java.awt.Component;
@@ -16,7 +11,7 @@ import jssc.SerialPortEventListener;
 import jssc.SerialPortException;
 
 /**
- * Communicates with the Unibot serial port.
+ * Communicates with a real serial port.
  *
  * @author Miles Bryant (mb459@sussex.ac.uk)
  */
