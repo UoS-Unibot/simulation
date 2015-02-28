@@ -9,7 +9,7 @@ import jssc.*;
  * outside of the robotics lab
  * @author patrick
  */
-public class SerialCommunicatorTest {
+public class SerialCommunicatorMockTest {
 	@Mocked SerialPortEvent mockedEvent;
 	@Mocked SerialPort mockedSerialPort;
 	@Mocked DataReceivedListener mockedListener; 
