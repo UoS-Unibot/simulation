@@ -13,7 +13,7 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
  * @version 0.1
  * @author Miles Bryant <mb459 at sussex.ac.uk>
  */
-public interface IRobot {
+public interface IRobo {
 
     /**
      * Integrates the robot one timestep; for a real robot this would only
