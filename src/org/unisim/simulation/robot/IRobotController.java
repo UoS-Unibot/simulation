@@ -34,5 +34,5 @@ public interface IRobotController {
      *
      * @return Current angular velocity in radians/second.
      */
-    public float getAngularVelocity(float axleWidth);
+    public float getAngularVelocity();
 }

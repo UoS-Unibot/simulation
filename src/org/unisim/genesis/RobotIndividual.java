@@ -10,7 +10,7 @@ import java.util.Random;
 import org.unisim.exp.Experiment;
 import org.unisim.exp.Trial;
 import org.unisim.exp.params.Parameters;
-import org.unisim.simulation.core.SimulationController;
+import org.unisim.simulation.core.OldSimulationController;
 import org.unisim.simulation.core.SimulationWorld;
 import org.unisim.simulation.robot.ctrnn.CTRNN;
 
@@ -60,8 +60,8 @@ public class RobotIndividual implements Comparable<RobotIndividual> {
         int nTrials = params.getFitness_n_trials();
 
         //float[] angs = {1,-3,-2,-4,4,-6,5,-5,-1,2,6,3};
-        SimulationController sc
-                = new SimulationController.SimulationBuilder(new CTRNN(genotype, params)).setWorld(world).build();
+        OldSimulationController sc
+                = new OldSimulationController.SimulationBuilder(new CTRNN(genotype, params)).setWorld(world).build();
 
         for (int i = 0; i < nTrials; i++) {
 

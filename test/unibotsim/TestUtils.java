@@ -21,24 +21,31 @@ public class TestUtils {
     
     public static final double EPS = 1E-5;
     
-    public static Matcher<Vector2D> vEquals(double x, double y) {
-        return vEquals(new Vector2D(x,y));
-    }
-    
-    public static Matcher<Vector2D> vEquals(final Vector2D v) {
-        return new BaseMatcher<Vector2D>() {
+    public static Matcher<Vector2D> vEquals(final Vector2D v,final double eps) {
+            return new BaseMatcher<Vector2D>() {
 
             @Override
             public boolean matches(Object item) {
-                return ((Vector2D)item).distance(v) < EPS;
+                return ((Vector2D)item).distance(v) < eps;
             }
 
             @Override
             public void describeTo(Description description) {
                 description.appendText("Vector does not equal expected vector " + v.toString());
             }
-        };
-        
+        };    
+    }
+    
+    public static Matcher<Vector2D> vEquals(double x, double y,final double eps) {
+            return vEquals(new Vector2D(x,y), eps);
+    }
+    
+    public static Matcher<Vector2D> vEquals(double x, double y) {
+        return vEquals(new Vector2D(x,y));
+    }
+    
+    public static Matcher<Vector2D> vEquals(final Vector2D v) {
+        return vEquals(v, EPS);        
     }
     
     public static Matcher<Vector2D> vIsIn(final Collection<Vector2D> vc) {

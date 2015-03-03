@@ -20,7 +20,7 @@ import org.unisim.simulation.geometry.Shape2D;
  *
  * @author Miles Bryant <mb459 at sussex.ac.uk>
  */
-public class SimulationController implements CollisionListener{
+public class OldSimulationController implements CollisionListener{
 
     private final SimulationWorld world;
     private final SimulatedUnibot robot;
@@ -34,7 +34,7 @@ public class SimulationController implements CollisionListener{
      *
      * @param builder
      */
-    private SimulationController(SimulationBuilder builder) {
+    private OldSimulationController(SimulationBuilder builder) {
         if(builder.world == null) {        
             world = new SimulationWorld(builder.worldSize);
         } else {
@@ -235,8 +235,8 @@ public class SimulationController implements CollisionListener{
          *
          * @return final SimulationController
          */
-        public SimulationController build() {
-            return new SimulationController(this);
+        public OldSimulationController build() {
+            return new OldSimulationController(this);
         }
 
     }

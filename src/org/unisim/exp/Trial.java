@@ -5,7 +5,7 @@
  */
 package org.unisim.exp;
 
-import org.unisim.simulation.core.SimulationController;
+import org.unisim.simulation.core.OldSimulationController;
 import org.unisim.simulation.core.SimulationEventListener;
 
 /**
@@ -14,12 +14,12 @@ import org.unisim.simulation.core.SimulationEventListener;
  */
 public class Trial implements SimulationEventListener {
 
-    private final SimulationController simulation;
+    private final OldSimulationController simulation;
     private final double trialLength;
     private final boolean terminateOnCollision;
     private volatile  boolean terminateTrial = false;
 
-    public Trial(SimulationController simulation, double trialLength, boolean loggingEnabled, boolean terminateOnCollision) {
+    public Trial(OldSimulationController simulation, double trialLength, boolean loggingEnabled, boolean terminateOnCollision) {
         this.simulation = simulation;
         this.trialLength = trialLength;
         this.terminateOnCollision = terminateOnCollision;
