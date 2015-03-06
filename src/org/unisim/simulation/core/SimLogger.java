@@ -5,7 +5,6 @@
  */
 package org.unisim.simulation.core;
 
-import org.unisim.simulation.robot.SimulatedUnibot;
 import org.unisim.io.DataFile;
 
 /**
