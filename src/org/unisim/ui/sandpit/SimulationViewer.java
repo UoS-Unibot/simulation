@@ -20,7 +20,7 @@ import org.unisim.genesis.RobotGenotype;
 import org.unisim.genesis.RobotIndividual;
 import org.unisim.simulation.core.OldSimulationController;
 import org.unisim.simulation.core.SimulationWorld;
-import org.unisim.simulation.robot.ctrnn.CTRNN;
+import org.unisim.simulation.robot.ctrnn.CTRNNController;
 import org.unisim.simulation.robot.ctrnn.CTRNNLayout;
 import org.unisim.io.ctrnn.JSONCTRNNLayout;
 
@@ -73,7 +73,7 @@ public class SimulationViewer extends JPanel {
     }
     
     public void loadSimulation(Experiment exp,RobotGenotype geno) {
-        OldSimulationController controller = new OldSimulationController.SimulationBuilder(new CTRNN(geno, exp.getParam())).setWorld(exp.getWorld()).build();
+        OldSimulationController controller = new OldSimulationController.SimulationBuilder(new CTRNNController(geno, exp.getParam())).setWorld(exp.getWorld()).build();
         cv.loadSimulation(controller);
     }
     
@@ -90,7 +90,7 @@ public class SimulationViewer extends JPanel {
         exp.setLayout(layout);
         exp.setParam(new Parameters());
         ind = new RobotIndividual(exp);
-        OldSimulationController controller = new OldSimulationController.SimulationBuilder(new CTRNN(ind.getGenotype(), new Parameters())).setWorldSize(new Vector2D(10,10)).build();
+        OldSimulationController controller = new OldSimulationController.SimulationBuilder(new CTRNNController(ind.getGenotype(), new Parameters())).setWorldSize(new Vector2D(10,10)).build();
         cv.loadSimulation(controller);
     }
 

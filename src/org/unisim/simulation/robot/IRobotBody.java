@@ -12,7 +12,6 @@ package org.unisim.simulation.robot;
 public interface IRobotBody {
     
     
-    public void setMotors(double velocity, double angularVelocity);
     public double getRange();
     public double[] getSonars();
     public boolean isLive();

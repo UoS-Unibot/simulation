@@ -11,7 +11,7 @@ import java.awt.Graphics2D;
 import java.awt.Stroke;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Line2D;
-import org.unisim.simulation.robot.SimulatedUnibot;
+import org.unisim.simulation.robot.SimulatedRobotBody;
 import org.unisim.simulation.core.SimulationWorld;
 import org.unisim.simulation.geometry.Line;
 import org.unisim.simulation.geometry.Shape2D;
@@ -39,18 +39,13 @@ public class SandpitRenderer {
             }
         }
     }
-    public static void drawRobot(Graphics2D g2,SimulatedUnibot robot) {
+    public static void drawRobot(Graphics2D g2,SimulatedRobotBody robot) {
         g2.setColor(new Color(45,45,45));
         //g2.draw(robot.getShape().toJava2DShape());
         g2.fill(robot.getShape().toJava2DShape());
         g2.setColor(Color.RED);
         g2.setStroke(bstroke);
-        g2.draw(new Line2D.Double(
-                robot.getRangeFinderBase().getX(),
-                robot.getRangeFinderBase().getY(),
-                robot.getRangeFinder().getLastIntersectionPoint().getX(),
-                robot.getRangeFinder().getLastIntersectionPoint().getY()
-        ));
+        g2.draw(robot.getShortenedRangeFinderLine().toLine2D());
     }
     
     

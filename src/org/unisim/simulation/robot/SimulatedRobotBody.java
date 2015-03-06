@@ -20,6 +20,7 @@ public class SimulatedRobotBody implements IRobotBody {
     private final SimulationWorld world;
     private Line rangeFinderLine;
     private final Shape2D shape;
+    private boolean live = true;
 
     public SimulatedRobotBody(SimulationWorld world) {
         this(world,new Vector2D(0.6,0.6),1f/60f);
@@ -43,10 +44,10 @@ public class SimulatedRobotBody implements IRobotBody {
         return shape.getLocalToWorldCoords(new Vector2D(size.getX() / 2,size.getY() / 2));
     }
     
-    @Override
-    public void setMotors(double velocity, double angularVelocity) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public Line getShortenedRangeFinderLine() {
+        return Line.fromPolarVec(getRangeFinderBase(), heading, getRange());
     }
+    
 
     @Override
     public double getRange() {
@@ -60,7 +61,7 @@ public class SimulatedRobotBody implements IRobotBody {
 
     @Override
     public boolean isLive() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return live;
     }
     
     public Vector2D getPosition() {
@@ -85,10 +86,17 @@ public class SimulatedRobotBody implements IRobotBody {
     public void step(double velocity, double angularVelocity) {
         double dist = velocity * timeStepLength;
         Vector2D changeV = new Vector2D(dist * Math.cos(heading), dist * Math.sin(heading));
+        double changeA = (angularVelocity * timeStepLength) % (2 * Math.PI);
         shape.translate(changeV);
         position = position.add(changeV);
         rangeFinderLine.translate(changeV);
-        heading = (heading + angularVelocity * timeStepLength) % (2 * Math.PI);
+        rangeFinderLine.rotate(changeA);
+        heading += changeA;
+        
+    }
+
+    public void doCollision(Shape2D obj) {
+        live = false;
     }
     
     

@@ -14,8 +14,7 @@ import java.awt.image.BufferStrategy;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.unisim.genesis.RobotIndividual;
 import org.unisim.simulation.core.OldSimulationController;
-import org.unisim.simulation.robot.IRobot;
-import org.unisim.simulation.robot.SimulatedUnibot;
+import org.unisim.simulation.robot.SimulatedRobotBody;
 import org.unisim.simulation.robot.ctrnn.CTRNNLayout;
 
 /**
@@ -27,7 +26,7 @@ public class TrialViewer extends SandPitCanvas implements Runnable {
     RobotIndividual ind;
     OldSimulationController controller;
     private boolean simulationLoaded = false;
-    private IRobot robot;
+    private SimulatedRobotBody robot;
     private PathTracer path;
     private volatile long DELAY = Math.round(1000 / 60);
     private volatile boolean simulationStopped = false;

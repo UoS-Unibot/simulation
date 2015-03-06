@@ -49,7 +49,7 @@ public class RealRobotBody implements IRobotBody {
 
     private double[] lastSonarReadings;
     
-    @Override
+    
     public void setMotors(double velocity, double angularVelocity) {
         try {
             //TODO: implement conversion from real world units to command
@@ -89,6 +89,11 @@ public class RealRobotBody implements IRobotBody {
     @Override
     public boolean isLive() {
         return true;
+    }
+
+    @Override
+    public void step(double velocity, double angularVelocity) {
+        lastSonarReadings = null;
     }
     
 }

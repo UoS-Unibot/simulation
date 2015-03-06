@@ -16,7 +16,7 @@ import org.unisim.simulation.robot.RobotInput;
  * Simulates a CTRNN. Loads neurons into an array from a CTRNNLayout.
  * @author Miles
  */
-public class CTRNN implements IRobotController{
+public class CTRNNController implements IRobotController{
     
     int n; //number of neurons
     int nSensors; //number of sensory inputs in the agent. The first nSensor neurons will receive input
@@ -27,15 +27,20 @@ public class CTRNN implements IRobotController{
     public int outIndL,outIndR;
     public ArrayList<Integer> sensNeurIndices;
     Parameters params;
+    private final float axleWidth;
+    
+    public CTRNNController(RobotGenotype g, Parameters params) {
+        this(g,params,0.6f);
+    }
     
     /**
      * Creates a new CTRNN with specified number of sensors and genotype
      * @param nSensors
      * @param g 
      */
-    public CTRNN(RobotGenotype g, Parameters params) {
+    public CTRNNController(RobotGenotype g, Parameters params,float axleWidth) {
         this.n = g.layout.getTotalN(); //get number of neurons
-        
+        this.axleWidth = axleWidth;
         taus = new float[n];
         biases = new float[n];
         gains = new float[n];
@@ -137,7 +142,7 @@ public class CTRNN implements IRobotController{
     }
 
     @Override
-    public float getAngularVelocity(float axleWidth) {
+    public float getAngularVelocity() {
         return (getMotorROutput() - getMotorLOutput()) / axleWidth;
     }
     

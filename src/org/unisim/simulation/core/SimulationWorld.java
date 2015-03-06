@@ -3,9 +3,9 @@ package org.unisim.simulation.core;
 import java.util.Collection;
 import java.util.LinkedList;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
-import org.unisim.simulation.robot.SimulatedUnibot;
 import org.unisim.simulation.geometry.Line;
 import org.unisim.simulation.geometry.Shape2D;
+import org.unisim.simulation.robot.SimulatedRobotBody;
 
 /**
  * The SimulationWorld represents a collection of objects making up the world,
@@ -64,7 +64,7 @@ public class SimulationWorld {
         this.objects.addAll(objects);
     }
 
-    public void checkCollisions(SimulatedUnibot robot) {
+    public void checkCollisions(SimulatedRobotBody robot) {
         for (Shape2D obj : objects) {
             if (obj.intersectsWith(robot.getShape())) {
                 for(CollisionListener cl : listeners) {
