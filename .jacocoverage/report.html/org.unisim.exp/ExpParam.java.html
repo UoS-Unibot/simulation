@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ExpParam.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;UnibotSim&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">org.unisim.exp</a> &gt; <span class="el_source">ExpParam.java</span></div><h1>ExpParam.java</h1><pre class="source lang-java linenums">package org.unisim.exp;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Writer;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+/**
+ * Stores all experimental parameters for easy editing.
+ *
+ * @author Miles
+ */
+public class ExpParam extends HashMap {
+
+<span class="nc" id="L17">    public ArrayList&lt;String&gt; keys = new ArrayList&lt;&gt;();</span>
+
+
+<span class="nc" id="L20">    public ExpParam() {</span>
+<span class="nc" id="L21">        put(&quot;AGENT_EYE_WIDTH_RAD&quot;, 1.0f / 4.0f);</span>
+<span class="nc" id="L22">        keys.add(&quot;AGENT_EYE_WIDTH_RAD&quot;);</span>
+<span class="nc" id="L23">        put(&quot;AGENT_RADIUS&quot;, 15);</span>
+<span class="nc" id="L24">        keys.add(&quot;AGENT_RADIUS&quot;);</span>
+<span class="nc" id="L25">        put(&quot;AGENT_SENSOR_LENGTH&quot;, 220);</span>
+<span class="nc" id="L26">        keys.add(&quot;AGENT_SENSOR_LENGTH&quot;);</span>
+<span class="nc" id="L27">        put(&quot;AGENT_START_Y&quot;, 240);</span>
+<span class="nc" id="L28">        keys.add(&quot;AGENT_START_Y&quot;);</span>
+
+<span class="nc" id="L30">        put(&quot;CIRCLE_RADIUS&quot;, 13);</span>
+<span class="nc" id="L31">        keys.add(&quot;CIRCLE_RADIUS&quot;);</span>
+<span class="nc" id="L32">        put(&quot;CIRCLE_START_Y&quot;, 0);</span>
+<span class="nc" id="L33">        keys.add(&quot;CIRCLE_START_Y&quot;);</span>
+
+<span class="nc" id="L35">        put(&quot;GRID_WIDTH&quot;, 400);</span>
+<span class="nc" id="L36">        keys.add(&quot;GRID_WIDTH&quot;);</span>
+<span class="nc" id="L37">        put(&quot;GRID_HEIGHT&quot;, 275);</span>
+<span class="nc" id="L38">        keys.add(&quot;GRID_HEIGHT&quot;);</span>
+<span class="nc" id="L39">        put(&quot;GRID_CENTER&quot;, 200);</span>
+<span class="nc" id="L40">        keys.add(&quot;GRID_CENTER&quot;);</span>
+
+<span class="nc" id="L42">        put(&quot;EULER_TIMESTEP&quot;, 0.1);</span>
+<span class="nc" id="L43">        keys.add(&quot;EULER_TIMESTEP&quot;);</span>
+
+<span class="nc" id="L45">        put(&quot;FITNESS_EVAL_CIRC_DISP&quot;, 60f);</span>
+<span class="nc" id="L46">        keys.add(&quot;FITNESS_EVAL_CIRC_DISP&quot;);</span>
+<span class="nc" id="L47">        put(&quot;FITNESS_EVAL_H_VELOCITY&quot;, 6f);</span>
+<span class="nc" id="L48">        keys.add(&quot;FITNESS_EVAL_H_VELOCITY&quot;);</span>
+<span class="nc" id="L49">        put(&quot;FITNESS_EVAL_V_VELOCITY&quot;, 5f);</span>
+<span class="nc" id="L50">        keys.add(&quot;FITNESS_EVAL_V_VELOCITY&quot;);</span>
+<span class="nc" id="L51">        put(&quot;FITNESS_EVAL_NTRIALS&quot;, 12);</span>
+<span class="nc" id="L52">        keys.add(&quot;FITNESS_EVAL_NTRIALS&quot;);</span>
+
+<span class="nc" id="L54">        put(&quot;FITNESS_RAND_CIRC_DISP&quot;, 60f);</span>
+<span class="nc" id="L55">        keys.add(&quot;FITNESS_RAND_CIRC_DISP&quot;);</span>
+<span class="nc" id="L56">        put(&quot;FITNESS_RAND_H_VELOCITY&quot;, 6f);</span>
+<span class="nc" id="L57">        keys.add(&quot;FITNESS_RAND_H_VELOCITY&quot;);</span>
+<span class="nc" id="L58">        put(&quot;FITNESS_RAND_V_VELOCITY&quot;, 5f);</span>
+<span class="nc" id="L59">        keys.add(&quot;FITNESS_RAND_V_VELOCITY&quot;);</span>
+<span class="nc" id="L60">        put(&quot;FITNESS_RAND_NTRIALS&quot;, 24);</span>
+<span class="nc" id="L61">        keys.add(&quot;FITNESS_RAND_NTRIALS&quot;);</span>
+
+<span class="nc" id="L63">        put(&quot;GA_CROSSOVER_P_CROSS&quot;, 0.075);</span>
+<span class="nc" id="L64">        keys.add(&quot;GA_CROSSOVER_P_CROSS&quot;);</span>
+<span class="nc" id="L65">        put(&quot;GA_P_MUT&quot;, 0.4);</span>
+<span class="nc" id="L66">        keys.add(&quot;GA_P_MUT&quot;);</span>
+<span class="nc" id="L67">        put(&quot;GA_MAXFIT&quot;, 0.9);</span>
+<span class="nc" id="L68">        keys.add(&quot;GA_MAXFIT&quot;);</span>
+<span class="nc" id="L69">        put(&quot;GA_MAXGEN&quot;, 200);</span>
+<span class="nc" id="L70">        keys.add(&quot;GA_MAXGEN&quot;);</span>
+<span class="nc" id="L71">        put(&quot;GA_NPOP&quot;, 100);</span>
+<span class="nc" id="L72">        keys.add(&quot;GA_NPOP&quot;);</span>
+<span class="nc" id="L73">        put(&quot;GA_DEME&quot;, 5);</span>
+<span class="nc" id="L74">        keys.add(&quot;GA_DEME&quot;);</span>
+
+<span class="nc" id="L76">        put(&quot;UPDATE_SUMMARY&quot;, true);</span>
+<span class="nc" id="L77">        keys.add(&quot;UPDATE_SUMMARY&quot;);</span>
+<span class="nc" id="L78">        put(&quot;UPDATE_PLOT&quot;, true);</span>
+<span class="nc" id="L79">        keys.add(&quot;UPDATE_PLOT&quot;);</span>
+
+<span class="nc" id="L81">        put(&quot;GA_RUNTOMAXGEN&quot;, true);</span>
+<span class="nc" id="L82">        keys.add(&quot;GA_RUNTOMAXGEN&quot;);</span>
+
+<span class="nc" id="L84">        put(&quot;UPDATE_PLOT_FREQ&quot;, 1);</span>
+<span class="nc" id="L85">        keys.add(&quot;UPDATE_PLOT_FREQ&quot;);</span>
+<span class="nc" id="L86">        put(&quot;UPDATE_SUMMARY_FREQ&quot;, 1);</span>
+<span class="nc" id="L87">        keys.add(&quot;UPDATE_SUMMARY_FREQ&quot;);</span>
+
+<span class="nc" id="L89">        put(&quot;N_SCRIPTED_RUNS&quot;, 100);</span>
+<span class="nc" id="L90">        keys.add(&quot;N_SCRIPTED_RUNS&quot;);</span>
+
+<span class="nc" id="L92">    }</span>
+
+    public String getTrialsStr() {
+<span class="nc" id="L95">        StringBuilder r = new StringBuilder(&quot;Trial\tStartingX\tDX\n&quot;);</span>
+<span class="nc" id="L96">        float dispRange = (float) get(&quot;FITNESS_EVAL_CIRC_DISP&quot;);</span>
+<span class="nc" id="L97">        float angRange = -(float) get(&quot;FITNESS_EVAL_H_VELOCITY&quot;);</span>
+<span class="nc" id="L98">        int nTrials = (int) get(&quot;FITNESS_EVAL_NTRIALS&quot;);</span>
+<span class="nc" id="L99">        float dHVelo = ((float) get(&quot;FITNESS_EVAL_H_VELOCITY&quot;) * 2.0f) / (nTrials - 1);</span>
+<span class="nc" id="L100">        float distClip = dispRange;</span>
+<span class="nc bnc" id="L101" title="All 2 branches missed.">        for (int i = 0; i &lt; nTrials; i++) {</span>
+<span class="nc" id="L102">            float disp = (i * (2 * dispRange / (nTrials - 1)) - dispRange);</span>
+<span class="nc" id="L103">            float ang = (int) Math.round(angRange + (double) (i * dHVelo));</span>
+<span class="nc" id="L104">            r.append(String.format(&quot;%d\t%f\t%f\n&quot;, i + 1, disp, ang));</span>
+        }
+<span class="nc" id="L106">        return r.toString();</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L111">        StringBuilder r = new StringBuilder();</span>
+<span class="nc bnc" id="L112" title="All 2 branches missed.">        for (String key : keys) {</span>
+<span class="nc" id="L113">            r.append(String.format(&quot;%s\t%s\n&quot;, key, this.get(key)));</span>
+<span class="nc" id="L114">        }</span>
+<span class="nc" id="L115">        return r.toString();</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

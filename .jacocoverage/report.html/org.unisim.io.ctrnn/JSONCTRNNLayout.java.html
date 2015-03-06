@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>JSONCTRNNLayout.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;UnibotSim&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">org.unisim.io.ctrnn</a> &gt; <span class="el_source">JSONCTRNNLayout.java</span></div><h1>JSONCTRNNLayout.java</h1><pre class="source lang-java linenums">/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package org.unisim.io.ctrnn;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import org.unisim.simulation.robot.ctrnn.CTRNNLayout;
+import org.unisim.simulation.robot.ctrnn.CTRNNParamRanges;
+import org.unisim.simulation.robot.ctrnn.LayoutBuilder;
+import org.unisim.util.Range;
+
+/**
+ *
+ * @author miles
+ */
+public class JSONCTRNNLayout {
+
+<span class="fc" id="L25">    private String filename = &quot;&quot;;</span>
+
+<span class="fc" id="L27">    public JSONCTRNNLayout() {</span>
+<span class="fc" id="L28">    }</span>
+
+    public void saveToFile(File file) throws IOException {
+<span class="nc" id="L31">        new ObjectMapper().writerWithDefaultPrettyPrinter().writeValue(file, this);</span>
+<span class="nc" id="L32">    }</span>
+    public static JSONCTRNNLayout fromFile(File file) throws IOException {
+<span class="fc" id="L34">        ObjectMapper mapper = new ObjectMapper();</span>
+<span class="fc" id="L35">        JSONCTRNNLayout layout = mapper.readValue(file, JSONCTRNNLayout.class);</span>
+<span class="fc" id="L36">        layout.filename = file.getAbsolutePath();</span>
+<span class="fc" id="L37">        return layout;</span>
+    }
+    
+    public CTRNNLayout toCTRNNLayout() {
+<span class="fc" id="L41">        LayoutBuilder lb = new LayoutBuilder();</span>
+<span class="fc" id="L42">        lb.setFilename(filename);</span>
+<span class="fc" id="L43">        HashMap&lt;org.unisim.simulation.robot.ctrnn.Neuron, ArrayList&lt;String&gt;&gt; conns = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L44">        int idCount = 0;</span>
+<span class="fc bfc" id="L45" title="All 2 branches covered.">        for (Layer l : layers) {</span>
+<span class="fc" id="L46">            lb.addNewLayer();</span>
+<span class="fc" id="L47">            String p = l.getParams();</span>
+<span class="fc" id="L48">            ParamRanges pr = findParamRange(p);</span>
+<span class="pc bpc" id="L49" title="1 of 2 branches missed.">            if (pr == null) {</span>
+<span class="nc" id="L50">                throw new IllegalArgumentException(&quot;Parameter string '&quot; + p + &quot;' not found in defined parameter ranges&quot;);</span>
+            }
+<span class="fc bfc" id="L52" title="All 2 branches covered.">            for (Neuron n : l.getNeurons()) {</span>
+<span class="fc" id="L53">                org.unisim.simulation.robot.ctrnn.Neuron neuron = new org.unisim.simulation.robot.ctrnn.Neuron(idCount);</span>
+
+<span class="fc" id="L55">                neuron.name = n.getName();</span>
+<span class="fc" id="L56">                neuron.ID = idCount; idCount++;</span>
+<span class="fc" id="L57">                neuron.ParamRanges = new CTRNNParamRanges(</span>
+                        new Range(pr.getTauR()[0], pr.getTauR()[1]),
+                        new Range(pr.getBiasR()[0], pr.getBiasR()[1]),
+                        new Range(pr.getGainR()[0], pr.getGainR()[1]),
+                        new Range(pr.getWeightsR()[0], pr.getWeightsR()[1])
+                );
+<span class="fc bfc" id="L63" title="All 2 branches covered.">                if (letter1(n.getName()).equals(&quot;s&quot;)) {</span>
+<span class="fc" id="L64">                    lb.addSensorInput(Integer.parseInt(letter2(n.getName())));</span>
+                }
+<span class="fc bfc" id="L66" title="All 2 branches covered.">                if (letter1(n.getName()).equals(&quot;m&quot;)) {</span>
+<span class="fc" id="L67">                    lb.addMotorOutput(Integer.parseInt(letter2(n.getName())));</span>
+                }
+<span class="pc bpc" id="L69" title="1 of 2 branches missed.">                if (letter1(n.getTau()).equals(&quot;g&quot;)) {</span>
+<span class="fc" id="L70">                    neuron.tauG = 0;</span>
+<span class="fc" id="L71">                    neuron.tauGID = Integer.parseInt(n.getTau().substring(1));</span>
+                } else {
+<span class="nc" id="L73">                    neuron.tauG = Float.parseFloat(n.getTau());</span>
+<span class="nc" id="L74">                    neuron.tauGID = -1;</span>
+                }
+<span class="pc bpc" id="L76" title="1 of 2 branches missed.">                if (letter1(n.getBias()).equals(&quot;g&quot;)) {</span>
+<span class="fc" id="L77">                    neuron.biasG = 0;</span>
+<span class="fc" id="L78">                    neuron.biasGID = Integer.parseInt(n.getBias().substring(1));</span>
+                } else {
+<span class="nc" id="L80">                    neuron.biasG = Float.parseFloat(n.getBias());</span>
+<span class="nc" id="L81">                    neuron.biasGID = -1;</span>
+                }
+<span class="fc bfc" id="L83" title="All 2 branches covered.">                if(neuron.name.equals(&quot;m0&quot;))</span>
+<span class="pc bpc" id="L84" title="1 of 2 branches missed.">                if (letter1(n.getGain()).equals(&quot;g&quot;)) {</span>
+<span class="fc" id="L85">                    neuron.gainG = 0;</span>
+<span class="fc" id="L86">                    neuron.gainGID = Integer.parseInt(n.getGain().substring(1));</span>
+                } else {
+<span class="nc" id="L88">                    neuron.gainG = Float.parseFloat(n.getGain());</span>
+<span class="nc" id="L89">                    neuron.gainGID = -1;</span>
+                }
+
+<span class="pc bpc" id="L92" title="1 of 2 branches missed.">                if (n.getConns().length != n.getWeights().length) {</span>
+<span class="nc" id="L93">                    throw new ArrayIndexOutOfBoundsException(String.format(&quot;Mismatch: Neuron named %s has %d conns defined and %d weights&quot;, n.getName(), n.getConns().length, n.getWeights().length));</span>
+                }
+
+<span class="fc" id="L96">                CTRNNParamRanges cpr = new CTRNNParamRanges();</span>
+<span class="fc" id="L97">                cpr.bias = new Range(pr.getTauR()[0], pr.getTauR()[1]);</span>
+<span class="fc" id="L98">                conns.put(neuron, new ArrayList&lt;String&gt;());</span>
+<span class="fc bfc" id="L99" title="All 2 branches covered.">                for (int i = 0; i &lt; n.getConns().length; i++) {</span>
+<span class="fc" id="L100">                    conns.get(neuron).add(n.getConns()[i]);</span>
+<span class="fc" id="L101">                    String w = n.getWeights()[i];</span>
+<span class="pc bpc" id="L102" title="1 of 2 branches missed.">                    if (letter1(w).equals(&quot;g&quot;)) {</span>
+<span class="fc" id="L103">                        neuron.weightsG.add(0f);</span>
+<span class="fc" id="L104">                        neuron.weightsGID.add(Integer.parseInt(w.substring(1)));</span>
+                    } else {
+<span class="nc" id="L106">                        neuron.weightsG.add(Float.parseFloat(w));</span>
+<span class="nc" id="L107">                        neuron.weightsGID.add(-1);</span>
+                    }
+                }
+
+<span class="fc" id="L111">                lb.addNeuronToLastLayer(neuron);</span>
+            }
+        }
+
+<span class="fc bfc" id="L115" title="All 2 branches covered.">        for (org.unisim.simulation.robot.ctrnn.Neuron neuron : conns.keySet()) {</span>
+<span class="fc bfc" id="L116" title="All 2 branches covered.">            for(String conn : conns.get(neuron)) {</span>
+<span class="fc" id="L117">                org.unisim.simulation.robot.ctrnn.Neuron neuron2 = lb.getNeuronByName(conn);</span>
+<span class="pc bpc" id="L118" title="1 of 2 branches missed.">                if(neuron2 == null)</span>
+<span class="nc" id="L119">                    throw new IllegalArgumentException(&quot;Neuron named &quot; + conn + &quot;not found in layout file&quot;);</span>
+<span class="fc" id="L120">                neuron.conns.add(neuron2.ID);</span>
+<span class="fc" id="L121">            }</span>
+<span class="fc" id="L122">        }</span>
+
+<span class="fc" id="L124">        return new CTRNNLayout(lb.build());</span>
+    }
+
+    
+    
+    private String letter1(String str) {
+<span class="fc" id="L130">        return str.substring(0, 1);</span>
+    }
+
+    private String letter2(String str) {
+
+<span class="fc" id="L135">        return str.substring(1);</span>
+    }
+
+
+    private ParamRanges findParamRange(String name) {
+<span class="pc bpc" id="L140" title="1 of 2 branches missed.">        for (ParamRanges pr : paramranges) {</span>
+<span class="pc bpc" id="L141" title="3 of 6 branches missed.">            if (pr.getName() == null ? name == null : pr.getName().equals(name)) {</span>
+<span class="fc" id="L142">                return pr;</span>
+            }
+        }
+<span class="nc" id="L145">        return null;</span>
+    }
+
+    private Metadata metadata;
+    private ParamRanges[] paramranges;
+    private Layer[] layers;
+
+    @Override
+    public String toString() {
+<span class="fc" id="L154">        return &quot;JSONCTRNNLayout{&quot; + &quot;metadata=&quot; + metadata + &quot;, paramranges=&quot; + Arrays.toString(paramranges) + &quot;, layers=&quot; + Arrays.toString(layers) + '}';</span>
+    }
+
+    public org.unisim.io.ctrnn.Metadata getMetadata() {
+<span class="nc" id="L158">        return metadata;</span>
+    }
+
+    public void setMetadata(org.unisim.io.ctrnn.Metadata metadata) {
+<span class="fc" id="L162">        this.metadata = metadata;</span>
+<span class="fc" id="L163">    }</span>
+
+    public ParamRanges[] getParamranges() {
+<span class="nc" id="L166">        return paramranges;</span>
+    }
+
+    public void setParamranges(ParamRanges[] paramranges) {
+<span class="fc" id="L170">        this.paramranges = paramranges;</span>
+<span class="fc" id="L171">    }</span>
+
+    public Layer[] getLayers() {
+<span class="nc" id="L174">        return layers;</span>
+    }
+
+    public void setLayers(Layer[] layers) {
+<span class="fc" id="L178">        this.layers = layers;</span>
+<span class="fc" id="L179">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

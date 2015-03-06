@@ -5,6 +5,7 @@
  */
 package org.unisim.reality;
 
+import org.unisim.ui.reality.CalibrationUI;
 import java.awt.Component;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -25,21 +26,13 @@ public class SerialCommunicator implements SerialPortEventListener {
     private static final Logger LOG = Logger.getLogger(SerialCommunicator.class.getName());
     private SerialPort serialPort;
 
-    /**
-     * Instantiates this, opening the serial port on COM4.
-     *
-     * @throws SerialPortException Thrown if serial port is missing, busy or
-     * otherwise unavailable.
-     */
-    public SerialCommunicator() {
-
-    }
-
     public void openSerialPort() throws SerialPortException {
         openSerialPort("COM4");
     }
     
     public void closeSerialPort() throws SerialPortException {
+        if(serialPort == null)
+            throw new NullPointerException("Serial port is null; make sure the port is opened first.");
         serialPort.closePort();
     }
 
@@ -67,7 +60,8 @@ public class SerialCommunicator implements SerialPortEventListener {
      */
     public void sendCommand(String command) throws SerialPortException {
         command = command + "\r";
-        serialPort.writeBytes(command.getBytes());
+        if(!serialPort.writeBytes(command.getBytes()))
+            throw new RuntimeException("Command could not be sent. Command: " + command);
     }
 
     protected String dataBuffer = "";

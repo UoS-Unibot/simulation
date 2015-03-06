@@ -5,7 +5,12 @@
  */
 package org.unisim.reality;
 
+import jssc.SerialPort;
+import jssc.SerialPortEvent;
+import jssc.SerialPortException;
 import jssc.SerialPortTimeoutException;
+import mockit.Expectations;
+import mockit.Mocked;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,6 +30,63 @@ public class SerialCommunicatorTest {
     public void setup() {
         serial = new SerialCommunicator();
     }
+    
+    @Mocked SerialPort port;
+    
+    @Test
+    public void openPortOpensPort() throws SerialPortException {
+        new Expectations() {{
+            port.openPort();
+        }};
+        serial.openSerialPort();
+    }
+    
+    @Test(expected=NullPointerException.class)
+    public void closePortWithoutOpenCausesNullPointerException() throws SerialPortException {
+        serial.closeSerialPort();
+    }
+    
+    @Test
+    public void closePortClosesPort() throws SerialPortException {
+        serial.openSerialPort();
+        new Expectations() {{
+            port.closePort();
+        }};
+        serial.closeSerialPort();
+    }
+    
+    @Test
+    public void sendCommandAppendsCarriageReturn() throws SerialPortException {
+        serial.openSerialPort();
+        String sentCommand = "#d 0 0";
+        final String expCommand = "#d 0 0\r";
+        new Expectations() {{
+            port.writeBytes(expCommand.getBytes()); result = true;
+        }};
+        serial.sendCommand(sentCommand);
+    }
+    
+    @Test(expected=RuntimeException.class)
+    public void ifSendCommandNotSuccessfulExceptionThrown() throws SerialPortException {
+        serial.openSerialPort();
+        String sentCommand = "#d 0 0";
+        new Expectations() {{
+            port.writeBytes((byte[])any); result = false;
+        }};
+        serial.sendCommand(sentCommand);
+    }
+    @Mocked SerialPortEvent spe;
+    public void serialPortEventWritesToBuffer() throws SerialPortException, SerialPortTimeoutException {
+        final String data = "data\n";
+        serial.openSerialPort();
+        new Expectations() {{
+            spe.isRXCHAR();result = true;
+            port.readString(); result = data;
+        }};
+        serial.serialEvent(spe);
+        assertEquals(data,serial.readLine());
+    }
+    
 
     @Test(expected = SerialPortTimeoutException.class)
     public void getLineThrowsTimeOutExceptionIfBufferIsEmpty() throws SerialPortTimeoutException  {
@@ -74,5 +136,7 @@ public class SerialCommunicatorTest {
         assertEquals("#k", serial.readLine());
         assertEquals("", serial.dataBuffer);
     }
+    
+    
 
 }

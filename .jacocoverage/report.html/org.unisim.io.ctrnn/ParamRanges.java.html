@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ParamRanges.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;UnibotSim&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">org.unisim.io.ctrnn</a> &gt; <span class="el_source">ParamRanges.java</span></div><h1>ParamRanges.java</h1><pre class="source lang-java linenums">/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package org.unisim.io.ctrnn;
+
+import java.util.Arrays;
+
+/**
+ *
+ * @author miles
+ */
+<span class="fc" id="L14">public class ParamRanges {</span>
+
+    private String name;
+    private int[] tauR;
+    private int[] gainR;
+    private int[] biasR;
+    private int[] weightsR;
+
+    public String getName() {
+<span class="fc" id="L23">        return name;</span>
+    }
+
+    public void setName(String name) {
+<span class="fc" id="L27">        this.name = name;</span>
+<span class="fc" id="L28">    }</span>
+
+    public int[] getTauR() {
+<span class="fc" id="L31">        return tauR;</span>
+    }
+
+    public void setTauR(int[] tauR) {
+<span class="pc bpc" id="L35" title="1 of 2 branches missed.">        if(tauR.length != 2)</span>
+<span class="nc" id="L36">            throw new IllegalArgumentException(&quot;Tau parameter ranges must have 2 elements: [low, high], instead got &quot; + tauR.length);</span>
+<span class="fc" id="L37">        this.tauR = tauR;</span>
+<span class="fc" id="L38">    }</span>
+
+    public int[] getGainR() {
+<span class="fc" id="L41">        return gainR;</span>
+    }
+
+    public void setGainR(int[] gainR) {
+<span class="pc bpc" id="L45" title="1 of 2 branches missed.">        if(gainR.length != 2)</span>
+<span class="nc" id="L46">            throw new IllegalArgumentException(&quot;Tau parameter ranges must have 2 elements: [low, high], instead got &quot; + gainR.length);</span>
+<span class="fc" id="L47">        this.gainR = gainR;</span>
+<span class="fc" id="L48">    }</span>
+
+    public int[] getBiasR() {
+<span class="fc" id="L51">        return biasR;</span>
+    }
+
+    public void setBiasR(int[] biasR) {
+<span class="pc bpc" id="L55" title="1 of 2 branches missed.">        if(biasR.length != 2)</span>
+<span class="nc" id="L56">            throw new IllegalArgumentException(&quot;Tau parameter ranges must have 2 elements: [low, high], instead got &quot; + biasR.length);</span>
+<span class="fc" id="L57">        this.biasR = biasR;</span>
+<span class="fc" id="L58">    }</span>
+
+    public int[] getWeightsR() {
+<span class="fc" id="L61">        return weightsR;</span>
+    }
+
+    public void setWeightsR(int[] weightsR) {
+<span class="fc" id="L65">        this.weightsR = weightsR;</span>
+<span class="fc" id="L66">    }</span>
+
+    @Override
+    public String toString() {
+<span class="fc" id="L70">        return &quot;ParamRanges{&quot; + &quot;name=&quot; + name + &quot;, tauR=&quot; + Arrays.toString(tauR) + &quot;, gainR=&quot; + Arrays.toString(gainR) + &quot;, biasR=&quot; + Arrays.toString(biasR) + &quot;, weightsR=&quot; + Arrays.toString(weightsR) + '}';</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

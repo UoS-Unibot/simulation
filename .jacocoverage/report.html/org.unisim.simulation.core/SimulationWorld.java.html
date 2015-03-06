@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SimulationWorld.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;UnibotSim&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">org.unisim.simulation.core</a> &gt; <span class="el_source">SimulationWorld.java</span></div><h1>SimulationWorld.java</h1><pre class="source lang-java linenums">package org.unisim.simulation.core;
+
+import java.util.Collection;
+import java.util.LinkedList;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.unisim.simulation.geometry.Line;
+import org.unisim.simulation.geometry.Shape2D;
+import org.unisim.simulation.robot.SimulatedRobotBody;
+
+/**
+ * The SimulationWorld represents a collection of objects making up the world,
+ * including 4 bounding lines. Can check for collisions between the robot and
+ * any objects in the world (including bounding lines)
+ *
+ * @author Miles Bryant &lt;mb459 at sussex.ac.uk&gt;
+ */
+public class SimulationWorld {
+
+<span class="fc" id="L19">    private final LinkedList&lt;Shape2D&gt; objects = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L20">    private final LinkedList&lt;CollisionListener&gt; listeners = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L21">    private String filename = &quot;&quot;;</span>
+
+    public String getFilename() {
+<span class="nc" id="L24">        return filename;</span>
+    }
+
+    public void setFilename(String filename) {
+<span class="fc" id="L28">        this.filename = filename;</span>
+<span class="fc" id="L29">    }</span>
+    
+    
+
+    /**
+     * Creates a new SimulationWorld with specified bounds. LineObjs are
+     * automatically generated to form the bounding box.
+     *
+     * @param bounds Vector2D size of bounding box in metres.
+     */
+<span class="fc" id="L39">    public SimulationWorld(Vector2D bounds) {</span>
+<span class="fc" id="L40">        float pi2 = (float) Math.PI / 2;</span>
+<span class="fc" id="L41">        float w = (float) bounds.getX(),</span>
+<span class="fc" id="L42">                h = (float) bounds.getY();</span>
+<span class="fc" id="L43">        objects.add(Line.fromCenterPoint(0, h / 2, w, 0));</span>
+<span class="fc" id="L44">        objects.add(Line.fromCenterPoint(w / 2, 0, h, pi2));</span>
+<span class="fc" id="L45">        objects.add(Line.fromCenterPoint(0, -h / 2, w, 0));</span>
+<span class="fc" id="L46">        objects.add(Line.fromCenterPoint(-w / 2, 0, h, pi2));</span>
+
+<span class="fc" id="L48">    }</span>
+    
+    public void addListener(CollisionListener listener) {
+<span class="nc" id="L51">        listeners.add(listener);</span>
+<span class="nc" id="L52">    }</span>
+    
+    public void removeListener(CollisionListener listener) {
+<span class="nc" id="L55">        listeners.remove(listener);</span>
+<span class="nc" id="L56">    }</span>
+
+    /**
+     * Adds all objects in a Collection to the world.
+     *
+     * @param objects Collection of WorldObjs
+     */
+    public void addWorldObjects(Collection&lt;Shape2D&gt; objects) {
+<span class="fc" id="L64">        this.objects.addAll(objects);</span>
+<span class="fc" id="L65">    }</span>
+
+    public void checkCollisions(SimulatedRobotBody robot) {
+<span class="nc bnc" id="L68" title="All 2 branches missed.">        for (Shape2D obj : objects) {</span>
+<span class="nc bnc" id="L69" title="All 2 branches missed.">            if (obj.intersectsWith(robot.getShape())) {</span>
+<span class="nc bnc" id="L70" title="All 2 branches missed.">                for(CollisionListener cl : listeners) {</span>
+<span class="nc bnc" id="L71" title="All 2 branches missed.">                    if(cl.collisionOccured())</span>
+<span class="nc" id="L72">                        break;</span>
+<span class="nc" id="L73">                }</span>
+<span class="nc" id="L74">                robot.doCollision(obj);</span>
+            }
+<span class="nc" id="L76">        }</span>
+<span class="nc" id="L77">    }</span>
+
+    /**
+     * Adds a single WorldObj to the world.
+     *
+     * @param object WorldObj to add.
+     */
+    public void createWorldObject(Shape2D object) {
+<span class="nc" id="L85">        objects.add(object);</span>
+<span class="nc" id="L86">    }</span>
+
+    /**
+     * @return a collection of the current objects in the world.
+     */
+    public Collection&lt;Shape2D&gt; getObjects() {
+<span class="fc" id="L92">        return objects;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L97">        return &quot;SimulationWorld{&quot; + &quot;objects=&quot; + objects + &quot;, listeners=&quot; + listeners + '}';</span>
+    }
+    
+    public Vector2D getBounds() {
+<span class="nc" id="L101">        return new Vector2D(5,5);</span>
+    }
+
+    public double findRange(Line rangeFinderLine) {
+<span class="fc" id="L105">        double lowestDist = 0; //will return this if no intersection found</span>
+
+<span class="fc bfc" id="L107" title="All 2 branches covered.">        for (Shape2D obj : objects) {</span>
+<span class="fc" id="L108">            Line.LineIntersection li = obj.getSmallestLineIntersection(rangeFinderLine);</span>
+<span class="fc bfc" id="L109" title="All 2 branches covered.">            if (li.isIntersection) {</span>
+<span class="pc bpc" id="L110" title="1 of 6 branches missed.">                if (lowestDist == 0 | li.line1DistToIntersect &lt; lowestDist) {</span>
+<span class="fc" id="L111">                    lowestDist = li.line1DistToIntersect;</span>
+                }
+            }
+<span class="fc" id="L114">        }</span>
+<span class="fc" id="L115">        return (float) lowestDist;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

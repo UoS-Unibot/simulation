@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SandPitCanvas.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;UnibotSim&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">org.unisim.ui.sandpit</a> &gt; <span class="el_source">SandPitCanvas.java</span></div><h1>SandPitCanvas.java</h1><pre class="source lang-java linenums">/* 
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package org.unisim.ui.sandpit;
+
+import java.awt.Canvas;
+import java.awt.Graphics;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseWheelEvent;
+import java.awt.image.BufferStrategy;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.unisim.simulation.core.SimulationWorld;
+
+/**
+ * Renders the simulation.
+ *
+ * @author Miles
+ */
+public abstract class SandPitCanvas extends Canvas {
+
+<span class="nc" id="L24">    public SandPitCanvas() {</span>
+
+<span class="nc" id="L26">        camera = new SandPitCamera(Vector2D.ZERO, Vector2D.ZERO, 50);</span>
+<span class="nc" id="L27">        grid = new Grid(camera);</span>
+
+<span class="nc" id="L29">        MouseAdapter mouseAdapter = new MouseAdapter() {</span>
+<span class="nc" id="L30">            private Vector2D prevCoord = Vector2D.NaN;</span>
+
+            @Override
+            public void mouseDragged(MouseEvent me) {
+<span class="nc" id="L34">                Vector2D newCoord = getCamera().convertScreenToWorldCoords(new Vector2D(me.getX(), me.getY()));</span>
+<span class="nc bnc" id="L35" title="All 2 branches missed.">                if (prevCoord == Vector2D.NaN) {</span>
+<span class="nc" id="L36">                    prevCoord = newCoord;</span>
+                } else {
+<span class="nc" id="L38">                    Vector2D sub = newCoord.subtract(prevCoord);</span>
+<span class="nc" id="L39">                    getCamera().move(sub);</span>
+<span class="nc" id="L40">                    draw();</span>
+                }
+<span class="nc" id="L42">            }</span>
+
+            @Override
+            public void mouseReleased(MouseEvent me) {
+<span class="nc" id="L46">                prevCoord = Vector2D.NaN;</span>
+<span class="nc" id="L47">            }</span>
+
+            @Override
+            public void mouseWheelMoved(MouseWheelEvent mwe) {
+<span class="nc" id="L51">                getCamera().changeScale(-0.5 * mwe.getUnitsToScroll());</span>
+<span class="nc" id="L52">                draw();</span>
+<span class="nc" id="L53">            }</span>
+
+        };
+
+<span class="nc" id="L57">        addMouseListener(mouseAdapter);</span>
+<span class="nc" id="L58">        addMouseMotionListener(mouseAdapter);</span>
+<span class="nc" id="L59">        addMouseWheelListener(mouseAdapter);</span>
+
+<span class="nc" id="L61">    }</span>
+
+
+    public abstract void draw();
+
+
+
+
+    public SandPitCamera getCamera() {
+<span class="nc" id="L70">        return camera;</span>
+    }
+
+    protected SimulationWorld world;
+    protected final SandPitCamera camera;
+    protected final Grid grid;
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

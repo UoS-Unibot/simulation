@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Individual.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;UnibotSim&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">org.unisim.genesis</a> &gt; <span class="el_source">Individual.java</span></div><h1>Individual.java</h1><pre class="source lang-java linenums">/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package org.unisim.genesis;
+
+import java.util.ArrayList;
+import java.util.Random;
+
+/**
+ *
+ * @author Miles
+ */
+<span class="nc" id="L15">public abstract class Individual implements Comparable&lt;Individual&gt; {</span>
+    
+    //protected Genotype genotype;
+<span class="nc" id="L18">    private final Random rand = new Random();</span>
+    
+//    public Object getGene(int index) {
+//        return genotype.getGene(index);
+//    }
+//    public void setGene(int index, Object value)  {
+//        genotype.setGene(index, value);
+//    }
+    
+//    public Genotype getGenotype() {
+//        return genotype;
+//    }
+//    
+//    Individual() {}
+//        
+//    Individual(Genotype prototype) {
+//        genotype = prototype.getInstanceOf();
+//    }
+        
+    /**
+     * Calculates HammingDistance between this instance and another.
+     *
+     * Calculates the HammingDistance between this instance and BinaryIndividual
+     * ind. http://en.wikipedia.org/wiki/Hamming_distance.
+     * @param ind Other individual to compare this instance with.
+     * @return Int value representing the Hamming Distance, or difference.
+     */
+    //int HammingDistance(Individual ind)
+    
+    /**
+     * Fitness function for an individual - it should unambiguously provide a 
+     * quantitative measure of success from an individual's genotype.
+     * @return Fitness value.
+     */
+    public abstract float fitness();
+
+    /**
+     * Simulates biological gene crossover between this and another individual.
+     *
+     * Simulates biological gene crossover by replacing each gene with the copy
+     * in another individual with probability p_crossover.
+     * @param p_crossover Probability for each gene that it will be crossed over.
+     * @param ind Individual to cross over genes from.
+     */
+    //void crossover(float p_crossover, Individual ind);
+
+    /**
+     * Mutates each gene with p_mutation probability.
+     * @param p_mutation Probability of mutation for each gene between 0 and 1.
+     */
+    //void mutate(float p_mutation);
+
+    /**
+     * Returns size of the genotype in bits.
+     * @return size of the genotype in bits. size([0000]) -&gt; 4
+     */
+    //int size();
+
+    /**
+     * Provides a string representation of the individual, by default genotype
+     * and fitness.
+     * @return String to be outputted.
+     */
+    @Override
+    public String toString() {
+<span class="nc" id="L83">        return &quot;&quot;;</span>
+    }
+    
+    @Override
+    public int compareTo(Individual ind)  {
+<span class="nc bnc" id="L88" title="All 2 branches missed.">        if(this.fitness() &gt; ind.fitness())  {</span>
+<span class="nc" id="L89">            return 1;</span>
+<span class="nc bnc" id="L90" title="All 2 branches missed.">        } else if (this.fitness() &lt; ind.fitness())  {</span>
+<span class="nc" id="L91">            return -1;</span>
+        } else  {
+<span class="nc" id="L93">            return 0;</span>
+        }
+    }
+    
+    public abstract void crossover(float pCross, Individual ind);
+//    {
+//        for(int i = 0; i &lt; genotype.size(); i++) {
+//            if(rand.nextFloat() &lt; p_crossover)
+//                setGene(i, ind.getGene(i)); //probability matched, so crossover
+//        }
+//    }
+
+    public abstract Individual getInstanceOf();
+
+    abstract void mutate(float p_mutation) ;
+
+    
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

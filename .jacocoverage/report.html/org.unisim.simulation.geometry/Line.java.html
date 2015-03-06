@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Line.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;UnibotSim&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">org.unisim.simulation.geometry</a> &gt; <span class="el_source">Line.java</span></div><h1>Line.java</h1><pre class="source lang-java linenums">/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package org.unisim.simulation.geometry;
+
+import java.awt.Graphics2D;
+import java.awt.geom.Line2D;
+import static java.lang.Double.NaN;
+import java.util.Collection;
+import java.util.LinkedList;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+
+/**
+ *
+ * @author miles
+ */
+public class Line extends Shape2D {
+
+    public Vector2D p1;
+    public Vector2D p2;
+
+    public Line() {
+<span class="nc" id="L25">        this(Vector2D.ZERO, Vector2D.ZERO);</span>
+<span class="nc" id="L26">    }</span>
+
+<span class="fc" id="L28">    public Line(Vector2D p1, Vector2D p2) {</span>
+<span class="fc" id="L29">        this.p1 = p1;</span>
+<span class="fc" id="L30">        this.p2 = p2;</span>
+<span class="fc" id="L31">    }</span>
+
+    @Override
+    public Collection&lt;Line&gt; getLines() {
+<span class="fc" id="L35">        LinkedList&lt;Line&gt; lines = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L36">        lines.add(this);</span>
+<span class="fc" id="L37">        return lines; //To change body of generated methods, choose Tools | Templates.</span>
+    }
+
+    public static Line fromCoords(double x1, double y1, double x2, double y2) {
+<span class="fc" id="L41">        return new Line(new Vector2D(x1, y1), new Vector2D(x2, y2));</span>
+    }
+
+    private static Vector2D translatePolar(Vector2D v, double angle, double length) {
+<span class="fc" id="L45">        return new Vector2D(</span>
+                v.getX() + length * Math.cos(angle),
+                v.getY() + length * Math.sin(angle)
+        );
+    }
+
+    public static Line fromPolarVec(Vector2D p1, double angle, double length) {
+<span class="fc" id="L52">        return new Line(</span>
+                p1,
+                translatePolar(p1, angle, length)
+        );
+    }
+
+    public static Line fromPolarCoords(double x1, double y1, double angle, double length) {
+<span class="fc" id="L59">        return fromPolarVec(new Vector2D(x1, y1), angle, length);</span>
+    }
+
+    public static Line fromCenterPoint(Vector2D center, double length, double angle) {
+<span class="fc" id="L63">        return new Line(</span>
+                translatePolar(center, (angle + Math.PI) % (2 * Math.PI), length / 2),
+                translatePolar(center, angle, length / 2)
+        );
+    }
+
+    public static Line fromCenterPoint(double c1, double c2, double length, double angle) {
+<span class="fc" id="L70">        return fromCenterPoint(new Vector2D(c1, c2), length, angle);</span>
+    }
+    
+    public void setFromPolar(Vector2D p1, double angle) {
+<span class="nc" id="L74">        this.p1 = p1;</span>
+<span class="nc" id="L75">        this.p2 = translatePolar(p1, angle, getLength());</span>
+<span class="nc" id="L76">    }</span>
+
+    public LineIntersection getIntersection(Line line2) {
+<span class="fc" id="L79">        return new LineIntersection(this, line2);</span>
+    }
+    
+    @Override
+    public void rotate(double deltaAngle) {
+<span class="fc" id="L84">        p2 = getRotatedPoint(p1, p2, deltaAngle);</span>
+<span class="fc" id="L85">    }</span>
+
+    public void rotate(Vector2D pivot, double deltaAngle) {
+<span class="fc" id="L88">        p1 = getRotatedPoint(pivot, p1, deltaAngle);</span>
+<span class="fc" id="L89">        p2 = getRotatedPoint(pivot, p2, deltaAngle);</span>
+<span class="fc" id="L90">    }</span>
+
+    public Line2D toLine2D() {
+<span class="nc" id="L93">        return new Line2D.Double(p1.getX(), p1.getY(), p2.getX(), p2.getY());</span>
+    }
+
+    public void render(Graphics2D g2) {
+<span class="nc" id="L97">        g2.draw(toLine2D());</span>
+<span class="nc" id="L98">    }</span>
+
+    public double getLength() {
+<span class="nc" id="L101">        return p2.subtract(p1).getNorm();</span>
+    }
+
+    private Vector2D getRotatedPoint(Vector2D pivot, Vector2D point, double deltaAngle) {
+<span class="fc" id="L105">        return new Vector2D(</span>
+                pivot.getX() + Math.cos(deltaAngle) * (point.getX() - pivot.getX())
+                - Math.sin(deltaAngle) * (point.getY() - pivot.getY()),
+                pivot.getY() + Math.sin(deltaAngle) * (point.getX() - pivot.getX())
+                + Math.cos(deltaAngle) * (point.getY() - pivot.getY())
+        );
+    }
+
+    @Override
+    public void translate(Vector2D deltaMovement) {
+<span class="fc" id="L115">        p1 = p1.add(deltaMovement);</span>
+<span class="fc" id="L116">        p2 = p2.add(deltaMovement);</span>
+<span class="fc" id="L117">    }</span>
+
+    private static double cross2D(Vector2D v1, Vector2D v2) {
+<span class="fc" id="L120">        return v1.getX() * v2.getY() - v1.getY() * v2.getX();</span>
+    }
+    
+    public static LineIntersection NoIntersection() {
+<span class="fc" id="L124">        return LineIntersection.noIntersection();</span>
+    }
+
+    public static class LineIntersection {
+
+        public final boolean isIntersection;
+        public final double line1DistToIntersect, line2DistToIntersect;
+        public final Vector2D intersectionPoint;
+        
+        public static LineIntersection noIntersection() {
+<span class="fc" id="L134">            return new LineIntersection();</span>
+        }
+
+<span class="fc" id="L137">        private LineIntersection() {</span>
+<span class="fc" id="L138">            isIntersection = false;</span>
+<span class="fc" id="L139">            line1DistToIntersect = NaN;</span>
+<span class="fc" id="L140">            line2DistToIntersect = NaN;</span>
+<span class="fc" id="L141">            intersectionPoint = Vector2D.NaN;</span>
+<span class="fc" id="L142">        }</span>
+
+<span class="fc" id="L144">        public LineIntersection(Line line1, Line line2) {</span>
+            /**
+             * Implementation of http://stackoverflow.com/a/565282
+             */
+<span class="fc" id="L148">            Vector2D q = line2.p1,</span>
+<span class="fc" id="L149">                    p = line1.p1,</span>
+<span class="fc" id="L150">                    s = line2.p2.subtract(line2.p1),</span>
+<span class="fc" id="L151">                    r = line1.p2.subtract(line1.p1),</span>
+<span class="fc" id="L152">                    qp = q.subtract(p);</span>
+<span class="fc" id="L153">            double rs = cross2D(r, s),</span>
+<span class="fc" id="L154">                    qpCrossR = cross2D(qp, r),</span>
+<span class="fc" id="L155">                    qpCrossS = cross2D(qp, s),</span>
+<span class="fc" id="L156">                    t = qpCrossS / rs,</span>
+<span class="fc" id="L157">                    u = qpCrossR / rs;</span>
+<span class="fc bfc" id="L158" title="All 2 branches covered.">            if (rs == 0) {</span>
+<span class="fc" id="L159">                isIntersection = false;</span>
+                /**
+                 * There are three possible cases if the cross product of r and
+                 * s is 0, all of which result in Nan being returned: (1) the
+                 * lines are parallel and do not intersect, (2) the lines are
+                 * collinear and disjoint, with no intersection, or (3) the
+                 * lines are collinear and overlapping, with no definitive
+                 * intersection point.
+                 */
+<span class="fc" id="L168">                intersectionPoint = Vector2D.NaN;</span>
+<span class="fc" id="L169">                line1DistToIntersect = NaN;</span>
+<span class="fc" id="L170">                line2DistToIntersect = NaN;</span>
+<span class="fc bfc" id="L171" title="All 10 branches covered.">            } else if (0 &lt; t &amp; t &lt; 1</span>
+                    &amp; 0 &lt; u &amp; u &lt; 1) {
+                //lines intersect, return p + tr
+<span class="fc" id="L174">                intersectionPoint = p.add(t, r);</span>
+<span class="fc" id="L175">                isIntersection = true;</span>
+<span class="fc" id="L176">                line1DistToIntersect = t * r.getNorm();</span>
+<span class="fc" id="L177">                line2DistToIntersect = u * s.getNorm();</span>
+            } else {
+                //non parallel and not intersecting
+<span class="fc" id="L180">                intersectionPoint = Vector2D.NaN;</span>
+<span class="fc" id="L181">                isIntersection = false;</span>
+<span class="fc" id="L182">                line1DistToIntersect = NaN;</span>
+<span class="fc" id="L183">                line2DistToIntersect = NaN;</span>
+            }
+<span class="fc" id="L185">        }</span>
+
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

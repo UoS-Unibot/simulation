@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>UnibotCommands.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;UnibotSim&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">org.unisim.reality</a> &gt; <span class="el_source">UnibotCommands.java</span></div><h1>UnibotCommands.java</h1><pre class="source lang-java linenums">/* 
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package org.unisim.reality;
+
+/**
+ *
+ * @author Miles Bryant (mb459@sussex.ac.uk)
+ */
+<span class="nc" id="L12">public enum UnibotCommands {</span>
+<span class="nc" id="L13">        DATA_GET_PACKET(&quot;!&quot;),</span>
+<span class="nc" id="L14">        DATA_GET_INERTIAL_MEASUREMENT(&quot;I&quot;),</span>
+<span class="nc" id="L15">        DATA_SET_PACKET_TYPE(&quot;t&quot;),</span>
+<span class="nc" id="L16">        DATA_REQUEST_WHEEL_STATE(&quot;W&quot;),</span>
+        
+<span class="nc" id="L18">        DRIVE_DIFFERENTIAL_EXT(&quot;D&quot;),</span>
+<span class="nc" id="L19">        DRIVE_DIFFERENTIAL_INT(&quot;d&quot;),</span>
+<span class="nc" id="L20">        DRIVE_ACKERMANN_VAR(&quot;C&quot;),</span>
+<span class="nc" id="L21">        DRIVE_ACKERMANN_FRONT(&quot;A&quot;),</span>
+<span class="nc" id="L22">        DRIVE_ACKERMANN_REAR(&quot;a&quot;),</span>
+<span class="nc" id="L23">        DRIVE_ACKERMANN_SET_AXLE_POS(&quot;z&quot;),</span>
+<span class="nc" id="L24">        DRIVE_VECTOR_EXT(&quot;V&quot;),</span>
+<span class="nc" id="L25">        DRIVE_VECTOR_INT(&quot;v&quot;),</span>
+        
+<span class="nc" id="L27">        RANGEFINDER_SET_ANGLE(&quot;Q&quot;),</span>
+<span class="nc" id="L28">        RANGEFINDER_GET_RANGE(&quot;q&quot;),</span>
+<span class="nc" id="L29">        RANGEFINDER_START_SCANNING(&quot;L&quot;),</span>
+<span class="nc" id="L30">        RANGEFINDER_STOP_SCANNING(&quot;l&quot;),</span>
+        
+<span class="nc" id="L32">        PING(&quot;?&quot;),</span>
+<span class="nc" id="L33">        SET_PAUSE_STATE(&quot;P&quot;),</span>
+<span class="nc" id="L34">        EMERGENCY_STOP(&quot;X&quot;),</span>
+<span class="nc" id="L35">        SET_STEERING_MOTOR_SPEED(&quot;g&quot;),</span>
+<span class="nc" id="L36">        SET_PID(&quot;M&quot;),</span>
+        ;
+        
+        private final String commandStr;
+
+<span class="nc" id="L41">        private UnibotCommands(String commandStr) {</span>
+<span class="nc" id="L42">            this.commandStr = commandStr;</span>
+<span class="nc" id="L43">        }</span>
+
+        /**
+         * Gets the command string associated with this command that is sent to
+         * the serial port (without the # prefix)
+         *
+         * @return
+         */
+        public String getCommandStr() {
+<span class="nc" id="L52">            return commandStr;</span>
+        }
+    }
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

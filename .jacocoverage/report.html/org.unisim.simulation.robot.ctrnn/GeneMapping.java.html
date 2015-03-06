@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>GeneMapping.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;UnibotSim&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">org.unisim.simulation.robot.ctrnn</a> &gt; <span class="el_source">GeneMapping.java</span></div><h1>GeneMapping.java</h1><pre class="source lang-java linenums">/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package org.unisim.simulation.robot.ctrnn;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+/**
+ *
+ * @author Miles
+ */
+<span class="fc" id="L15">public class GeneMapping {</span>
+<span class="fc" id="L16">    HashMap&lt;Integer,Gene&gt; genes = new HashMap&lt;&gt;();</span>
+<span class="fc" id="L17">    private int highestGeneID = 0;</span>
+    
+    public void add(int gID, int neuronID,Parameter type) {
+<span class="fc" id="L20">        Gene gene = getGene(gID);</span>
+<span class="fc" id="L21">        Mapping mapping = new Mapping();</span>
+<span class="fc" id="L22">        mapping.neuronID = neuronID;</span>
+<span class="fc" id="L23">        mapping.type = type;</span>
+<span class="fc" id="L24">        gene.mappings.add(mapping);</span>
+<span class="fc bfc" id="L25" title="All 2 branches covered.">        if(gID &gt; highestGeneID)</span>
+<span class="fc" id="L26">            highestGeneID = gID;</span>
+<span class="fc" id="L27">    }</span>
+
+    public int getHighestGeneID() {
+<span class="fc" id="L30">        return highestGeneID;</span>
+    }
+    
+    
+    
+    public void addWeight(int gID, int neuronID1,int neuronID2) {
+<span class="nc" id="L36">        Gene gene = getGene(gID);</span>
+<span class="nc" id="L37">        Mapping mapping = new Mapping();</span>
+<span class="nc" id="L38">        mapping.neuronID = neuronID1;</span>
+<span class="nc" id="L39">        mapping.neuronID2 = neuronID2;</span>
+<span class="nc" id="L40">        mapping.type = Parameter.WEIGHT;</span>
+<span class="nc" id="L41">        gene.mappings.add(mapping);</span>
+<span class="nc bnc" id="L42" title="All 2 branches missed.">        if(gID &gt; highestGeneID)</span>
+<span class="nc" id="L43">            highestGeneID = gID;</span>
+<span class="nc" id="L44">    }</span>
+    
+    public int getGeneCount() {
+<span class="nc" id="L47">        return genes.size();</span>
+    }
+    
+    public Gene getGene(int gID) {
+        Gene gene;
+<span class="fc bfc" id="L52" title="All 2 branches covered.">        if(genes.containsKey(gID))</span>
+<span class="fc" id="L53">            return genes.get(gID);</span>
+        else {
+<span class="fc" id="L55">            gene = new Gene();</span>
+<span class="fc" id="L56">            genes.put(gID, gene);</span>
+<span class="fc" id="L57">            return gene;</span>
+        }
+    }
+    
+<span class="pc" id="L61">    public static enum Parameter {</span>
+<span class="fc" id="L62">        TAU,BIAS,GAIN,WEIGHT</span>
+    }
+<span class="fc" id="L64">    public class Gene {</span>
+<span class="fc" id="L65">        ArrayList&lt;Mapping&gt; mappings = new ArrayList&lt;&gt;();</span>
+    }
+<span class="fc" id="L67">    public class Mapping {</span>
+        int neuronID;
+        Parameter type;
+        int neuronID2;
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

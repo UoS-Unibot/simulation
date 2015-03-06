@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Range.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;UnibotSim&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">org.unisim.util</a> &gt; <span class="el_source">Range.java</span></div><h1>Range.java</h1><pre class="source lang-java linenums">/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package org.unisim.util;
+
+import java.util.ArrayList;
+import java.util.Random;
+
+/**
+ *
+ * @author Miles
+ */
+public class Range {
+    public int low,high;
+<span class="fc" id="L17">        public Range(int low, int high) {</span>
+<span class="fc" id="L18">            this.low = low; this.high = high;</span>
+<span class="fc" id="L19">        }</span>
+        public int getDiff() {
+<span class="nc" id="L21">            return high - low;</span>
+        }
+        public float map(float x) {
+            //maps a val of -1 to 1 to this range
+<span class="nc" id="L25">            return getDiff() * (x + 1) / 2 + low;</span>
+        }
+        public float[] map(float[] x) {
+            //same with an array
+<span class="nc" id="L29">            float[] r = new float[x.length];</span>
+<span class="nc bnc" id="L30" title="All 2 branches missed.">            for(int i = 0; i&lt; x.length; i++) {</span>
+<span class="nc" id="L31">                r[i] = map(x[i]);</span>
+            }
+<span class="nc" id="L33">            return r;</span>
+        }
+        public ArrayList&lt;Float&gt; map(ArrayList&lt;Float&gt; x) {
+<span class="nc" id="L36">            ArrayList&lt;Float&gt; r = new ArrayList&lt;&gt;(x.size());</span>
+<span class="nc bnc" id="L37" title="All 2 branches missed.">            for(float d : x)</span>
+<span class="nc" id="L38">                r.add(map(d));</span>
+<span class="nc" id="L39">            return r;</span>
+        }
+        
+        public float getRandDouble() {
+<span class="nc" id="L43">            Random rand = new Random();</span>
+<span class="nc" id="L44">            return (float)rand.nextDouble() * getDiff() - low;</span>
+        }
+        public float clip(float x) {
+<span class="nc bnc" id="L47" title="All 2 branches missed.">            if(x &lt; low)</span>
+<span class="nc" id="L48">                return low;</span>
+<span class="nc bnc" id="L49" title="All 2 branches missed.">            if(x &gt; high)</span>
+<span class="nc" id="L50">                return high;</span>
+<span class="nc" id="L51">            return x;</span>
+        }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

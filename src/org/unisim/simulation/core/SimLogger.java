@@ -18,14 +18,14 @@ public class SimLogger {
         data = new DataFile(new String[]{"RobotX","RobotY","RobotHeading","RobotVelocity","RobotAngularVelocity","Rangefinder"});
     }
     
-    public void update(SimulatedUnibot robot) {
-        data.addData("RobotX", robot.getPosition().getX());
-        data.addData("RobotY", robot.getPosition().getY());
-        data.addData("RobotHeading", robot.getHeading());
-        data.addData("RobotVelocity", robot.getVelocity());
-        data.addData("RobotAngularVelocity", robot.getAngularVelocity());
-        data.addData("Rangefinder", robot.getLastRangeFinderValue());
-    }
+//    public void update(SimulatedUnibot robot) {
+//        data.addData("RobotX", robot.getPosition().getX());
+//        data.addData("RobotY", robot.getPosition().getY());
+//        data.addData("RobotHeading", robot.getHeading());
+//        data.addData("RobotVelocity", robot.getVelocity());
+//        data.addData("RobotAngularVelocity", robot.getAngularVelocity());
+//        data.addData("Rangefinder", robot.getLastRangeFinderValue());
+//    }
     
     public DataFile getData() {
         return data;

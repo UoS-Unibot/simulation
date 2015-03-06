@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Shape2D.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;UnibotSim&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">org.unisim.simulation.geometry</a> &gt; <span class="el_source">Shape2D.java</span></div><h1>Shape2D.java</h1><pre class="source lang-java linenums">/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package org.unisim.simulation.geometry;
+
+import org.unisim.simulation.geometry.Line;
+import java.awt.Graphics2D;
+import java.awt.Shape;
+import java.awt.geom.Path2D;
+import java.util.Collection;
+import java.util.LinkedList;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.unisim.simulation.geometry.Line.LineIntersection;
+
+/**
+ *
+ * @author miles
+ */
+public class Shape2D {
+
+    private final LinkedList&lt;Line&gt; lines;
+    private Vector2D center;
+    private double rotation;
+
+    public Shape2D() {
+<span class="fc" id="L28">        this(Vector2D.ZERO);</span>
+<span class="fc" id="L29">    }</span>
+
+<span class="fc" id="L31">    public Shape2D(Vector2D center) {</span>
+<span class="fc" id="L32">        lines = new LinkedList&lt;&gt;();</span>
+<span class="fc" id="L33">        this.center = center;</span>
+<span class="fc" id="L34">    }</span>
+
+    public static Shape2D createRectangleFromCenter(Vector2D center, Vector2D size, double rotation) {
+<span class="fc" id="L37">        Shape2D shape = new Shape2D();</span>
+<span class="fc" id="L38">        double halfW = size.getX() / 2,</span>
+<span class="fc" id="L39">                halfH = size.getY() / 2,</span>
+<span class="fc" id="L40">                x1 = center.getX() - halfW,</span>
+<span class="fc" id="L41">                y1 = center.getY() + halfH,</span>
+<span class="fc" id="L42">                x2 = center.getX() + halfW,</span>
+<span class="fc" id="L43">                y2 = center.getY() - halfH;</span>
+<span class="fc" id="L44">        shape.addLine(Line.fromCoords(x1, y1, x1, y2));</span>
+<span class="fc" id="L45">        shape.addLine(Line.fromCoords(x1, y2, x2, y2));</span>
+<span class="fc" id="L46">        shape.addLine(Line.fromCoords(x2, y2, x2, y1));</span>
+<span class="fc" id="L47">        shape.addLine(Line.fromCoords(x2, y1, x1, y1));</span>
+<span class="fc" id="L48">        shape.rotate(rotation);</span>
+<span class="fc" id="L49">        return shape;</span>
+    }
+
+    public Shape toJava2DShape() {
+<span class="nc" id="L53">        Path2D s = new Path2D.Double();</span>
+<span class="nc bnc" id="L54" title="All 2 branches missed.">        for (Line line : lines) {</span>
+<span class="nc" id="L55">            s.append(line.toLine2D(), true);</span>
+<span class="nc" id="L56">        }</span>
+<span class="nc" id="L57">        s.closePath();</span>
+<span class="nc" id="L58">        return s;</span>
+    }
+
+    public void addLine(Line line) {
+<span class="fc" id="L62">        lines.add(line);</span>
+<span class="fc" id="L63">    }</span>
+
+    public void addLine(double x1, double y1, double x2, double y2) {
+<span class="nc" id="L66">        addLine(Line.fromCoords(x1, y1, x2, y2));</span>
+<span class="nc" id="L67">    }</span>
+
+    public boolean isEmpty() {
+<span class="fc" id="L70">        return lines.isEmpty();</span>
+    }
+
+    public void rotate(double deltaAngle) {
+<span class="fc" id="L74">        rotation = (rotation + deltaAngle) % (2 * Math.PI);</span>
+<span class="fc bfc" id="L75" title="All 2 branches covered.">        for (Line line : lines) {</span>
+<span class="fc" id="L76">            line.rotate(center, deltaAngle);</span>
+<span class="fc" id="L77">        }</span>
+<span class="fc" id="L78">    }</span>
+
+    public Vector2D getLocalToWorldCoords(Vector2D localCoords) {
+<span class="fc" id="L81">        return getCenter().add(</span>
+                new Vector2D(
+                        localCoords.getX() * Math.cos(rotation),
+                        localCoords.getY() * Math.sin(rotation)
+                )
+        );
+    }
+
+    public void move(double distance, double deltaAngle) {
+<span class="nc" id="L90">        translate(new Vector2D(distance * Math.cos(getRotation()), distance * Math.sin(getRotation())));</span>
+<span class="nc" id="L91">        rotate(deltaAngle);</span>
+<span class="nc" id="L92">    }</span>
+
+    public void translate(Vector2D deltaMovement) {
+<span class="fc" id="L95">        center = center.add(deltaMovement);</span>
+<span class="fc bfc" id="L96" title="All 2 branches covered.">        for (Line l : getLines()) {</span>
+<span class="fc" id="L97">            l.translate(deltaMovement);</span>
+<span class="fc" id="L98">        }</span>
+<span class="fc" id="L99">    }</span>
+
+    public Collection&lt;Line&gt; getLines() {
+<span class="fc" id="L102">        return lines;</span>
+    }
+
+    public Collection&lt;Vector2D&gt; getIntersectionPoints(Shape2D shape) {
+<span class="nc" id="L106">        LinkedList&lt;Vector2D&gt; ips = new LinkedList&lt;&gt;();</span>
+<span class="nc bnc" id="L107" title="All 2 branches missed.">        for (Line l1 : getLines()) {</span>
+<span class="nc bnc" id="L108" title="All 2 branches missed.">            for (Line l2 : shape.getLines()) {</span>
+<span class="nc" id="L109">                LineIntersection result = l1.getIntersection(l2);</span>
+<span class="nc bnc" id="L110" title="All 2 branches missed.">                if (result.isIntersection) {</span>
+<span class="nc" id="L111">                    ips.add(result.intersectionPoint);</span>
+                }
+<span class="nc" id="L113">            }</span>
+<span class="nc" id="L114">        }</span>
+<span class="nc" id="L115">        return ips;</span>
+    }
+
+    public LineIntersection getSmallestLineIntersection(Line line) {
+<span class="fc" id="L119">        LineIntersection lowestLine = Line.NoIntersection();</span>
+<span class="fc bfc" id="L120" title="All 2 branches covered.">        for (Line shapeLine : getLines()) {</span>
+<span class="fc" id="L121">            LineIntersection li = line.getIntersection(shapeLine);</span>
+<span class="fc bfc" id="L122" title="All 2 branches covered.">            if (li.isIntersection) {</span>
+<span class="fc bfc" id="L123" title="All 2 branches covered.">                if (!lowestLine.isIntersection) {</span>
+<span class="fc" id="L124">                    lowestLine = li;</span>
+<span class="fc bfc" id="L125" title="All 2 branches covered.">                } else if (li.line1DistToIntersect &lt; lowestLine.line1DistToIntersect) {</span>
+<span class="fc" id="L126">                    lowestLine = li;</span>
+                }
+            }
+<span class="fc" id="L129">        }</span>
+<span class="fc" id="L130">        return lowestLine;</span>
+    }
+
+    public double getSmallestLineIntersectionDist(Line line) {
+<span class="nc" id="L134">        Double lowestDist = Double.NaN;</span>
+<span class="nc bnc" id="L135" title="All 2 branches missed.">        for (Line shapeLine : getLines()) {</span>
+<span class="nc" id="L136">            LineIntersection li = line.getIntersection(shapeLine);</span>
+<span class="nc bnc" id="L137" title="All 2 branches missed.">            if (li.isIntersection) {</span>
+<span class="nc bnc" id="L138" title="All 2 branches missed.">                if (lowestDist.isNaN()) {</span>
+<span class="nc" id="L139">                    lowestDist = li.line1DistToIntersect;</span>
+<span class="nc bnc" id="L140" title="All 2 branches missed.">                } else if (li.line1DistToIntersect &lt; lowestDist) {</span>
+<span class="nc" id="L141">                    lowestDist = li.line1DistToIntersect;</span>
+                }
+            }
+<span class="nc" id="L144">        }</span>
+<span class="nc" id="L145">        return lowestDist;</span>
+    }
+
+    public void fill(Graphics2D g2) {
+<span class="nc" id="L149">        Path2D path = new Path2D.Double();</span>
+<span class="nc bnc" id="L150" title="All 2 branches missed.">        for (Line l : lines) {</span>
+<span class="nc" id="L151">            path.append(l.toLine2D(), false);</span>
+<span class="nc" id="L152">        }</span>
+<span class="nc" id="L153">        g2.fill(path);</span>
+<span class="nc" id="L154">    }</span>
+
+    public boolean intersectsWith(Shape2D shape) {
+<span class="fc bfc" id="L157" title="All 2 branches covered.">        for (Line l1 : getLines()) {</span>
+<span class="fc bfc" id="L158" title="All 2 branches covered.">            for (Line l2 : shape.getLines()) {</span>
+<span class="fc bfc" id="L159" title="All 2 branches covered.">                if (l1.getIntersection(l2).isIntersection) {</span>
+<span class="fc" id="L160">                    return true;</span>
+                }
+<span class="fc" id="L162">            }</span>
+<span class="fc" id="L163">        }</span>
+<span class="fc" id="L164">        return false;</span>
+    }
+
+    public Vector2D getCenter() {
+<span class="fc" id="L168">        return center;</span>
+    }
+
+    public void setCenter(Vector2D center) {
+<span class="nc" id="L172">        this.center = center;</span>
+<span class="nc" id="L173">    }</span>
+
+    public double getRotation() {
+<span class="nc" id="L176">        return rotation;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>
