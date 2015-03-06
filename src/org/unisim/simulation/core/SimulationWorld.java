@@ -97,6 +97,22 @@ public class SimulationWorld {
         return "SimulationWorld{" + "objects=" + objects + ", listeners=" + listeners + '}';
     }
     
-    
+    public Vector2D getBounds() {
+        return new Vector2D(5,5);
+    }
+
+    public double findRange(Line rangeFinderLine) {
+        double lowestDist = 0; //will return this if no intersection found
+
+        for (Shape2D obj : objects) {
+            Line.LineIntersection li = obj.getSmallestLineIntersection(rangeFinderLine);
+            if (li.isIntersection) {
+                if (lowestDist == 0 | li.line1DistToIntersect < lowestDist) {
+                    lowestDist = li.line1DistToIntersect;
+                }
+            }
+        }
+        return (float) lowestDist;
+    }
 
 }

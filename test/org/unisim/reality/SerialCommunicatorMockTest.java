@@ -19,7 +19,6 @@ public class SerialCommunicatorMockTest {
 			mockedEvent.isRXCHAR(); result = true;
 		}};
 		SerialCommunicator communicatorUnderTest = new SerialCommunicator();
-		communicatorUnderTest.setListener(mockedListener);
 		communicatorUnderTest.serialEvent(mockedEvent);
 		new Verifications() {{
 			mockedListener.dataReceivedEvent("A1"); times = 1;
