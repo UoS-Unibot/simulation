@@ -10,7 +10,7 @@ import mockit.Mocked;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import static org.junit.Assert.assertThat;
 import org.junit.Test;
-import org.unisim.reality.SimulationController;
+import org.unisim.reality.RunController;
 import org.unisim.simulation.core.SimulationWorld;
 import org.unisim.simulation.robot.IRobotController;
 import org.unisim.simulation.robot.SimulatedRobotBody;
@@ -24,12 +24,12 @@ public class EndToEndTests {
     @Mocked IRobotController controller;
     @Mocked SimulationWorld world;
     SimulatedRobotBody robot;
-    SimulationController sim;
+    RunController sim;
     
     @Test
     public void controllerWith0VelocityDoesNotMoveRobot() {
         robot = new SimulatedRobotBody(world);
-        sim = new SimulationController(controller,robot);
+        sim = new RunController(controller,robot);
         new Expectations() {{
             controller.getVelocity(); result = 0;
             controller.getAngularVelocity(); result = 0;
@@ -43,7 +43,7 @@ public class EndToEndTests {
     @Test
     public void controllerWith1VelocityMoves1Meter() {
         robot = new SimulatedRobotBody(world);
-        sim = new SimulationController(controller,robot);
+        sim = new RunController(controller,robot);
         new Expectations() {{
             controller.getVelocity(); result = 1;
             controller.getAngularVelocity(); result = 0;

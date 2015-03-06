@@ -10,6 +10,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JPanel;
@@ -18,11 +19,11 @@ import org.unisim.exp.Experiment;
 import org.unisim.exp.params.Parameters;
 import org.unisim.genesis.RobotGenotype;
 import org.unisim.genesis.RobotIndividual;
-import org.unisim.simulation.core.OldSimulationController;
-import org.unisim.simulation.core.SimulationWorld;
 import org.unisim.simulation.robot.ctrnn.CTRNNController;
 import org.unisim.simulation.robot.ctrnn.CTRNNLayout;
 import org.unisim.io.ctrnn.JSONCTRNNLayout;
+import org.unisim.reality.RunController;
+import org.unisim.simulation.core.SimulationBuilder;
 
 /**
  *
@@ -73,7 +74,7 @@ public class SimulationViewer extends JPanel {
     }
     
     public void loadSimulation(Experiment exp,RobotGenotype geno) {
-        OldSimulationController controller = new OldSimulationController.SimulationBuilder(new CTRNNController(geno, exp.getParam())).setWorld(exp.getWorld()).build();
+        RunController controller = new SimulationBuilder(new CTRNNController(geno, exp.getParam())).setWorld(exp.getWorld()).build();
         cv.loadSimulation(controller);
     }
     
@@ -90,7 +91,7 @@ public class SimulationViewer extends JPanel {
         exp.setLayout(layout);
         exp.setParam(new Parameters());
         ind = new RobotIndividual(exp);
-        OldSimulationController controller = new OldSimulationController.SimulationBuilder(new CTRNNController(ind.getGenotype(), new Parameters())).setWorldSize(new Vector2D(10,10)).build();
+        RunController controller = new SimulationBuilder(new CTRNNController(ind.getGenotype(), new Parameters())).setWorldSize(new Vector2D(10,10)).build();
         cv.loadSimulation(controller);
     }
 

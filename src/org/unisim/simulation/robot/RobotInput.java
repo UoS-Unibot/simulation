@@ -10,11 +10,11 @@ package org.unisim.simulation.robot;
  */
 public class RobotInput {
 
-    private final float range;
-    private final float sonar1;
-    private final float sonar2;
-    private final float sonar3;
-    private final float sonar4;
+    private final double range;
+    private final double sonar1;
+    private final double sonar2;
+    private final double sonar3;
+    private final double sonar4;
 
     /**
      * Creates a new RobotInput to pass to a controller.
@@ -24,46 +24,50 @@ public class RobotInput {
      * @param sonar3 Value of sonar 3.
      * @param sonar4 Value of sonar 4.
      */
-    public RobotInput(float range, float sonar1, float sonar2, float sonar3, float sonar4) {
+    public RobotInput(double range, double sonar1, double sonar2, double sonar3, double sonar4) {
         this.range = range;
         this.sonar1 = sonar1;
         this.sonar2 = sonar2;
         this.sonar3 = sonar3;
         this.sonar4 = sonar4;
     }
+    
+    public RobotInput(double range, double[] sonars) {
+        this(range,sonars[0],sonars[1],sonars[2],sonars[3]);
+    }
 
     /**
      * @return the value of sonar4
      */
-    public float getSonar4() {
+    public double getSonar4() {
         return sonar4;
     }
 
     /**
      * @return the value of sonar3
      */
-    public float getSonar3() {
+    public double getSonar3() {
         return sonar3;
     }
 
     /**
      * @return the value of sonar2
      */
-    public float getSonar2() {
+    public double getSonar2() {
         return sonar2;
     }
 
     /**
      * @return the value of sonar1
      */
-    public float getSonar1() {
+    public double getSonar1() {
         return sonar1;
     }
 
     /**
      * @return the rangefinder value.
      */
-    public float getRange() {
+    public double getRange() {
         return range;
     }
 

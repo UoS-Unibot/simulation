@@ -26,7 +26,7 @@ public interface IRobotController {
      *
      * @return Current forward velocity in metres/second.
      */
-    public float getVelocity();
+    public double getVelocity();
 
     /**
      * Gets the current angular velocity output of the controller in
@@ -34,5 +34,5 @@ public interface IRobotController {
      *
      * @return Current angular velocity in radians/second.
      */
-    public float getAngularVelocity();
+    public double getAngularVelocity();
 }

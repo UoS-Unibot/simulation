@@ -22,12 +22,12 @@ public class CTRNNController implements IRobotController{
     int nSensors; //number of sensory inputs in the agent. The first nSensor neurons will receive input
     public Neuron[] neurons; //array of neurons
     public ArrayList<ArrayList<Neuron>> neuronLayers; //stores layers of neurons
-    public float[] taus,biases,gains,states,outputs;
-    public float[][] weights;
+    public double[] taus,biases,gains,states,outputs;
+    public double[][] weights;
     public int outIndL,outIndR;
     public ArrayList<Integer> sensNeurIndices;
     Parameters params;
-    private final float axleWidth;
+    private final double axleWidth;
     
     public CTRNNController(RobotGenotype g, Parameters params) {
         this(g,params,0.6f);
@@ -38,15 +38,15 @@ public class CTRNNController implements IRobotController{
      * @param nSensors
      * @param g 
      */
-    public CTRNNController(RobotGenotype g, Parameters params,float axleWidth) {
+    public CTRNNController(RobotGenotype g, Parameters params,double axleWidth) {
         this.n = g.layout.getTotalN(); //get number of neurons
         this.axleWidth = axleWidth;
-        taus = new float[n];
-        biases = new float[n];
-        gains = new float[n];
-        states = new float[n];
-        outputs = new float[n];
-        weights = new float[n][n];
+        taus = new double[n];
+        biases = new double[n];
+        gains = new double[n];
+        states = new double[n];
+        outputs = new double[n];
+        weights = new double[n][n];
         
         nSensors = g.layout.sensorInputs.size();
         
@@ -78,8 +78,8 @@ public class CTRNNController implements IRobotController{
      * Integrates one time step
      * @param inputs 
      */
-    public void step(float[] inputs) {
-        float stepSize = (float)params.getController_timestep();
+    public void step(double[] inputs) {
+        double stepSize = (double)params.getController_timestep();
         EulerStep(stepSize,inputs);
     }
     
@@ -88,9 +88,9 @@ public class CTRNNController implements IRobotController{
      * @param stepSize
      * @param inputs 
      */
-    public void EulerStep(float stepSize, float[] inputs) {
+    public void EulerStep(double stepSize, double[] inputs) {
         for(int i = 0; i < n; i++) {
-            float input;
+            double input;
             int sensInd = sensNeurIndices.indexOf(i);
             if(sensInd != -1)
                 input = inputs[sensInd];
@@ -105,13 +105,13 @@ public class CTRNNController implements IRobotController{
     /**
      * @return motor output: relative difference between motor neurons (last two neurons)
      */
-    public float getMotorLOutput() {
+    public double getMotorLOutput() {
         return outputs[outIndL];
     }
     /**
      * @return motor output: relative difference between motor neurons (last two neurons)
      */
-    public float getMotorROutput() {
+    public double getMotorROutput() {
         return outputs[outIndR];
     }
     /**
@@ -119,30 +119,30 @@ public class CTRNNController implements IRobotController{
      * @param x
      * @return 
      */
-    protected float sigmoid(float x) {
-        return 1.0f / (1 + (float)Math.exp(-x));
+    protected double sigmoid(double x) {
+        return 1.0f / (1 + (double)Math.exp(-x));
     }
     /**
      * Inverse standard sigmoid function.
      * @param x
      * @return 
      */
-    private float invSigmoid(float x) {
-        return (float)Math.log(x / (1 - x));
+    private double invSigmoid(double x) {
+        return (double)Math.log(x / (1 - x));
     }
 
     @Override
     public void step(RobotInput input) {
-        step(new float[]{input.getRange()});
+        step(new double[]{input.getRange()});
     }
 
     @Override
-    public float getVelocity() {
+    public double getVelocity() {
         return (getMotorLOutput() + getMotorROutput()) / 2;
     }
 
     @Override
-    public float getAngularVelocity() {
+    public double getAngularVelocity() {
         return (getMotorROutput() - getMotorLOutput()) / axleWidth;
     }
     

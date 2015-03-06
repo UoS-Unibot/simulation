@@ -56,7 +56,7 @@ public class SimulatedRobotBody implements IRobotBody {
 
     @Override
     public double[] getSonars() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new double[]{0,0,0,0};
     }
 
     @Override
@@ -84,20 +84,33 @@ public class SimulatedRobotBody implements IRobotBody {
 
     @Override
     public void step(double velocity, double angularVelocity) {
+        if(!live)
+            return;
+        //Calculate movement vector
         double dist = velocity * timeStepLength;
         Vector2D changeV = new Vector2D(dist * Math.cos(heading), dist * Math.sin(heading));
-        double changeA = (angularVelocity * timeStepLength) % (2 * Math.PI);
         shape.translate(changeV);
         position = position.add(changeV);
-        rangeFinderLine.translate(changeV);
+        rangeFinderLine.translate(changeV);        
+        
+        //Calculate actual rotation
+        double changeA = (angularVelocity * timeStepLength) % (2 * Math.PI);
         rangeFinderLine.rotate(changeA);
+        shape.rotate(changeA);
         heading += changeA;
         
+        world.checkCollisions(this);
     }
 
     public void doCollision(Shape2D obj) {
         live = false;
     }
+
+    public SimulationWorld getWorld() {
+        return world;
+    }
+    
+    
     
     
     

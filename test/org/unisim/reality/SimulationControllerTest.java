@@ -22,11 +22,11 @@ public class SimulationControllerTest {
     
     @Mocked IRobotController controller;
     @Mocked SimulatedRobotBody robot;
-    SimulationController sim;
+    RunController sim;
 
     @Test
     public void simStepCallsRobotStepWithCorrectVelocityAndAngularVelocity() {
-        sim = new SimulationController(controller, robot);
+        sim = new RunController(controller, robot);
         new Expectations() {{
             robot.step(1,0); 
             controller.getVelocity();result = 1f;

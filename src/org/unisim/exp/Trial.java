@@ -5,52 +5,42 @@
  */
 package org.unisim.exp;
 
-import org.unisim.simulation.core.OldSimulationController;
-import org.unisim.simulation.core.SimulationEventListener;
+import org.unisim.reality.RunController;
+import org.unisim.simulation.robot.SimulatedRobotBody;
 
 /**
  *
  * @author miles
  */
-public class Trial implements SimulationEventListener {
+public class Trial {
 
-    private final OldSimulationController simulation;
+    private final RunController simulation;
     private final double trialLength;
     private final boolean terminateOnCollision;
     private volatile  boolean terminateTrial = false;
 
-    public Trial(OldSimulationController simulation, double trialLength, boolean loggingEnabled, boolean terminateOnCollision) {
+    public Trial(RunController simulation, double trialLength, boolean loggingEnabled, boolean terminateOnCollision) {
         this.simulation = simulation;
         this.trialLength = trialLength;
         this.terminateOnCollision = terminateOnCollision;
-        simulation.addListener(this);
     }
 
     public synchronized boolean trialTerminated() {
         return terminateTrial;
     }
     
-    @Override
-    public boolean collisionOccured() {
-        if (terminateOnCollision) {
-            terminateTrial = true;
-            return true;
-        }
-        return false;
-    }
     
 
     public double run() {
-        float velocitySum = 0;
         double trialLengthMsec = trialLength * 60 * simulation.getTimeStep();
+        double totalT = 0;
         for (float t = 0; t < trialLengthMsec; t += simulation.getTimeStep()) {
             if (trialTerminated()) {
-                return 0;
+                return t/trialLengthMsec;
             }
             simulation.step();
-            velocitySum += simulation.getRobot().getVelocity();
         }
-        return velocitySum / trialLengthMsec;
+        return 1;
     }
 
 }
