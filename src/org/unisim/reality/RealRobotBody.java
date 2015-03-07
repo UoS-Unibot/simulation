@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.unisim.reality;
 
 import java.util.logging.Level;
@@ -13,13 +8,45 @@ import jssc.SerialPortException;
 import jssc.SerialPortTimeoutException;
 import org.unisim.simulation.robot.IRobotBody;
 
+/**
+ * The RealRobotBody implements the IRobotBody interface representing a real
+ * robot with serial communication.
+ *
+ * @author Miles Bryant <mb459 at sussex.ac.uk>
+ */
 public class RealRobotBody implements IRobotBody {
 
-    private double lastRange = Double.NaN;
     private final SerialCommunicator serial;
-
     private final SerialParameters parameters;
 
+    private double lastRange = Double.NaN;
+    private double[] lastSonarReadings;
+    private boolean live = true;
+
+    /**
+     * Instantiates a new RealRobotBody with default parameters. Sends a command
+     * to the Unibot specifying that data packet 3 (sonar) should be returned
+     * after sending motor commands.
+     *
+     * @throws SerialPortException If an error occurs opening the serial port.
+     * @throws SerialPortTimeoutException If the data packet command times out.
+     */
+    public RealRobotBody() throws SerialPortException,
+            SerialPortTimeoutException {
+        this(new SerialParameters());
+    }
+
+    /**
+     * Instantiates a new RealRobotBody with specified parameters. Sends a
+     * command to the Unibot specifying that data packet 3 (sonar) should be
+     * returned after sending motor commands.
+     *
+     * @param parameters SerialParameters specifying port name, time out length
+     * and robot calibration data.
+     *
+     * @throws SerialPortException If an error occurs opening the serial port.
+     * @throws SerialPortTimeoutException If the data packet command times out.
+     */
     public RealRobotBody(SerialParameters parameters) throws SerialPortException,
             SerialPortTimeoutException {
         this.parameters = parameters;
@@ -29,26 +56,39 @@ public class RealRobotBody implements IRobotBody {
         serial.readLine();
     }
 
-    public RealRobotBody() throws SerialPortException,
-            SerialPortTimeoutException {
-        this(new SerialParameters());
-    }
-
+    /**
+     * Closes the serial port, also sending a halt command to the robot. Should
+     * be called on close down.
+     *
+     * @throws SerialPortException
+     */
     public void closePort() throws SerialPortException {
         serial.sendCommand("#d0");
         serial.closeSerialPort();
     }
 
-    private double[] lastSonarReadings;
-
+    /**
+     * Directly sets the motor speed of the robot, and reads the returned data
+     * packet from the serial port.
+     *
+     * @param velocity Forward velocity to send to the robot in m/s.
+     * @param angularVelocity Angular velocity to send to the robot in radians/s
+     * @throws SerialPortException If an error with the serial port occurs.
+     * @throws SerialPortTimeoutException If the motor command sent times out.
+     */
     public void setMotors(double velocity, double angularVelocity) throws
             SerialPortException, SerialPortTimeoutException {
-        //TODO: implement conversion from real world units to command
-        serial.sendCommand(String.format("#d %f %f", velocity,
-                angularVelocity));
+        serial.sendCommand(String.format("#d %f %f", parameters.
+                getCalibratedForwardVelocityMultiplier() * velocity,
+                parameters.getCalibratedAngularVelocityMultiplier()
+                * angularVelocity));
         readData();
     }
 
+    /**
+     * 
+     * @return 
+     */
     @Override
     public double getRange() {
         Double d = lastRange;
@@ -86,8 +126,6 @@ public class RealRobotBody implements IRobotBody {
         return s;
     }
 
-    private boolean live = true;
-
     @Override
     public boolean isLive() {
         return live;
@@ -104,28 +142,30 @@ public class RealRobotBody implements IRobotBody {
     }
 
     public void readData() throws SerialPortTimeoutException {
-            String data = serial.readLine();
-            if (STARTUP_PATTERN.matcher(data).matches()) {
-                Logger.getLogger(RealRobotBody.class.getName()).info("Unibot startup okay");
+        String data = serial.readLine();
+        if (STARTUP_PATTERN.matcher(data).matches()) {
+            Logger.getLogger(RealRobotBody.class.getName()).info(
+                    "Unibot startup okay");
+        } else {
+            Matcher range = RANGE_PATTERN.matcher(data);
+            if (range.matches()) {
+                lastRange = Double.parseDouble(range.group(1));
             } else {
-                Matcher range = RANGE_PATTERN.matcher(data);
-                if (range.matches()) {
-                    lastRange = Double.parseDouble(range.group(1));
+                Matcher sonar = SONAR_PATTERN.matcher(data);
+                if (sonar.matches()) {
+                    lastSonarReadings = new double[]{
+                        Double.parseDouble(sonar.group(1)),
+                        Double.parseDouble(sonar.group(2)),
+                        Double.parseDouble(sonar.group(3)),
+                        Double.parseDouble(sonar.group(4))
+                    };
                 } else {
-                    Matcher sonar = SONAR_PATTERN.matcher(data);
-                    if (sonar.matches()) {
-                        lastSonarReadings = new double[]{
-                            Double.parseDouble(sonar.group(1)),
-                            Double.parseDouble(sonar.group(2)),
-                            Double.parseDouble(sonar.group(3)),
-                            Double.parseDouble(sonar.group(4))
-                        };
-                    } else {
-                        Logger.getLogger(RealRobotBody.class.getName()).log(Level.WARNING,
-                                "Could not parsed received data: {0}", data);
-                    }
+                    Logger.getLogger(RealRobotBody.class.getName()).log(
+                            Level.WARNING,
+                            "Could not parsed received data: {0}", data);
                 }
             }
+        }
     }
 
     public void halt() throws SerialPortException {

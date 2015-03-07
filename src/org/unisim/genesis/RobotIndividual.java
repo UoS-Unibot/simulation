@@ -61,7 +61,7 @@ public class RobotIndividual implements Comparable<RobotIndividual> {
 
         //float[] angs = {1,-3,-2,-4,4,-6,5,-5,-1,2,6,3};
         RunController sc
-                = new SimulationBuilder(new CTRNNController(genotype, params)).setWorld(world).build();
+                = new SimulationBuilder(new CTRNNController(genotype.layout, params.getController_timestep())).setWorld(world).build();
 
         for (int i = 0; i < nTrials; i++) {
 

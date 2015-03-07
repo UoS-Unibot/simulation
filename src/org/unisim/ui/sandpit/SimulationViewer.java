@@ -74,7 +74,7 @@ public class SimulationViewer extends JPanel {
     }
     
     public void loadSimulation(Experiment exp,RobotGenotype geno) {
-        RunController controller = new SimulationBuilder(new CTRNNController(geno, exp.getParam())).setWorld(exp.getWorld()).build();
+        RunController controller = new SimulationBuilder(new CTRNNController(geno.layout, exp.getParam().getController_timestep())).setWorld(exp.getWorld()).build();
         cv.loadSimulation(controller);
     }
     
@@ -91,7 +91,7 @@ public class SimulationViewer extends JPanel {
         exp.setLayout(layout);
         exp.setParam(new Parameters());
         ind = new RobotIndividual(exp);
-        RunController controller = new SimulationBuilder(new CTRNNController(ind.getGenotype(), new Parameters())).setWorldSize(new Vector2D(10,10)).build();
+        RunController controller = new SimulationBuilder(new CTRNNController(ind.getGenotype().layout, new Parameters().getController_timestep())).setWorldSize(new Vector2D(10,10)).build();
         cv.loadSimulation(controller);
     }
 

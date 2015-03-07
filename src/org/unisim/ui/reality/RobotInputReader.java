@@ -38,8 +38,8 @@ public class RobotInputReader extends javax.swing.JFrame {
         lblSonar2.setText(String.valueOf(sonars[1]));
         lblSonar3.setText(String.valueOf(sonars[2]));
         lblSonar4.setText(String.valueOf(sonars[3]));
-        if(logData) {
-            data.addDataRow(range,sonars[0],sonars[1],sonars[2],sonars[3]);
+        if (logData) {
+            data.addDataRow(range, sonars[0], sonars[1], sonars[2], sonars[3]);
         }
     }
 
@@ -70,12 +70,13 @@ public class RobotInputReader extends javax.swing.JFrame {
         txtDirectory.getDocument().addDocumentListener(filenameListener);
         txtFilename.getDocument().addDocumentListener(filenameListener);
         updateFilename();
-        
+
     }
 
     private void updateFilename() {
         lblFilename.setText(txtDirectory.getText() + spnAngle.getValue().
-                toString() + "deg_" + spnDist.getValue().toString() + "cm"+ txtFilename.
+                toString() + "deg_" + spnDist.getValue().toString() + "cm"
+                + txtFilename.
                 getText());
     }
 
@@ -452,28 +453,30 @@ public class RobotInputReader extends javax.swing.JFrame {
 
     private void btnReadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReadActionPerformed
         try {
-            if(robot == null)
+            if (robot == null) {
                 robot = new RealRobotBody();
-            
-            logData = chkSave.isSelected();
-            if(logData) {
-                data = new DataFile("Range","Sonar1","Sonar2","Sonar3","Sonar4");
             }
-            
+
+            logData = chkSave.isSelected();
+            if (logData) {
+                data = new DataFile("Range", "Sonar1", "Sonar2", "Sonar3",
+                        "Sonar4");
+            }
+
             final Timer t = new Timer();
             t.schedule(new TimerTask() {
-                
+
                 @Override
                 public void run() {
                     updateData();
                 }
-            },1, timerUpdateInterval);
+            }, 1, timerUpdateInterval);
             t.schedule(new TimerTask() {
 
                 @Override
                 public void run() {
                     t.cancel();
-                    if(logData) {
+                    if (logData) {
                         try {
                             data.saveToCSV(new File(lblFilename.getText()));
                         } catch (IOException ex) {
@@ -482,18 +485,23 @@ public class RobotInputReader extends javax.swing.JFrame {
                         }
                     }
                 }
-            }, (int)spnTime.getValue());
-            
-        } catch (SerialPortException | SerialPortTimeoutException ex) {
-            SerialCommunicator.showErrorDialog((SerialPortException)ex, this);
+            }, (int) spnTime.getValue());
+
+        } catch (SerialPortException ex) {
+            SerialCommunicator.showErrorDialog(ex, jLabel1);
+        } catch (SerialPortTimeoutException ex) {
+            SerialCommunicator.showErrorDialog(ex, jLabel1);
         }
     }//GEN-LAST:event_btnReadActionPerformed
 
     private void btnOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenActionPerformed
         try {
             robot = new RealRobotBody();
-        } catch (SerialPortException | SerialPortTimeoutException ex) {
-            SerialCommunicator.showErrorDialog((SerialPortException) ex, this);
+
+        } catch (SerialPortException ex) {
+            SerialCommunicator.showErrorDialog(ex, jLabel1);
+        } catch (SerialPortTimeoutException ex) {
+            SerialCommunicator.showErrorDialog(ex, jLabel1);
         }
     }//GEN-LAST:event_btnOpenActionPerformed
 

@@ -6,8 +6,7 @@
 package org.unisim.simulation.robot.ctrnn;
 
 import java.util.ArrayList;
-import org.unisim.exp.ExpParam;
-import org.unisim.exp.params.Parameters;
+import java.util.Collection;
 import org.unisim.genesis.RobotGenotype;
 import org.unisim.simulation.robot.IRobotController;
 import org.unisim.simulation.robot.RobotInput;
@@ -21,16 +20,16 @@ public class CTRNNController implements IRobotController{
     int n; //number of neurons
     int nSensors; //number of sensory inputs in the agent. The first nSensor neurons will receive input
     public Neuron[] neurons; //array of neurons
-    public ArrayList<ArrayList<Neuron>> neuronLayers; //stores layers of neurons
+    public Collection<Collection<Neuron>> neuronLayers; //stores layers of neurons
     public double[] taus,biases,gains,states,outputs;
     public double[][] weights;
     public int outIndL,outIndR;
     public ArrayList<Integer> sensNeurIndices;
-    Parameters params;
     private final double axleWidth;
+    private final double timeStep;
     
-    public CTRNNController(RobotGenotype g, Parameters params) {
-        this(g,params,0.6f);
+    public CTRNNController(CTRNNLayout layout, double timeStep) {
+        this(layout,timeStep,0.6f);
     }
     
     /**
@@ -38,8 +37,9 @@ public class CTRNNController implements IRobotController{
      * @param nSensors
      * @param g 
      */
-    public CTRNNController(RobotGenotype g, Parameters params,double axleWidth) {
-        this.n = g.layout.getTotalN(); //get number of neurons
+    public CTRNNController(CTRNNLayout layout, double timeStep,double axleWidth) {
+        this.timeStep = timeStep;
+        this.n = layout.getTotalN(); //get number of neurons
         this.axleWidth = axleWidth;
         taus = new double[n];
         biases = new double[n];
@@ -48,12 +48,12 @@ public class CTRNNController implements IRobotController{
         outputs = new double[n];
         weights = new double[n][n];
         
-        nSensors = g.layout.sensorInputs.size();
+        nSensors = layout.sensorInputs.size();
         
         
-        sensNeurIndices = g.layout.sensorInputs;
+        sensNeurIndices = layout.sensorInputs;
         
-        ArrayList<org.unisim.simulation.robot.ctrnn.Neuron> neurs = g.layout.getAllNeurons();
+        ArrayList<org.unisim.simulation.robot.ctrnn.Neuron> neurs = layout.getAllNeurons();
         for(int i = 0; i < n; i++) {
             org.unisim.simulation.robot.ctrnn.Neuron neuron = neurs.get(i);
             taus[i] = neuron.getMappedTau();
@@ -68,19 +68,18 @@ public class CTRNNController implements IRobotController{
             states[i] = 0.5f;
             outputs[i] = 0f;
         }
-        outIndL = g.layout.getMotorNeuron(true).ID;
-        outIndR = g.layout.getMotorNeuron(false).ID;
+        outIndL = layout.getMotorNeuron(true).ID;
+        outIndR = layout.getMotorNeuron(false).ID;
         
-        this.params = params;
     }
+    
     
     /**
      * Integrates one time step
      * @param inputs 
      */
     public void step(double[] inputs) {
-        double stepSize = (double)params.getController_timestep();
-        EulerStep(stepSize,inputs);
+        EulerStep(timeStep,inputs);
     }
     
     /**

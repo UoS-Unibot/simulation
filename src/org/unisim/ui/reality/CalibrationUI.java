@@ -48,8 +48,10 @@ public class CalibrationUI extends javax.swing.JFrame {
     public CalibrationUI() {
         try {
             robot = new RealRobotBody();
-        } catch (SerialPortException | SerialPortTimeoutException ex) {
-            SerialCommunicator.showErrorDialog((SerialPortException) ex, jLabel1);
+        } catch (SerialPortException ex) {
+            SerialCommunicator.showErrorDialog(ex, jLabel1);
+        } catch (SerialPortTimeoutException ex) {
+            SerialCommunicator.showErrorDialog(ex, jLabel1);
         }
     }
 
@@ -201,8 +203,10 @@ public class CalibrationUI extends javax.swing.JFrame {
             robot.setMotors((float) spnVelocity.getValue(),
                     (float) spnWheelDiff.
                     getValue());
-        } catch (SerialPortException | SerialPortTimeoutException ex) {
-            SerialCommunicator.showErrorDialog((SerialPortException) ex, jLabel1);
+        } catch (SerialPortException ex) {
+            SerialCommunicator.showErrorDialog(ex, jLabel1);
+        } catch (SerialPortTimeoutException ex) {
+            SerialCommunicator.showErrorDialog(ex, jLabel1);
         }
     }//GEN-LAST:event_btnRunActionPerformed
 

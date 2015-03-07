@@ -11,46 +11,47 @@ package org.unisim.reality;
  */
 public class SerialParameters {
     
-    private String portName = "COM4";
-    private int timeOutMSec = 100;
-    private double calibratedForwardVelocityMultiplier = 1.0;
-    private double calibratedAngularVelocityMultiplier = 1.0;
+    private final String portName;
+    private final int timeOutMSec;
+    private final double calibratedForwardVelocityMultiplier;
+    private final double calibratedAngularVelocityMultiplier;
+
+    public SerialParameters() {
+        this("COM4",100,1.0,1.0);
+    }
+
+    public SerialParameters(String portName, int timeOutMSec,
+            double calibratedForwardVelocityMultiplier,
+            double calibratedAngularVelocityMultiplier) {
+        this.portName = portName;
+        this.timeOutMSec = timeOutMSec;
+        this.calibratedForwardVelocityMultiplier
+                = calibratedForwardVelocityMultiplier;
+        this.calibratedAngularVelocityMultiplier
+                = calibratedAngularVelocityMultiplier;
+    }
+
+    
+    
 
     public String getPortName() {
         return portName;
     }
 
-    public void setPortName(String portName) {
-        this.portName = portName;
-    }
 
     public int getTimeOutMSec() {
         return timeOutMSec;
     }
 
-    public void setTimeOutMSec(int timeOutMSec) {
-        this.timeOutMSec = timeOutMSec;
-    }
 
     public double getCalibratedForwardVelocityMultiplier() {
         return calibratedForwardVelocityMultiplier;
-    }
-
-    public void setCalibratedForwardVelocityMultiplier(
-            double calibratedForwardVelocityMultiplier) {
-        this.calibratedForwardVelocityMultiplier
-                = calibratedForwardVelocityMultiplier;
     }
 
     public double getCalibratedAngularVelocityMultiplier() {
         return calibratedAngularVelocityMultiplier;
     }
 
-    public void setCalibratedAngularVelocityMultiplier(
-            double calibratedAngularVelocityMultiplier) {
-        this.calibratedAngularVelocityMultiplier
-                = calibratedAngularVelocityMultiplier;
-    }
     
     
     
