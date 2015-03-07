@@ -25,10 +25,14 @@
  */
 package org.unisim.ui.reality;
 
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JOptionPane;
 import jssc.SerialPortException;
+import jssc.SerialPortTimeoutException;
+import org.unisim.reality.RealRobotBody;
+import org.unisim.reality.SerialCommunicator;
 
 /**
  *
@@ -36,19 +40,17 @@ import jssc.SerialPortException;
  */
 public class CalibrationUI extends javax.swing.JFrame {
 
-//    private SimpleUnibotController unibot;
+    RealRobotBody robot;
 
     /**
      * Creates new form CalibrationUI
      */
     public CalibrationUI() {
-//        initComponents();
-//        try {
-//            unibot = new SimpleUnibotController();
-//        } catch (SerialPortException ex) {
-//            SerialCommunicator.showErrorDialog(ex, this);
-//            System.exit(0);
-//        }
+        try {
+            robot = new RealRobotBody();
+        } catch (SerialPortException | SerialPortTimeoutException ex) {
+            SerialCommunicator.showErrorDialog((SerialPortException) ex, jLabel1);
+        }
     }
 
     /**
@@ -183,12 +185,25 @@ public class CalibrationUI extends javax.swing.JFrame {
     }//GEN-LAST:event_formKeyPressed
 
     private void btnRunActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRunActionPerformed
-//        try {
-//            unibot.driveDiff((int) spnTime.getValue(), (float) spnVelocity.getValue(), (float) spnWheelDiff.getValue());
-//        } catch (SerialPortException ex) {
-//            SerialCommunicator.showErrorDialog(ex, this);
-//            System.exit(0);
-//        }
+        Timer t = new Timer();
+        t.schedule(new TimerTask() {
+
+            @Override
+            public void run() {
+                try {
+                    robot.halt();
+                } catch (SerialPortException ex) {
+                    SerialCommunicator.showErrorDialog(ex, jLabel1);
+                }
+            }
+        }, (int) spnTime.getValue());
+        try {
+            robot.setMotors((float) spnVelocity.getValue(),
+                    (float) spnWheelDiff.
+                    getValue());
+        } catch (SerialPortException | SerialPortTimeoutException ex) {
+            SerialCommunicator.showErrorDialog((SerialPortException) ex, jLabel1);
+        }
     }//GEN-LAST:event_btnRunActionPerformed
 
     private void btnStopActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStopActionPerformed
@@ -205,20 +220,25 @@ public class CalibrationUI extends javax.swing.JFrame {
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
         try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+            for (javax.swing.UIManager.LookAndFeelInfo info
+                    : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(CalibrationUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(CalibrationUI.class.getName()).
+                    log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(CalibrationUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(CalibrationUI.class.getName()).
+                    log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(CalibrationUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(CalibrationUI.class.getName()).
+                    log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(CalibrationUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(CalibrationUI.class.getName()).
+                    log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 

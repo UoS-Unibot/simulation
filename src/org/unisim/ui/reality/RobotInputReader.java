@@ -5,11 +5,19 @@
  */
 package org.unisim.ui.reality;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import jssc.SerialPortException;
+import jssc.SerialPortTimeoutException;
+import org.unisim.reality.RealRobotBody;
+import org.unisim.reality.SerialCommunicator;
+import org.unisim.util.DataFile;
 
 /**
  *
@@ -17,37 +25,58 @@ import jssc.SerialPortException;
  */
 public class RobotInputReader extends javax.swing.JFrame {
 
-//    private SimpleUnibotController unibot;
-
-    private final long timerUpdateInterval = Math.round(1.0 / 60.0);
+    private final long timerUpdateInterval = Math.round(1000.0 / 60.0);
+    private RealRobotBody robot;
+    private boolean logData = false;
+    private DataFile data;
 
     public void updateData() {
-//        try {
-//            unibot.requestRange();
-//            unibot.requestData(SimpleUnibotController.PacketType.SONAR);
-//        } catch (SerialPortException ex) {
-//            SerialCommunicator.showErrorDialog(ex, this);
-//        }
-//        lblRange.setText(String.valueOf(unibot.getLastData(SimpleUnibotController.PacketType.RANGE_SINGLE)[0]));
-//
-//        double[] sonarVals = unibot.getLastData(SimpleUnibotController.PacketType.RANGE_SINGLE);
-//        lblSonar1.setText(String.valueOf(sonarVals[0]));
-//        lblSonar2.setText(String.valueOf(sonarVals[1]));
-//        lblSonar3.setText(String.valueOf(sonarVals[2]));
-//        lblSonar4.setText(String.valueOf(sonarVals[3]));
+        double range = robot.getRange();
+        double[] sonars = robot.getSonars();
+        lblRange.setText(String.valueOf(range));
+        lblSonar1.setText(String.valueOf(sonars[0]));
+        lblSonar2.setText(String.valueOf(sonars[1]));
+        lblSonar3.setText(String.valueOf(sonars[2]));
+        lblSonar4.setText(String.valueOf(sonars[3]));
+        if(logData) {
+            data.addDataRow(range,sonars[0],sonars[1],sonars[2],sonars[3]);
+        }
     }
 
     /**
      * Creates new form RobotInputReader
      */
     public RobotInputReader() {
-//        initComponents();
-//        try {
-//            unibot = new SimpleUnibotController();
-//        } catch (SerialPortException ex) {
-//            SerialCommunicator.showErrorDialog(ex, this);
-//            System.exit(0);
-//        }
+        initComponents();
+
+        DocumentListener filenameListener = new DocumentListener() {
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                updateFilename();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                updateFilename();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                updateFilename();
+            }
+        };
+
+        txtDirectory.getDocument().addDocumentListener(filenameListener);
+        txtFilename.getDocument().addDocumentListener(filenameListener);
+        updateFilename();
+        
+    }
+
+    private void updateFilename() {
+        lblFilename.setText(txtDirectory.getText() + spnAngle.getValue().
+                toString() + "deg_" + spnDist.getValue().toString() + "cm"+ txtFilename.
+                getText());
     }
 
     /**
@@ -58,65 +87,348 @@ public class RobotInputReader extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
-        lblRange = new javax.swing.JLabel();
-        lblSonar1 = new javax.swing.JLabel();
-        lblSonar2 = new javax.swing.JLabel();
-        lblSonar3 = new javax.swing.JLabel();
-        lblSonar4 = new javax.swing.JLabel();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel2 = new javax.swing.JLabel();
-        chkSave = new javax.swing.JCheckBox();
-        btnRead = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtFilename = new javax.swing.JTextPane();
+        jLabel6 = new javax.swing.JLabel();
+        spnDist = new javax.swing.JSpinner();
+        jLabel5 = new javax.swing.JLabel();
+        spnAngle = new javax.swing.JSpinner();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        txtDirectory = new javax.swing.JTextPane();
+        chkSave = new javax.swing.JCheckBox();
+        jPanel3 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
-        spnN = new javax.swing.JSpinner();
+        spnTime = new javax.swing.JSpinner();
         jLabel4 = new javax.swing.JLabel();
+        btnRead = new javax.swing.JButton();
+        lblFilename = new javax.swing.JLabel();
+        btnOpen = new javax.swing.JButton();
+        jPanel4 = new javax.swing.JPanel();
+        jLabel1 = new javax.swing.JLabel();
+        lblRange = new javax.swing.JLabel();
+        jPanel5 = new javax.swing.JPanel();
+        jLabel2 = new javax.swing.JLabel();
+        lblSonar1 = new javax.swing.JLabel();
+        lblSonar2 = new javax.swing.JLabel();
+        lblSonar4 = new javax.swing.JLabel();
+        lblSonar3 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        lblRange.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
-        lblRange.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblRange.setText("0");
+        jPanel2.setLayout(new java.awt.GridBagLayout());
 
-        lblSonar1.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
-        lblSonar1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblSonar1.setText("0");
+        jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jPanel1.setLayout(new java.awt.GridBagLayout());
 
-        lblSonar2.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
-        lblSonar2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblSonar2.setText("0");
+        jScrollPane1.setMinimumSize(new java.awt.Dimension(300, 35));
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(300, 35));
+        jScrollPane1.setRequestFocusEnabled(false);
 
-        lblSonar3.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
-        lblSonar3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblSonar3.setText("0");
+        txtFilename.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
+        txtFilename.setText(".csv");
+        txtFilename.setMinimumSize(new java.awt.Dimension(300, 35));
+        txtFilename.setPreferredSize(new java.awt.Dimension(300, 35));
+        jScrollPane1.setViewportView(txtFilename);
 
-        lblSonar4.setFont(new java.awt.Font("Dialog", 0, 18)); // NOI18N
-        lblSonar4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        lblSonar4.setText("0");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 4;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(15, 15, 15, 15);
+        jPanel1.add(jScrollPane1, gridBagConstraints);
 
-        jLabel1.setText("Range");
+        jLabel6.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
+        jLabel6.setText("cm");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(7, 7, 7, 7);
+        jPanel1.add(jLabel6, gridBagConstraints);
 
-        jLabel2.setText("Sonars");
+        spnDist.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
+        spnDist.setModel(new javax.swing.SpinnerNumberModel(Double.valueOf(0.0d), Double.valueOf(0.0d), null, Double.valueOf(10.0d)));
+        spnDist.setPreferredSize(new java.awt.Dimension(80, 34));
+        spnDist.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                spnDistStateChanged(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(7, 7, 7, 7);
+        jPanel1.add(spnDist, gridBagConstraints);
 
+        jLabel5.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
+        jLabel5.setText("deg_");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(7, 7, 7, 7);
+        jPanel1.add(jLabel5, gridBagConstraints);
+
+        spnAngle.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
+        spnAngle.setModel(new javax.swing.SpinnerNumberModel(0.0d, 0.0d, 360.0d, 22.5d));
+        spnAngle.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                spnAngleStateChanged(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(7, 7, 7, 7);
+        jPanel1.add(spnAngle, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.ipadx = 181;
+        gridBagConstraints.ipady = 4;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(18, 35, 18, 35);
+        jPanel2.add(jPanel1, gridBagConstraints);
+
+        jScrollPane2.setMinimumSize(new java.awt.Dimension(503, 83));
+        jScrollPane2.setPreferredSize(new java.awt.Dimension(503, 83));
+
+        txtDirectory.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
+        txtDirectory.setText(System.getProperty("user.dir") + "/Calibration Data/");
+        txtDirectory.setMinimumSize(new java.awt.Dimension(200, 35));
+        txtDirectory.setPreferredSize(new java.awt.Dimension(200, 35));
+        jScrollPane2.setViewportView(txtDirectory);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(15, 15, 15, 15);
+        jPanel2.add(jScrollPane2, gridBagConstraints);
+
+        chkSave.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
         chkSave.setText("Save reading(s) to");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(13, 13, 13, 13);
+        jPanel2.add(chkSave, gridBagConstraints);
 
-        btnRead.setText("Read");
+        jPanel3.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jPanel3.setLayout(new java.awt.GridBagLayout());
+
+        jLabel3.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
+        jLabel3.setText("Read for");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
+        jPanel3.add(jLabel3, gridBagConstraints);
+
+        spnTime.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
+        spnTime.setModel(new javax.swing.SpinnerNumberModel(Integer.valueOf(500), Integer.valueOf(500), null, Integer.valueOf(500)));
+        spnTime.setPreferredSize(new java.awt.Dimension(100, 34));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
+        jPanel3.add(spnTime, gridBagConstraints);
+
+        jLabel4.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
+        jLabel4.setText("msec");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
+        jPanel3.add(jLabel4, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(13, 13, 13, 13);
+        jPanel2.add(jPanel3, gridBagConstraints);
+
+        btnRead.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
+        btnRead.setText("Run");
         btnRead.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnReadActionPerformed(evt);
             }
         });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 5;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
+        jPanel2.add(btnRead, gridBagConstraints);
 
-        txtFilename.setText(".csv");
-        jScrollPane1.setViewportView(txtFilename);
+        lblFilename.setBackground(new java.awt.Color(204, 255, 204));
+        lblFilename.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
+        lblFilename.setText("Filename");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
+        jPanel2.add(lblFilename, gridBagConstraints);
 
-        jLabel3.setText("Take");
+        btnOpen.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
+        btnOpen.setText("Open Serial Port");
+        btnOpen.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnOpenActionPerformed(evt);
+            }
+        });
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
+        jPanel2.add(btnOpen, gridBagConstraints);
 
-        spnN.setModel(new javax.swing.SpinnerNumberModel(Integer.valueOf(1), Integer.valueOf(1), null, Integer.valueOf(1)));
+        jPanel4.setLayout(new java.awt.GridBagLayout());
 
-        jLabel4.setText("reading(s)");
+        jLabel1.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
+        jLabel1.setText("Range");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(12, 12, 12, 12);
+        jPanel4.add(jLabel1, gridBagConstraints);
+
+        lblRange.setBackground(new java.awt.Color(204, 255, 204));
+        lblRange.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
+        lblRange.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblRange.setText("0");
+        lblRange.setPreferredSize(new java.awt.Dimension(90, 29));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(12, 12, 12, 12);
+        jPanel4.add(lblRange, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 6;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
+        jPanel2.add(jPanel4, gridBagConstraints);
+
+        jPanel5.setLayout(new java.awt.GridBagLayout());
+
+        jLabel2.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
+        jLabel2.setText("Sonars");
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.gridheight = 2;
+        gridBagConstraints.insets = new java.awt.Insets(12, 12, 12, 12);
+        jPanel5.add(jLabel2, gridBagConstraints);
+
+        lblSonar1.setBackground(new java.awt.Color(204, 255, 204));
+        lblSonar1.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
+        lblSonar1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblSonar1.setText("0");
+        lblSonar1.setPreferredSize(new java.awt.Dimension(40, 40));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.ipadx = 15;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+        jPanel5.add(lblSonar1, gridBagConstraints);
+
+        lblSonar2.setBackground(new java.awt.Color(204, 255, 204));
+        lblSonar2.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
+        lblSonar2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblSonar2.setText("0");
+        lblSonar2.setPreferredSize(new java.awt.Dimension(40, 40));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.ipadx = 15;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+        jPanel5.add(lblSonar2, gridBagConstraints);
+
+        lblSonar4.setBackground(new java.awt.Color(204, 255, 204));
+        lblSonar4.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
+        lblSonar4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblSonar4.setText("0");
+        lblSonar4.setPreferredSize(new java.awt.Dimension(40, 40));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.ipadx = 15;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+        jPanel5.add(lblSonar4, gridBagConstraints);
+
+        lblSonar3.setBackground(new java.awt.Color(204, 255, 204));
+        lblSonar3.setFont(new java.awt.Font("Dialog", 0, 24)); // NOI18N
+        lblSonar3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
+        lblSonar3.setText("0");
+        lblSonar3.setPreferredSize(new java.awt.Dimension(40, 40));
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.ipadx = 15;
+        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
+        jPanel5.add(lblSonar3, gridBagConstraints);
+
+        gridBagConstraints = new java.awt.GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 7;
+        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);
+        jPanel2.add(jPanel5, gridBagConstraints);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -124,85 +436,74 @@ public class RobotInputReader extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnRead, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(41, 41, 41)
-                        .addComponent(lblRange, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(lblSonar3, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(lblSonar4, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(lblSonar1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(lblSonar2, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(51, 51, 51))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(chkSave)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane1)
-                        .addContainerGap())
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(spnN, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 68, Short.MAX_VALUE))))
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 870, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(spnN, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(chkSave)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnRead)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblRange, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lblSonar1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblSonar2, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblSonar4, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblSonar3, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 640, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnReadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReadActionPerformed
-        Timer t = new Timer();
-        t.schedule(new TimerTask() {
-
-            @Override
-            public void run() {
-                updateData();
+        try {
+            if(robot == null)
+                robot = new RealRobotBody();
+            
+            logData = chkSave.isSelected();
+            if(logData) {
+                data = new DataFile("Range","Sonar1","Sonar2","Sonar3","Sonar4");
             }
-        }, timerUpdateInterval);
+            
+            final Timer t = new Timer();
+            t.schedule(new TimerTask() {
+                
+                @Override
+                public void run() {
+                    updateData();
+                }
+            },1, timerUpdateInterval);
+            t.schedule(new TimerTask() {
+
+                @Override
+                public void run() {
+                    t.cancel();
+                    if(logData) {
+                        try {
+                            data.saveToCSV(new File(lblFilename.getText()));
+                        } catch (IOException ex) {
+                            Logger.getLogger(RobotInputReader.class.getName()).
+                                    log(Level.SEVERE, null, ex);
+                        }
+                    }
+                }
+            }, (int)spnTime.getValue());
+            
+        } catch (SerialPortException | SerialPortTimeoutException ex) {
+            SerialCommunicator.showErrorDialog((SerialPortException)ex, this);
+        }
     }//GEN-LAST:event_btnReadActionPerformed
+
+    private void btnOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenActionPerformed
+        try {
+            robot = new RealRobotBody();
+        } catch (SerialPortException | SerialPortTimeoutException ex) {
+            SerialCommunicator.showErrorDialog((SerialPortException) ex, this);
+        }
+    }//GEN-LAST:event_btnOpenActionPerformed
+
+    private void spnAngleStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spnAngleStateChanged
+        updateFilename();
+    }//GEN-LAST:event_spnAngleStateChanged
+
+    private void spnDistStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spnDistStateChanged
+        updateFilename();
+    }//GEN-LAST:event_spnDistStateChanged
 
     /**
      * @param args the command line arguments
@@ -214,20 +515,25 @@ public class RobotInputReader extends javax.swing.JFrame {
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
         try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+            for (javax.swing.UIManager.LookAndFeelInfo info
+                    : javax.swing.UIManager.getInstalledLookAndFeels()) {
                 if ("Nimbus".equals(info.getName())) {
                     javax.swing.UIManager.setLookAndFeel(info.getClassName());
                     break;
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(RobotInputReader.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(RobotInputReader.class.getName()).
+                    log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(RobotInputReader.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(RobotInputReader.class.getName()).
+                    log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(RobotInputReader.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(RobotInputReader.class.getName()).
+                    log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(RobotInputReader.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(RobotInputReader.class.getName()).
+                    log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
 
@@ -240,19 +546,32 @@ public class RobotInputReader extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnOpen;
     private javax.swing.JButton btnRead;
     private javax.swing.JCheckBox chkSave;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JLabel lblFilename;
     private javax.swing.JLabel lblRange;
     private javax.swing.JLabel lblSonar1;
     private javax.swing.JLabel lblSonar2;
     private javax.swing.JLabel lblSonar3;
     private javax.swing.JLabel lblSonar4;
-    private javax.swing.JSpinner spnN;
+    private javax.swing.JSpinner spnAngle;
+    private javax.swing.JSpinner spnDist;
+    private javax.swing.JSpinner spnTime;
+    private javax.swing.JTextPane txtDirectory;
     private javax.swing.JTextPane txtFilename;
     // End of variables declaration//GEN-END:variables
 }

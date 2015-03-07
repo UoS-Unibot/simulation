@@ -5,7 +5,6 @@
  */
 package org.unisim.reality;
 
-import com.google.common.base.Splitter;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -16,20 +15,23 @@ import org.unisim.simulation.robot.IRobotBody;
 
 public class RealRobotBody implements IRobotBody {
 
-    private SerialCommunicator serial = new SerialCommunicator();
-    private static final Logger LOG
-            = Logger.getLogger(RealRobotBody.class.getName());
     private double lastRange = Double.NaN;
+    private final SerialCommunicator serial;
 
-    public RealRobotBody() throws SerialPortException {
+    private final SerialParameters parameters;
+
+    public RealRobotBody(SerialParameters parameters) throws SerialPortException,
+            SerialPortTimeoutException {
+        this.parameters = parameters;
+        serial = new SerialCommunicator(parameters);
         serial.openSerialPort();
         serial.sendCommand("#t3");
-        try {
-            serial.readLine();
-        } catch (SerialPortTimeoutException ex) {
-            Logger.getLogger(RealRobotBody.class.getName()).log(Level.SEVERE,
-                    null, ex);
-        }
+        serial.readLine();
+    }
+
+    public RealRobotBody() throws SerialPortException,
+            SerialPortTimeoutException {
+        this(new SerialParameters());
     }
 
     public void closePort() throws SerialPortException {
@@ -37,33 +39,14 @@ public class RealRobotBody implements IRobotBody {
         serial.closeSerialPort();
     }
 
-    private double[] parseSonarData(String data) {
-//        if(!data.startsWith("#!"))
-//            throw new IllegalArgumentException("Data '" + data + " is not valid sonar data");
-        double[] arrayData = new double[4];
-        Iterable<String> iterStr = Splitter.on(" ").omitEmptyStrings().
-                trimResults().limit(4).split(data.substring(2));
-        int i = 0;
-        for (String s : iterStr) {
-            arrayData[i] = Double.parseDouble(s);
-            i++;
-        }
-        return arrayData;
-    }
-
     private double[] lastSonarReadings;
 
-    public void setMotors(double velocity, double angularVelocity) {
-        try {
-            //TODO: implement conversion from real world units to command
-            serial.sendCommand(String.format("#d%f %f", velocity,
-                    angularVelocity));
-            readData();
-        } catch (SerialPortException ex) {
-            LOG.log(Level.SEVERE,
-                    null, ex);
-            throw new RuntimeException(ex.toString());
-        }
+    public void setMotors(double velocity, double angularVelocity) throws
+            SerialPortException, SerialPortTimeoutException {
+        //TODO: implement conversion from real world units to command
+        serial.sendCommand(String.format("#d %f %f", velocity,
+                angularVelocity));
+        readData();
     }
 
     @Override
@@ -76,7 +59,7 @@ public class RealRobotBody implements IRobotBody {
                 d = lastRange;
                 lastRange = Double.NaN;
                 return d;
-            } catch (SerialPortException ex) {
+            } catch (SerialPortException | SerialPortTimeoutException ex) {
                 Logger.getLogger(RealRobotBody.class.getName()).
                         log(Level.SEVERE,
                                 null, ex);
@@ -92,31 +75,38 @@ public class RealRobotBody implements IRobotBody {
             try {
                 serial.sendCommand("#!3");
                 readData();
-                s = lastSonarReadings;
-                lastSonarReadings = null;
-                return s;
-            } catch (SerialPortException ex) {
-                LOG.log(Level.SEVERE, null, ex);
+            } catch (SerialPortException | SerialPortTimeoutException ex) {
+                Logger.getLogger(RealRobotBody.class.getName()).
+                        log(Level.SEVERE, null, ex);
             }
         }
-        return lastSonarReadings;
+
+        s = lastSonarReadings;
+        lastSonarReadings = null;
+        return s;
     }
+
+    private boolean live = true;
 
     @Override
     public boolean isLive() {
-        return true;
+        return live;
     }
 
     @Override
     public void step(double velocity, double angularVelocity) {
-
+        try {
+            setMotors(velocity, angularVelocity);
+        } catch (SerialPortException | SerialPortTimeoutException ex) {
+            Logger.getLogger(RealRobotBody.class.getName()).
+                    log(Level.SEVERE, null, ex);
+        }
     }
 
-    public void readData() {
-        try {
+    public void readData() throws SerialPortTimeoutException {
             String data = serial.readLine();
             if (STARTUP_PATTERN.matcher(data).matches()) {
-                LOG.info("Unibot startup okay");
+                Logger.getLogger(RealRobotBody.class.getName()).info("Unibot startup okay");
             } else {
                 Matcher range = RANGE_PATTERN.matcher(data);
                 if (range.matches()) {
@@ -131,21 +121,22 @@ public class RealRobotBody implements IRobotBody {
                             Double.parseDouble(sonar.group(4))
                         };
                     } else {
-                        LOG.log(Level.WARNING,
+                        Logger.getLogger(RealRobotBody.class.getName()).log(Level.WARNING,
                                 "Could not parsed received data: {0}", data);
                     }
                 }
             }
-        } catch (SerialPortTimeoutException ex) {
-            LOG.log(Level.SEVERE, null, ex);
-        }
+    }
 
+    public void halt() throws SerialPortException {
+        serial.sendCommand("#d0");
+        live = false;
     }
 
     private final Pattern STARTUP_PATTERN = Pattern.compile(
             "\\s*Startup OK!\\s*");
     private final Pattern RANGE_PATTERN = Pattern.compile(
-            "#!\\s*(\\d{1,3}.\\d*)\\s*");
+            "#q\\s*(\\d{1,3}.\\d*)\\s*");
     private final Pattern SONAR_PATTERN = Pattern.compile(
             "#!\\s*(\\d{1,3}.\\d*)\\s*(\\d{1,3}.\\d*)\\s*(\\d{1,3}.\\d*)\\s*(\\d{1,3}.\\d*)\\s*");
 

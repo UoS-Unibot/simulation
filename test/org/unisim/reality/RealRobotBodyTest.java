@@ -69,7 +69,7 @@ public class RealRobotBodyTest {
     @Test
     public void readDataParsesToRangeIfRangeDataReceived() throws SerialPortTimeoutException {
         new Expectations() {{
-           serial.readLine(); result = "#! 300.0";
+           serial.readLine(); result = "#q 300.0";
         }};
         robot.readData();
         Assert.assertEquals(300.0,robot.getRange(),0.001);
@@ -78,7 +78,7 @@ public class RealRobotBodyTest {
     @Test
     public void getRangeAndgetSonarsParseBoth() throws SerialPortTimeoutException  {
         new Expectations() {{
-           serial.readLine(); times = 2; returns("#! 300.0","#! 600.0 300.0 30.0 3.0");
+           serial.readLine(); times = 2; returns("#q 300.0","#! 600.0 300.0 30.0 3.0");
         }};
         Assert.assertEquals(300.0,robot.getRange(),0.001);
         Assert.assertArrayEquals(new double[]{600.0,300.0,30.0,3.0},robot.getSonars(),0.001);
@@ -88,7 +88,7 @@ public class RealRobotBodyTest {
     @Test
     public void multipleGetRangesParsesTheValues() throws SerialPortTimeoutException {
         new Expectations() {{
-           serial.readLine(); times = 2; returns("#! 300.0","#! 600.0");
+           serial.readLine(); times = 2; returns("#q 300.0","#q 600.0");
         }};
         Assert.assertEquals(300.0,robot.getRange(),0.001);
         Assert.assertEquals(600.0,robot.getRange(),0.001);

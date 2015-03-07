@@ -23,11 +23,23 @@ import jssc.SerialPortTimeoutException;
  */
 public class SerialCommunicator implements SerialPortEventListener {
 
+    public SerialCommunicator() {
+        this(new SerialParameters());
+    }
+
+    private final SerialParameters parameters;
+    
+    public SerialCommunicator(SerialParameters parameters) {
+        this.parameters = parameters;
+    }
+    
+    
+
     private static final Logger LOG = Logger.getLogger(SerialCommunicator.class.getName());
     private SerialPort serialPort;
 
     public void openSerialPort() throws SerialPortException {
-        openSerialPort("COM4");
+        openSerialPort(parameters.getPortName());
     }
     
     public void closeSerialPort() throws SerialPortException {
@@ -74,7 +86,7 @@ public class SerialCommunicator implements SerialPortEventListener {
     }
     
     public String readLine() throws SerialPortTimeoutException {
-        return readLine(100);
+        return readLine(parameters.getTimeOutMSec());
     }
 
     public String readLine(long timeout) throws SerialPortTimeoutException {
