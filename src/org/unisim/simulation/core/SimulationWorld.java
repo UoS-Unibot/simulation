@@ -107,7 +107,7 @@ public class SimulationWorld {
         for (Shape2D obj : objects) {
             Line.LineIntersection li = obj.getSmallestLineIntersection(rangeFinderLine);
             if (li.isIntersection) {
-                if (lowestDist == 0 | li.line1DistToIntersect < lowestDist) {
+                if (lowestDist == 0 || li.line1DistToIntersect < lowestDist) {
                     lowestDist = li.line1DistToIntersect;
                 }
             }

@@ -17,7 +17,7 @@ import javax.swing.JPanel;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.unisim.exp.Experiment;
 import org.unisim.exp.params.Parameters;
-import org.unisim.genesis.RobotGenotype;
+import org.unisim.genesis.Genotype;
 import org.unisim.genesis.RobotIndividual;
 import org.unisim.simulation.robot.ctrnn.CTRNNController;
 import org.unisim.simulation.robot.ctrnn.CTRNNLayout;
@@ -73,8 +73,8 @@ public class SimulationViewer extends JPanel {
         
     }
     
-    public void loadSimulation(Experiment exp,RobotGenotype geno) {
-        RunController controller = new SimulationBuilder(new CTRNNController(geno.layout, exp.getParam().getController_timestep())).setWorld(exp.getWorld()).build();
+    public void loadSimulation(Experiment exp,Genotype geno) {
+        RunController controller = new SimulationBuilder(new CTRNNController(exp.getLayout(), exp.getParam().getController_timestep())).setWorld(exp.getWorld()).build();
         cv.loadSimulation(controller);
     }
     
@@ -91,7 +91,7 @@ public class SimulationViewer extends JPanel {
         exp.setLayout(layout);
         exp.setParam(new Parameters());
         ind = new RobotIndividual(exp);
-        RunController controller = new SimulationBuilder(new CTRNNController(ind.getGenotype().layout, new Parameters().getController_timestep())).setWorldSize(new Vector2D(10,10)).build();
+        RunController controller = new SimulationBuilder(new CTRNNController(exp.getLayout(), new Parameters().getController_timestep())).setWorldSize(new Vector2D(10,10)).build();
         cv.loadSimulation(controller);
     }
 

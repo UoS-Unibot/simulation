@@ -1,9 +1,7 @@
 package org.unisim.genesis;
 
-import org.unisim.simulation.robot.ctrnn.CTRNNLayout;
 import java.util.Random;
 import org.unisim.exp.Experiment;
-import org.unisim.exp.params.Parameters;
 
 /**
  * This class independently runs the GA, and provides access to per generation
@@ -13,7 +11,7 @@ import org.unisim.exp.params.Parameters;
  */
 public class MicrobialGA {
     
-    public volatile RobotGenotype lastFit;
+    public volatile Genotype lastFit;
     public volatile int curGen = 0;
     Random rand = new Random();
     Experiment experiment;

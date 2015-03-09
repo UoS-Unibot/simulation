@@ -7,7 +7,7 @@ package org.unisim.simulation.robot.ctrnn;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import org.unisim.genesis.RobotGenotype;
+import org.unisim.genesis.Genotype;
 import org.unisim.simulation.robot.IRobotController;
 import org.unisim.simulation.robot.RobotInput;
 

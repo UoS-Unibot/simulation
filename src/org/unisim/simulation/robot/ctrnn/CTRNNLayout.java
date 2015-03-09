@@ -6,6 +6,7 @@
 package org.unisim.simulation.robot.ctrnn;
 
 import java.util.ArrayList;
+import org.unisim.genesis.Phenotype;
 
 /**
  * Specifies a layout for a CTRNN, with multiple layers of neurons.
@@ -14,6 +15,19 @@ import java.util.ArrayList;
  */
 public class CTRNNLayout {
 
+    public static CTRNNLayout copyWithNewGenes(CTRNNLayout original, float[] genes) {
+        CTRNNLayout newLayout = new CTRNNLayout(original);
+        return newLayout;
+    }
+    
+    private CTRNNLayout(CTRNNLayout copy) {
+        layers = copy.layers;
+        geneMapping = copy.geneMapping;
+        genomeLength = copy.genomeLength;
+        sensorInputs = copy.sensorInputs;
+        motorOutputs = copy.motorOutputs;
+    }
+    
     public CTRNNLayout(LayoutBuilder builder) {
         filename = builder.getFilename();
         layers = builder.getLayers();
@@ -74,7 +88,7 @@ public class CTRNNLayout {
         return genomeLength;
     }
 
-    public void update(float[] genes) {
+    public void updateGenes(float[] genes) {
         for (Layer layer : layers) {
             for (Neuron neuron : layer.neurons) {
                 float tauG, biasG, gainG;

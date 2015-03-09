@@ -61,10 +61,10 @@ public class GeneMapping {
     public static enum Parameter {
         TAU,BIAS,GAIN,WEIGHT
     }
-    public class Gene {
+    public static class Gene {
         ArrayList<Mapping> mappings = new ArrayList<>();
     }
-    public class Mapping {
+    public static class Mapping {
         int neuronID;
         Parameter type;
         int neuronID2;

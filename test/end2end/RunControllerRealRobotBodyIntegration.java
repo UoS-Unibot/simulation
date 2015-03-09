@@ -33,7 +33,7 @@ public class RunControllerRealRobotBodyIntegration {
     RealRobotBody robot;
 
     @Before
-    public void setUp() throws SerialPortException {
+    public void setUp() throws SerialPortException, SerialPortTimeoutException {
         robot = new RealRobotBody();
         run = new RunController(controller, robot);
     }

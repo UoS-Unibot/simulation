@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>AbstractIndividual.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;UnibotSim&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">org.unisim.genesis</a> &gt; <span class="el_source">AbstractIndividual.java</span></div><h1>AbstractIndividual.java</h1><pre class="source lang-java linenums">/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package org.unisim.genesis;
+
+/**
+ *
+ * @author miles
+ */
+public abstract class AbstractIndividual implements Comparable&lt;AbstractIndividual&gt; {
+    
+    protected final Genotype genotype;
+    protected final Phenotype phenotype;
+<span class="nc" id="L16">    protected float rawFitness = 0.0F;</span>
+<span class="nc" id="L17">    protected boolean rawFitnessSet = false;</span>
+
+<span class="nc" id="L19">    public AbstractIndividual(Phenotype phenotype, Genotype genotype) {</span>
+<span class="nc" id="L20">        this.genotype = genotype;</span>
+<span class="nc" id="L21">        this.phenotype = phenotype;</span>
+<span class="nc" id="L22">    }</span>
+    
+    @Override
+    public int compareTo(AbstractIndividual o) {
+<span class="nc" id="L26">        return Float.valueOf(this.getRawFitness()).compareTo(o.getRawFitness());</span>
+    }
+
+    public Genotype getGenotype() {
+<span class="nc" id="L30">        return genotype;</span>
+    }
+
+
+    public void crossover(float pCross, Genotype g) {
+<span class="nc" id="L35">        genotype.crossover(pCross, g);</span>
+<span class="nc" id="L36">        rawFitness = calcRawFitness();</span>
+<span class="nc" id="L37">        phenotype.updateGenes(genotype.getGenes());</span>
+<span class="nc" id="L38">    }</span>
+
+    public float getRawFitness() {
+<span class="nc bnc" id="L41" title="All 2 branches missed.">        if (!rawFitnessSet) {</span>
+<span class="nc" id="L42">            rawFitness = calcRawFitness();</span>
+<span class="nc" id="L43">            rawFitnessSet = true;</span>
+        }
+<span class="nc" id="L45">        return rawFitness;</span>
+    }
+
+    public void mutate(float p_mutation) {
+<span class="nc" id="L49">        genotype.mutate(p_mutation);</span>
+<span class="nc" id="L50">        rawFitness = calcRawFitness();</span>
+<span class="nc" id="L51">        phenotype.updateGenes(genotype.getGenes());</span>
+<span class="nc" id="L52">    }</span>
+    
+    
+    public abstract float calcRawFitness();
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

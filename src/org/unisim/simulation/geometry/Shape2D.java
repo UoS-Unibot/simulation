@@ -116,7 +116,7 @@ public class Shape2D {
     }
 
     public LineIntersection getSmallestLineIntersection(Line line) {
-        LineIntersection lowestLine = Line.NoIntersection();
+        LineIntersection lowestLine = Line.getNoIntersection();
         for (Line shapeLine : getLines()) {
             LineIntersection li = line.getIntersection(shapeLine);
             if (li.isIntersection) {

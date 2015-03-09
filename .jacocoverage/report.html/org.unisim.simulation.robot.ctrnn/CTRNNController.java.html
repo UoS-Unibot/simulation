@@ -6,9 +6,8 @@
 package org.unisim.simulation.robot.ctrnn;
 
 import java.util.ArrayList;
-import org.unisim.exp.ExpParam;
-import org.unisim.exp.params.Parameters;
-import org.unisim.genesis.RobotGenotype;
+import java.util.Collection;
+import org.unisim.genesis.Genotype;
 import org.unisim.simulation.robot.IRobotController;
 import org.unisim.simulation.robot.RobotInput;
 
@@ -21,25 +20,26 @@ public class CTRNNController implements IRobotController{
     int n; //number of neurons
     int nSensors; //number of sensory inputs in the agent. The first nSensor neurons will receive input
     public Neuron[] neurons; //array of neurons
-    public ArrayList&lt;ArrayList&lt;Neuron&gt;&gt; neuronLayers; //stores layers of neurons
+    public Collection&lt;Collection&lt;Neuron&gt;&gt; neuronLayers; //stores layers of neurons
     public double[] taus,biases,gains,states,outputs;
     public double[][] weights;
     public int outIndL,outIndR;
     public ArrayList&lt;Integer&gt; sensNeurIndices;
-    Parameters params;
     private final double axleWidth;
+    private final double timeStep;
     
-    public CTRNNController(RobotGenotype g, Parameters params) {
-<span class="nc" id="L33">        this(g,params,0.6f);</span>
-<span class="nc" id="L34">    }</span>
+    public CTRNNController(CTRNNLayout layout, double timeStep) {
+<span class="nc" id="L32">        this(layout,timeStep,0.6f);</span>
+<span class="nc" id="L33">    }</span>
     
     /**
      * Creates a new CTRNN with specified number of sensors and genotype
      * @param nSensors
      * @param g 
      */
-<span class="nc" id="L41">    public CTRNNController(RobotGenotype g, Parameters params,double axleWidth) {</span>
-<span class="nc" id="L42">        this.n = g.layout.getTotalN(); //get number of neurons</span>
+<span class="nc" id="L40">    public CTRNNController(CTRNNLayout layout, double timeStep,double axleWidth) {</span>
+<span class="nc" id="L41">        this.timeStep = timeStep;</span>
+<span class="nc" id="L42">        this.n = layout.getTotalN(); //get number of neurons</span>
 <span class="nc" id="L43">        this.axleWidth = axleWidth;</span>
 <span class="nc" id="L44">        taus = new double[n];</span>
 <span class="nc" id="L45">        biases = new double[n];</span>
@@ -48,12 +48,12 @@ public class CTRNNController implements IRobotController{
 <span class="nc" id="L48">        outputs = new double[n];</span>
 <span class="nc" id="L49">        weights = new double[n][n];</span>
         
-<span class="nc" id="L51">        nSensors = g.layout.sensorInputs.size();</span>
+<span class="nc" id="L51">        nSensors = layout.sensorInputs.size();</span>
         
         
-<span class="nc" id="L54">        sensNeurIndices = g.layout.sensorInputs;</span>
+<span class="nc" id="L54">        sensNeurIndices = layout.sensorInputs;</span>
         
-<span class="nc" id="L56">        ArrayList&lt;org.unisim.simulation.robot.ctrnn.Neuron&gt; neurs = g.layout.getAllNeurons();</span>
+<span class="nc" id="L56">        ArrayList&lt;org.unisim.simulation.robot.ctrnn.Neuron&gt; neurs = layout.getAllNeurons();</span>
 <span class="nc bnc" id="L57" title="All 2 branches missed.">        for(int i = 0; i &lt; n; i++) {</span>
 <span class="nc" id="L58">            org.unisim.simulation.robot.ctrnn.Neuron neuron = neurs.get(i);</span>
 <span class="nc" id="L59">            taus[i] = neuron.getMappedTau();</span>
@@ -68,20 +68,19 @@ public class CTRNNController implements IRobotController{
 <span class="nc" id="L68">            states[i] = 0.5f;</span>
 <span class="nc" id="L69">            outputs[i] = 0f;</span>
         }
-<span class="nc" id="L71">        outIndL = g.layout.getMotorNeuron(true).ID;</span>
-<span class="nc" id="L72">        outIndR = g.layout.getMotorNeuron(false).ID;</span>
+<span class="nc" id="L71">        outIndL = layout.getMotorNeuron(true).ID;</span>
+<span class="nc" id="L72">        outIndR = layout.getMotorNeuron(false).ID;</span>
         
-<span class="nc" id="L74">        this.params = params;</span>
-<span class="nc" id="L75">    }</span>
+<span class="nc" id="L74">    }</span>
+    
     
     /**
      * Integrates one time step
      * @param inputs 
      */
     public void step(double[] inputs) {
-<span class="nc" id="L82">        double stepSize = (double)params.getController_timestep();</span>
-<span class="nc" id="L83">        EulerStep(stepSize,inputs);</span>
-<span class="nc" id="L84">    }</span>
+<span class="nc" id="L82">        EulerStep(timeStep,inputs);</span>
+<span class="nc" id="L83">    }</span>
     
     /**
      * Integrates one step using Euler's method (see any CTRNN resource)
@@ -89,30 +88,30 @@ public class CTRNNController implements IRobotController{
      * @param inputs 
      */
     public void EulerStep(double stepSize, double[] inputs) {
-<span class="nc bnc" id="L92" title="All 2 branches missed.">        for(int i = 0; i &lt; n; i++) {</span>
+<span class="nc bnc" id="L91" title="All 2 branches missed.">        for(int i = 0; i &lt; n; i++) {</span>
             double input;
-<span class="nc" id="L94">            int sensInd = sensNeurIndices.indexOf(i);</span>
-<span class="nc bnc" id="L95" title="All 2 branches missed.">            if(sensInd != -1)</span>
-<span class="nc" id="L96">                input = inputs[sensInd];</span>
+<span class="nc" id="L93">            int sensInd = sensNeurIndices.indexOf(i);</span>
+<span class="nc bnc" id="L94" title="All 2 branches missed.">            if(sensInd != -1)</span>
+<span class="nc" id="L95">                input = inputs[sensInd];</span>
             else
-<span class="nc" id="L98">                input = 0;</span>
-<span class="nc bnc" id="L99" title="All 2 branches missed.">            for(int j = 0; j &lt; n; j++)</span>
-<span class="nc" id="L100">                input += weights[j][i] * outputs[j];</span>
-<span class="nc" id="L101">            states[i] += stepSize * taus[i] * (input - states[i]);</span>
-<span class="nc" id="L102">            outputs[i] = sigmoid(gains[i] * (states[i] + biases[i]));</span>
+<span class="nc" id="L97">                input = 0;</span>
+<span class="nc bnc" id="L98" title="All 2 branches missed.">            for(int j = 0; j &lt; n; j++)</span>
+<span class="nc" id="L99">                input += weights[j][i] * outputs[j];</span>
+<span class="nc" id="L100">            states[i] += stepSize * taus[i] * (input - states[i]);</span>
+<span class="nc" id="L101">            outputs[i] = sigmoid(gains[i] * (states[i] + biases[i]));</span>
         }
-<span class="nc" id="L104">    }</span>
+<span class="nc" id="L103">    }</span>
     /**
      * @return motor output: relative difference between motor neurons (last two neurons)
      */
     public double getMotorLOutput() {
-<span class="nc" id="L109">        return outputs[outIndL];</span>
+<span class="nc" id="L108">        return outputs[outIndL];</span>
     }
     /**
      * @return motor output: relative difference between motor neurons (last two neurons)
      */
     public double getMotorROutput() {
-<span class="nc" id="L115">        return outputs[outIndR];</span>
+<span class="nc" id="L114">        return outputs[outIndR];</span>
     }
     /**
      * Standard sigmoid function.
@@ -120,7 +119,7 @@ public class CTRNNController implements IRobotController{
      * @return 
      */
     protected double sigmoid(double x) {
-<span class="nc" id="L123">        return 1.0f / (1 + (double)Math.exp(-x));</span>
+<span class="nc" id="L122">        return 1.0f / (1 + (double)Math.exp(-x));</span>
     }
     /**
      * Inverse standard sigmoid function.
@@ -128,22 +127,22 @@ public class CTRNNController implements IRobotController{
      * @return 
      */
     private double invSigmoid(double x) {
-<span class="nc" id="L131">        return (double)Math.log(x / (1 - x));</span>
+<span class="nc" id="L130">        return (double)Math.log(x / (1 - x));</span>
     }
 
     @Override
     public void step(RobotInput input) {
-<span class="nc" id="L136">        step(new double[]{input.getRange()});</span>
-<span class="nc" id="L137">    }</span>
+<span class="nc" id="L135">        step(new double[]{input.getRange()});</span>
+<span class="nc" id="L136">    }</span>
 
     @Override
     public double getVelocity() {
-<span class="nc" id="L141">        return (getMotorLOutput() + getMotorROutput()) / 2;</span>
+<span class="nc" id="L140">        return (getMotorLOutput() + getMotorROutput()) / 2;</span>
     }
 
     @Override
     public double getAngularVelocity() {
-<span class="nc" id="L146">        return (getMotorROutput() - getMotorLOutput()) / axleWidth;</span>
+<span class="nc" id="L145">        return (getMotorROutput() - getMotorLOutput()) / axleWidth;</span>
     }
     
 }

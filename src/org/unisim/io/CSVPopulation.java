@@ -12,9 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
-import org.unisim.genesis.RobotGenotype;
-import org.unisim.io.world.JSONWorld;
-import org.unisim.simulation.core.SimulationWorld;
+import org.unisim.genesis.Genotype;
 import org.unisim.simulation.robot.ctrnn.CTRNNLayout;
 import org.unisim.io.ctrnn.JSONCTRNNLayout;
 
@@ -59,14 +57,14 @@ public class CSVPopulation {
         return Double.valueOf(individuals.get(id).get("Fitness"));
     }
 
-    public RobotGenotype getGenotypeAt(int id) {
+    public Genotype getGenotypeAt(int id) {
         float[] genes = new float[layout.genomeLength];
         if(layout == null)
             return null;
         for(int i = 0; i < layout.genomeLength; i++) {
             genes[i] = Float.valueOf(individuals.get(id).get("gene " + i));
         }
-        return new RobotGenotype(layout, genes);
+        return Genotype.withGenes(genes);
     }
 
     public int getSize() {

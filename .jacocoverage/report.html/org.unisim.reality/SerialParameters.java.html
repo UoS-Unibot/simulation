@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SerialParameters.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;UnibotSim&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">org.unisim.reality</a> &gt; <span class="el_source">SerialParameters.java</span></div><h1>SerialParameters.java</h1><pre class="source lang-java linenums">/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package org.unisim.reality;
+
+/**
+ *
+ * @author miles
+ */
+public class SerialParameters {
+    
+    private final String portName;
+    private final int timeOutMSec;
+    private final double calibratedForwardVelocityMultiplier;
+    private final double calibratedAngularVelocityMultiplier;
+
+    public SerialParameters() {
+<span class="fc" id="L20">        this(&quot;COM4&quot;,100,1.0,1.0);</span>
+<span class="fc" id="L21">    }</span>
+
+    public SerialParameters(String portName, int timeOutMSec,
+            double calibratedForwardVelocityMultiplier,
+<span class="fc" id="L25">            double calibratedAngularVelocityMultiplier) {</span>
+<span class="fc" id="L26">        this.portName = portName;</span>
+<span class="fc" id="L27">        this.timeOutMSec = timeOutMSec;</span>
+<span class="fc" id="L28">        this.calibratedForwardVelocityMultiplier</span>
+                = calibratedForwardVelocityMultiplier;
+<span class="fc" id="L30">        this.calibratedAngularVelocityMultiplier</span>
+                = calibratedAngularVelocityMultiplier;
+<span class="fc" id="L32">    }</span>
+
+    
+    
+
+    public String getPortName() {
+<span class="fc" id="L38">        return portName;</span>
+    }
+
+
+    public int getTimeOutMSec() {
+<span class="fc" id="L43">        return timeOutMSec;</span>
+    }
+
+
+    public double getCalibratedForwardVelocityMultiplier() {
+<span class="nc" id="L48">        return calibratedForwardVelocityMultiplier;</span>
+    }
+
+    public double getCalibratedAngularVelocityMultiplier() {
+<span class="nc" id="L52">        return calibratedAngularVelocityMultiplier;</span>
+    }
+
+    
+    
+    
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

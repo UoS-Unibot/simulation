@@ -31,6 +31,7 @@ public class SimulatedRobotBody implements IRobotBody {
     public SimulatedRobotBody(SimulationWorld world,Vector2D size,float timeStepLength) {
         this.timeStepLength = timeStepLength;
         position = Vector2D.ZERO;
+        heading = 0;
         this.world = world;
         this.size = size;
         shape = Shape2D.createRectangleFromCenter(position, size, heading);

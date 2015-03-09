@@ -5,7 +5,6 @@
  */
 package org.unisim.exp;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,8 +17,6 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
-import org.apache.commons.io.FileUtils;
-import org.unisim.simulation.robot.ctrnn.CTRNNLayout;
 import org.unisim.exp.params.Parameters;
 import org.unisim.genesis.Stats;
 import org.unisim.ui.TextOutput;
@@ -30,12 +27,11 @@ import org.unisim.ui.TextOutput;
  */
 public class ExperimentController {
 
-<span class="nc" id="L33">    private static final Logger LOG = Logger.getLogger(ExperimentController.class.getName());</span>
+<span class="nc" id="L30">    private static final Logger LOG = Logger.getLogger(ExperimentController.class.getName());</span>
 
     private final Parameters params;
-    private final CTRNNLayout layout;
     private final Experiment experiment;
-<span class="nc" id="L38">    private ArrayList&lt;EvolutionRun&gt; experiments = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L34">    private ArrayList&lt;EvolutionRun&gt; experiments = new ArrayList&lt;&gt;();</span>
 
     private Path workingDir;
 
@@ -45,7 +41,7 @@ public class ExperimentController {
      * @return the value of workingDir
      */
     public Path getWorkingDir() {
-<span class="nc" id="L48">        return workingDir;</span>
+<span class="nc" id="L44">        return workingDir;</span>
     }
 
     /**
@@ -54,132 +50,131 @@ public class ExperimentController {
      * @param workingDir new value of workingDir
      */
     public void setWorkingDir(Path workingDir) {
-<span class="nc" id="L57">        this.workingDir = workingDir;</span>
-<span class="nc" id="L58">    }</span>
+<span class="nc" id="L53">        this.workingDir = workingDir;</span>
+<span class="nc" id="L54">    }</span>
 
-<span class="nc" id="L60">    public ExperimentController(Experiment exp) {</span>
-<span class="nc" id="L61">        this.params = exp.getParam();</span>
-<span class="nc" id="L62">        this.layout = exp.getLayout();</span>
-<span class="nc" id="L63">        experiment = exp;</span>
+<span class="nc" id="L56">    public ExperimentController(Experiment exp) {</span>
+<span class="nc" id="L57">        this.params = exp.getParam();</span>
+<span class="nc" id="L58">        experiment = exp;</span>
         try {
-<span class="nc" id="L65">            FileHandler handler = new FileHandler(&quot;prog.%u.%g.txt&quot;, 1024 * 1024, 3, true);</span>
-<span class="nc" id="L66">            handler.setFormatter(new SimpleFormatter());</span>
-<span class="nc" id="L67">            LOG.addHandler(handler);</span>
-<span class="nc" id="L68">            LOG.setLevel(Level.ALL);</span>
-<span class="nc" id="L69">        } catch (IOException | SecurityException e) {</span>
-<span class="nc" id="L70">            LOG.throwing(&quot;ExperimentController&quot;, &quot;Constructor&quot;, e);</span>
-<span class="nc" id="L71">            System.exit(1);</span>
-<span class="nc" id="L72">        }</span>
-<span class="nc" id="L73">    }</span>
+<span class="nc" id="L60">            FileHandler handler = new FileHandler(&quot;prog.%u.%g.txt&quot;, 1024 * 1024, 3, true);</span>
+<span class="nc" id="L61">            handler.setFormatter(new SimpleFormatter());</span>
+<span class="nc" id="L62">            LOG.addHandler(handler);</span>
+<span class="nc" id="L63">            LOG.setLevel(Level.ALL);</span>
+<span class="nc" id="L64">        } catch (IOException | SecurityException e) {</span>
+<span class="nc" id="L65">            LOG.throwing(&quot;ExperimentController&quot;, &quot;Constructor&quot;, e);</span>
+<span class="nc" id="L66">            System.exit(1);</span>
+<span class="nc" id="L67">        }</span>
+<span class="nc" id="L68">    }</span>
 
     public final void initialise() {
-<span class="nc" id="L76">        addLineOut(&quot;Initialising experiment...&quot;);</span>
-<span class="nc" id="L77">    }</span>
+<span class="nc" id="L71">        addLineOut(&quot;Initialising experiment...&quot;);</span>
+<span class="nc" id="L72">    }</span>
 
-<span class="nc" id="L79">    private final ArrayList&lt;TextOutput&gt; outputs = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L74">    private final ArrayList&lt;TextOutput&gt; outputs = new ArrayList&lt;&gt;();</span>
 
-<span class="nc" id="L81">    private final SimpleDateFormat sdf = new SimpleDateFormat(&quot;dd/MM/yyyy HH:mm:ss&quot;);</span>
+<span class="nc" id="L76">    private final SimpleDateFormat sdf = new SimpleDateFormat(&quot;dd/MM/yyyy HH:mm:ss&quot;);</span>
 
     public void addTextOutput(TextOutput output) {
-<span class="nc" id="L84">        outputs.add(output);</span>
-<span class="nc" id="L85">    }</span>
+<span class="nc" id="L79">        outputs.add(output);</span>
+<span class="nc" id="L80">    }</span>
 
     public void addLineOut(String newLine) {
-<span class="nc" id="L88">        newLine = (sdf.format(new Date())) + &quot;\t&quot; + newLine + &quot;\n&quot;;</span>
-<span class="nc bnc" id="L89" title="All 2 branches missed.">        for (TextOutput out : outputs) {</span>
-<span class="nc" id="L90">            out.addLine(newLine);</span>
-<span class="nc" id="L91">            out.updateProgress(getProgress());</span>
-<span class="nc" id="L92">        }</span>
-<span class="nc" id="L93">    }</span>
+<span class="nc" id="L83">        newLine = (sdf.format(new Date())) + &quot;\t&quot; + newLine + &quot;\n&quot;;</span>
+<span class="nc bnc" id="L84" title="All 2 branches missed.">        for (TextOutput out : outputs) {</span>
+<span class="nc" id="L85">            out.addLine(newLine);</span>
+<span class="nc" id="L86">            out.updateProgress(getProgress());</span>
+<span class="nc" id="L87">        }</span>
+<span class="nc" id="L88">    }</span>
 
-<span class="nc" id="L95">    private int genCount = 0;</span>
-<span class="nc" id="L96">    private int totalGen = 0;</span>
+<span class="nc" id="L90">    private int genCount = 0;</span>
+<span class="nc" id="L91">    private int totalGen = 0;</span>
 
     public int getProgress() {
-<span class="nc" id="L99">        return Math.round((1000 * (float) genCount) / ((float) totalGen));</span>
+<span class="nc" id="L94">        return Math.round((1000 * (float) genCount) / ((float) totalGen));</span>
     }
 
     private void countGen(int n) {
-<span class="nc" id="L103">        genCount += n;</span>
-<span class="nc" id="L104">    }</span>
+<span class="nc" id="L98">        genCount += n;</span>
+<span class="nc" id="L99">    }</span>
 
     private Executor exe;
-<span class="nc" id="L107">    public boolean isRunning = false;</span>
+<span class="nc" id="L102">    public boolean isRunning = false;</span>
 
     public void run(int nRuns, int nThreads) {
-<span class="nc bnc" id="L110" title="All 2 branches missed.">        if (isRunning) {</span>
-<span class="nc" id="L111">            restart();</span>
-<span class="nc" id="L112">            return;</span>
+<span class="nc bnc" id="L105" title="All 2 branches missed.">        if (isRunning) {</span>
+<span class="nc" id="L106">            restart();</span>
+<span class="nc" id="L107">            return;</span>
         }
-<span class="nc" id="L114">        isRunning = true;</span>
-<span class="nc" id="L115">        exe = Executors.newFixedThreadPool(nThreads);</span>
+<span class="nc" id="L109">        isRunning = true;</span>
+<span class="nc" id="L110">        exe = Executors.newFixedThreadPool(nThreads);</span>
         try {
-<span class="nc" id="L117">            experiment.saveToDir(workingDir.toString());</span>
-<span class="nc" id="L118">        } catch (IOException ex) {</span>
-<span class="nc" id="L119">            System.out.println(ex.toString());</span>
-<span class="nc" id="L120">            Logger.getLogger(ExperimentController.class.getName()).log(Level.SEVERE, null, ex);</span>
-<span class="nc" id="L121">        }</span>
+<span class="nc" id="L112">            experiment.saveToDir(workingDir.toString());</span>
+<span class="nc" id="L113">        } catch (IOException ex) {</span>
+<span class="nc" id="L114">            System.out.println(ex.toString());</span>
+<span class="nc" id="L115">            Logger.getLogger(ExperimentController.class.getName()).log(Level.SEVERE, null, ex);</span>
+<span class="nc" id="L116">        }</span>
 
-<span class="nc" id="L123">        addLineOut(&quot;Thread\tGen\tMax\tAvg\tMin\tVar&quot;);</span>
+<span class="nc" id="L118">        addLineOut(&quot;Thread\tGen\tMax\tAvg\tMin\tVar&quot;);</span>
 
-<span class="nc" id="L125">        totalGen = (int) params.getGa_generations() * nThreads;</span>
+<span class="nc" id="L120">        totalGen = (int) params.getGa_generations() * nThreads;</span>
 
-<span class="nc bnc" id="L127" title="All 2 branches missed.">        for (int i = 0; i &lt; nRuns; i++) {</span>
-<span class="nc" id="L128">            final EvolutionRun evoRun = new EvolutionRun();</span>
-<span class="nc" id="L129">            evoRun.start(experiment);</span>
-<span class="nc" id="L130">            final int curID = i + 1;</span>
-<span class="nc" id="L131">            evoRun.setListener(new GAListener() {</span>
+<span class="nc bnc" id="L122" title="All 2 branches missed.">        for (int i = 0; i &lt; nRuns; i++) {</span>
+<span class="nc" id="L123">            final EvolutionRun evoRun = new EvolutionRun();</span>
+<span class="nc" id="L124">            evoRun.start(experiment);</span>
+<span class="nc" id="L125">            final int curID = i + 1;</span>
+<span class="nc" id="L126">            evoRun.setListener(new GAListener() {</span>
                 @Override
                 public void GAupdateSummary(Stats stats) {
-<span class="nc" id="L134">                    addLineOut(String.format(&quot;%3d\t%3d\t%4.3f\t%4.3f\t%4.3f\t%4.3f&quot;, curID, stats.n, stats.maxFit, stats.avgFit, stats.minFit, stats.varFit));</span>
-<span class="nc" id="L135">                    countGen(1);</span>
-<span class="nc" id="L136">                }</span>
+<span class="nc" id="L129">                    addLineOut(String.format(&quot;%3d\t%3d\t%4.3f\t%4.3f\t%4.3f\t%4.3f&quot;, curID, stats.n, stats.maxFit, stats.avgFit, stats.minFit, stats.varFit));</span>
+<span class="nc" id="L130">                    countGen(1);</span>
+<span class="nc" id="L131">                }</span>
 
                 @Override
                 public void GAFinished() {
-<span class="nc" id="L140">                    addLineOut(String.format(&quot;Run %d finished&quot;, curID));</span>
-<span class="nc" id="L141">                    evoRun.GA.popStats.saveToCSV(getStatsFileName(curID));</span>
-<span class="nc" id="L142">                    evoRun.GA.pop.saveToCSV(getPopFileName(curID));</span>
-<span class="nc" id="L143">                }</span>
+<span class="nc" id="L135">                    addLineOut(String.format(&quot;Run %d finished&quot;, curID));</span>
+<span class="nc" id="L136">                    evoRun.GA.popStats.saveToCSV(getStatsFileName(curID));</span>
+<span class="nc" id="L137">                    evoRun.GA.pop.saveToCSV(getPopFileName(curID));</span>
+<span class="nc" id="L138">                }</span>
             }
             );
-<span class="nc" id="L146">            experiments.add(evoRun);</span>
-<span class="nc" id="L147">            exe.execute(evoRun);</span>
-<span class="nc" id="L148">            addLineOut(String.format(&quot;Run %d started&quot;, curID));</span>
+<span class="nc" id="L141">            experiments.add(evoRun);</span>
+<span class="nc" id="L142">            exe.execute(evoRun);</span>
+<span class="nc" id="L143">            addLineOut(String.format(&quot;Run %d started&quot;, curID));</span>
         }
 
-<span class="nc" id="L151">    }</span>
+<span class="nc" id="L146">    }</span>
 
 
     private String getStatsFileName(int run) {
         try {
-<span class="nc" id="L156">            Files.createDirectories(workingDir);</span>
-<span class="nc" id="L157">        } catch (IOException ex) {</span>
-<span class="nc" id="L158">            Logger.getLogger(ExperimentController.class.getName()).log(Level.SEVERE, null, ex);</span>
-<span class="nc" id="L159">        }</span>
-<span class="nc" id="L160">        return (workingDir.toString() + &quot;/stats-&quot; + run + &quot;.csv&quot;);</span>
+<span class="nc" id="L151">            Files.createDirectories(workingDir);</span>
+<span class="nc" id="L152">        } catch (IOException ex) {</span>
+<span class="nc" id="L153">            Logger.getLogger(ExperimentController.class.getName()).log(Level.SEVERE, null, ex);</span>
+<span class="nc" id="L154">        }</span>
+<span class="nc" id="L155">        return (workingDir.toString() + &quot;/stats-&quot; + run + &quot;.csv&quot;);</span>
     }
 
     private String getPopFileName(int run) {
         try {
-<span class="nc" id="L165">            Files.createDirectories(workingDir);</span>
-<span class="nc" id="L166">        } catch (IOException ex) {</span>
-<span class="nc" id="L167">            Logger.getLogger(ExperimentController.class.getName()).log(Level.SEVERE, null, ex);</span>
-<span class="nc" id="L168">        }</span>
-<span class="nc" id="L169">        return (workingDir.toString() + &quot;/population-&quot; + run + &quot;.csv&quot;);</span>
+<span class="nc" id="L160">            Files.createDirectories(workingDir);</span>
+<span class="nc" id="L161">        } catch (IOException ex) {</span>
+<span class="nc" id="L162">            Logger.getLogger(ExperimentController.class.getName()).log(Level.SEVERE, null, ex);</span>
+<span class="nc" id="L163">        }</span>
+<span class="nc" id="L164">        return (workingDir.toString() + &quot;/population-&quot; + run + &quot;.csv&quot;);</span>
     }
 
     public void restart() {
-<span class="nc bnc" id="L173" title="All 2 branches missed.">        for (EvolutionRun e : experiments) {</span>
-<span class="nc" id="L174">            e.setPaused(false);</span>
-<span class="nc" id="L175">        }</span>
-<span class="nc" id="L176">    }</span>
+<span class="nc bnc" id="L168" title="All 2 branches missed.">        for (EvolutionRun e : experiments) {</span>
+<span class="nc" id="L169">            e.setPaused(false);</span>
+<span class="nc" id="L170">        }</span>
+<span class="nc" id="L171">    }</span>
 
     public void stop() {
-<span class="nc bnc" id="L179" title="All 2 branches missed.">        for (EvolutionRun e : experiments) {</span>
-<span class="nc" id="L180">            e.setPaused(true);</span>
-<span class="nc" id="L181">        }</span>
-<span class="nc" id="L182">    }</span>
+<span class="nc bnc" id="L174" title="All 2 branches missed.">        for (EvolutionRun e : experiments) {</span>
+<span class="nc" id="L175">            e.setPaused(true);</span>
+<span class="nc" id="L176">        }</span>
+<span class="nc" id="L177">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

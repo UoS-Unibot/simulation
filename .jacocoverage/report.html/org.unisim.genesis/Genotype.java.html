@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Genotype.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;UnibotSim&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">org.unisim.genesis</a> &gt; <span class="el_source">Genotype.java</span></div><h1>Genotype.java</h1><pre class="source lang-java linenums">/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package org.unisim.genesis;
+
+import java.util.Arrays;
+import java.util.Random;
+
+/**
+ * Stores a list of gene values that can be mutated or crossed over from another
+ * genotype. To instantiate, use the static factory methods Genotype.withRandomGenome() or Genotype.withGenes()
+ *
+ * @author Miles
+ */
+public final class Genotype {
+
+<span class="fc" id="L19">    private static final Random rand = new Random();</span>
+
+    public static Genotype withRandomGenome(int length) {
+<span class="fc" id="L22">        return new Genotype(getRandomisedGenome(length));</span>
+    }
+
+    public static Genotype withGenes(float... genes) {
+<span class="fc" id="L26">        return new Genotype(Arrays.copyOf(genes, genes.length));</span>
+    }
+
+    private static float[] getRandomisedGenome(int length) {
+<span class="fc" id="L30">        float[] genes = new float[length];</span>
+<span class="fc bfc" id="L31" title="All 2 branches covered.">        for (int i = 0; i &lt; length; i++) {</span>
+<span class="fc" id="L32">            genes[i] = rand.nextFloat() * 2 - 1;</span>
+        }
+<span class="fc" id="L34">        return genes;</span>
+    }
+
+    private final int length;
+    private final float[] genes;
+
+<span class="fc" id="L40">    private Genotype(float[] genes) {</span>
+<span class="fc" id="L41">        length = genes.length;</span>
+<span class="fc" id="L42">        this.genes = genes;</span>
+<span class="fc" id="L43">    }</span>
+
+    private float randCreep(float mutVariance) {
+<span class="fc" id="L46">        return (float) rand.nextGaussian() * mutVariance;</span>
+    }
+
+    public Genotype mutate(float mutVariance) {
+<span class="fc" id="L50">        float[] newGenes = new float[length];</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">        for (int i = 0; i&lt; length; i++) {</span>
+            float newGene;
+<span class="fc" id="L53">            newGene = genes[i] + randCreep(mutVariance);</span>
+<span class="pc bpc" id="L54" title="1 of 2 branches missed.">            if (newGene &lt; -1.0) {</span>
+<span class="nc" id="L55">                newGenes[i] = -2 - newGene;</span>
+<span class="pc bpc" id="L56" title="1 of 2 branches missed.">            } else if (newGene &gt; 1.0) {</span>
+<span class="nc" id="L57">                newGenes[i] = 2 - newGene;</span>
+            } else {
+<span class="fc" id="L59">                newGenes[i] = newGene;</span>
+            }
+        }
+<span class="fc" id="L62">        return Genotype.withGenes(newGenes);</span>
+    }
+
+    public Genotype crossover(float pCross, Genotype g) {
+<span class="fc" id="L66">        float[] newGenes = new float[length];</span>
+<span class="fc bfc" id="L67" title="All 2 branches covered.">        for (int i = 0; i &lt; g.genes.length;</span>
+<span class="fc" id="L68">                i++) {</span>
+<span class="fc bfc" id="L69" title="All 2 branches covered.">            if (rand.nextFloat() &lt; pCross) {</span>
+<span class="fc" id="L70">                newGenes[i] = g.genes[i];</span>
+            } else {
+<span class="fc" id="L72">                newGenes[i] = genes[i];</span>
+            }
+        }
+<span class="fc" id="L75">        return Genotype.withGenes(newGenes);</span>
+    }
+
+    public float[] getGenes() {
+<span class="fc" id="L79">        return Arrays.copyOf(genes, length);</span>
+    }
+
+    
+    public int getLength() {
+<span class="nc" id="L84">        return length;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L89">        String str = &quot;&quot;;</span>
+<span class="nc bnc" id="L90" title="All 2 branches missed.">        for (float gene : genes) {</span>
+<span class="nc bnc" id="L91" title="All 2 branches missed.">            String prefix = gene &gt; 0 ? &quot;+&quot; : &quot;&quot;;</span>
+<span class="nc" id="L92">            str += prefix + String.format(&quot;%f\t&quot;, gene);</span>
+        }
+<span class="nc" id="L94">        return str;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

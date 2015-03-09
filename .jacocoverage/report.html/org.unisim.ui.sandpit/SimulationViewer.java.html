@@ -17,7 +17,7 @@ import javax.swing.JPanel;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.unisim.exp.Experiment;
 import org.unisim.exp.params.Parameters;
-import org.unisim.genesis.RobotGenotype;
+import org.unisim.genesis.Genotype;
 import org.unisim.genesis.RobotIndividual;
 import org.unisim.simulation.robot.ctrnn.CTRNNController;
 import org.unisim.simulation.robot.ctrnn.CTRNNLayout;
@@ -73,8 +73,8 @@ public class SimulationViewer extends JPanel {
         
 <span class="nc" id="L74">    }</span>
     
-    public void loadSimulation(Experiment exp,RobotGenotype geno) {
-<span class="nc" id="L77">        RunController controller = new SimulationBuilder(new CTRNNController(geno, exp.getParam())).setWorld(exp.getWorld()).build();</span>
+    public void loadSimulation(Experiment exp,Genotype geno) {
+<span class="nc" id="L77">        RunController controller = new SimulationBuilder(new CTRNNController(exp.getLayout(), exp.getParam().getController_timestep())).setWorld(exp.getWorld()).build();</span>
 <span class="nc" id="L78">        cv.loadSimulation(controller);</span>
 <span class="nc" id="L79">    }</span>
     
@@ -91,7 +91,7 @@ public class SimulationViewer extends JPanel {
 <span class="nc" id="L91">        exp.setLayout(layout);</span>
 <span class="nc" id="L92">        exp.setParam(new Parameters());</span>
 <span class="nc" id="L93">        ind = new RobotIndividual(exp);</span>
-<span class="nc" id="L94">        RunController controller = new SimulationBuilder(new CTRNNController(ind.getGenotype(), new Parameters())).setWorldSize(new Vector2D(10,10)).build();</span>
+<span class="nc" id="L94">        RunController controller = new SimulationBuilder(new CTRNNController(exp.getLayout(), new Parameters().getController_timestep())).setWorldSize(new Vector2D(10,10)).build();</span>
 <span class="nc" id="L95">        cv.loadSimulation(controller);</span>
 <span class="nc" id="L96">    }</span>
 

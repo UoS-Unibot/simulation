@@ -28,8 +28,6 @@ public final class DataFile {
         this();
         addHeaders(headers);
     }
-    
-    
 
     public DataFile() {
         headers = new ArrayList<>();

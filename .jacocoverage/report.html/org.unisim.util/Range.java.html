@@ -18,11 +18,11 @@ public class Range {
 <span class="fc" id="L18">            this.low = low; this.high = high;</span>
 <span class="fc" id="L19">        }</span>
         public int getDiff() {
-<span class="nc" id="L21">            return high - low;</span>
+<span class="fc" id="L21">            return high - low;</span>
         }
         public float map(float x) {
             //maps a val of -1 to 1 to this range
-<span class="nc" id="L25">            return getDiff() * (x + 1) / 2 + low;</span>
+<span class="fc" id="L25">            return getDiff() * (x + 1) / 2 + low;</span>
         }
         public float[] map(float[] x) {
             //same with an array
@@ -50,5 +50,31 @@ public class Range {
 <span class="nc" id="L50">                return high;</span>
 <span class="nc" id="L51">            return x;</span>
         }
+
+    @Override
+    public int hashCode() {
+<span class="nc" id="L56">        int hash = 7;</span>
+<span class="nc" id="L57">        hash = 17 * hash + this.low;</span>
+<span class="nc" id="L58">        hash = 17 * hash + this.high;</span>
+<span class="nc" id="L59">        return hash;</span>
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+<span class="nc bnc" id="L64" title="All 2 branches missed.">        if (obj == null) {</span>
+<span class="nc" id="L65">            return false;</span>
+        }
+<span class="nc bnc" id="L67" title="All 2 branches missed.">        if (getClass() != obj.getClass()) {</span>
+<span class="nc" id="L68">            return false;</span>
+        }
+<span class="nc" id="L70">        final Range other = (Range) obj;</span>
+<span class="nc bnc" id="L71" title="All 2 branches missed.">        if (this.low != other.low) {</span>
+<span class="nc" id="L72">            return false;</span>
+        }
+<span class="nc bnc" id="L74" title="All 2 branches missed.">        if (this.high != other.high) {</span>
+<span class="nc" id="L75">            return false;</span>
+        }
+<span class="nc" id="L77">        return true;</span>
+    }
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

@@ -1,9 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SerialCommunicator.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;UnibotSim&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">org.unisim.reality</a> &gt; <span class="el_source">SerialCommunicator.java</span></div><h1>SerialCommunicator.java</h1><pre class="source lang-java linenums">/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package org.unisim.reality;
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>SerialCommunicator.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;UnibotSim&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">org.unisim.reality</a> &gt; <span class="el_source">SerialCommunicator.java</span></div><h1>SerialCommunicator.java</h1><pre class="source lang-java linenums">package org.unisim.reality;
 
 import org.unisim.ui.reality.CalibrationUI;
 import java.awt.Component;
@@ -19,127 +14,213 @@ import jssc.SerialPortTimeoutException;
 /**
  * Communicates with the Unibot serial port.
  *
- * @author Miles Bryant (mb459@sussex.ac.uk)
+ * @author Miles Bryant (mb459 at sussex.ac.uk)
  */
-<span class="fc" id="L24">public class SerialCommunicator implements SerialPortEventListener {</span>
+public class SerialCommunicator implements SerialPortEventListener {
 
-<span class="fc" id="L26">    private static final Logger LOG = Logger.getLogger(SerialCommunicator.class.getName());</span>
+<span class="fc" id="L21">    private static final Logger LOG = Logger.getLogger(SerialCommunicator.class.</span>
+            getName());
+    private final SerialParameters parameters;
     private SerialPort serialPort;
 
+    /**
+     * Constructs a new SerialCommunicator with a default set of parameters
+     * (COM4, 100msec timeout)
+     */
+    public SerialCommunicator() {
+<span class="fc" id="L31">        this(new SerialParameters());</span>
+<span class="fc" id="L32">    }</span>
+
+    /**
+     * Constructs a new SerialCommunicator, specifying parameters.
+     *
+     * @param parameters SerialParameters used to specify port name and timeout
+     * length.
+     */
+<span class="fc" id="L40">    public SerialCommunicator(SerialParameters parameters) {</span>
+<span class="fc" id="L41">        this.parameters = parameters;</span>
+<span class="fc" id="L42">    }</span>
+
+    /**
+     * Opens the serial port with the port name specified in the parameters.
+     *
+     * @throws SerialPortException Thrown by the underlying SerialPort when any
+     * errors opening the serial port occur, such as can't find serial port,
+     * serial port busy etc. See SerialPortException for more details.
+     */
     public void openSerialPort() throws SerialPortException {
-<span class="fc" id="L30">        openSerialPort(&quot;COM4&quot;);</span>
-<span class="fc" id="L31">    }</span>
-    
-    public void closeSerialPort() throws SerialPortException {
-<span class="fc bfc" id="L34" title="All 2 branches covered.">        if(serialPort == null)</span>
-<span class="fc" id="L35">            throw new NullPointerException(&quot;Serial port is null; make sure the port is opened first.&quot;);</span>
-<span class="fc" id="L36">        serialPort.closePort();</span>
-<span class="fc" id="L37">    }</span>
+<span class="fc" id="L52">        serialPort = new SerialPort(parameters.getPortName());</span>
 
-    public void openSerialPort(String serialPortName) throws SerialPortException {
-<span class="fc" id="L40">        serialPort = new SerialPort(serialPortName);</span>
-
-<span class="fc" id="L42">        serialPort.openPort();</span>
+<span class="fc" id="L54">        serialPort.openPort();</span>
 
         // set params as per unibot protocol
-<span class="fc" id="L45">        serialPort.setParams(</span>
+<span class="fc" id="L57">        serialPort.setParams(</span>
                 SerialPort.BAUDRATE_57600,
                 SerialPort.DATABITS_8,
                 SerialPort.STOPBITS_1,
                 SerialPort.PARITY_NONE
         );
 
-<span class="fc" id="L52">        serialPort.addEventListener(this); //listen for data</span>
-<span class="fc" id="L53">    }</span>
-
-    /**
-     * Sends the raw command to the serial port.
-     *
-     * @param command String with raw command, e.g. &quot;#D 0.2 0.2&quot;
-     * @throws jssc.SerialPortException
-     */
-    public void sendCommand(String command) throws SerialPortException {
-<span class="fc" id="L62">        command = command + &quot;\r&quot;;</span>
-<span class="fc bfc" id="L63" title="All 2 branches covered.">        if(!serialPort.writeBytes(command.getBytes()))</span>
-<span class="fc" id="L64">            throw new RuntimeException(&quot;Command could not be sent. Command: &quot; + command);</span>
+<span class="fc" id="L64">        serialPort.addEventListener(this); //listen for data</span>
 <span class="fc" id="L65">    }</span>
 
-<span class="fc" id="L67">    protected String dataBuffer = &quot;&quot;;</span>
-<span class="fc" id="L68">    private final Object lock = new Object();</span>
-
-    protected void addToBuffer(String s) {
-<span class="fc" id="L71">        synchronized (lock) {</span>
-<span class="fc" id="L72">            dataBuffer += s;</span>
-<span class="pc" id="L73">        }</span>
-<span class="fc" id="L74">    }</span>
-    
-    public String readLine() throws SerialPortTimeoutException {
-<span class="fc" id="L77">        return readLine(100);</span>
-    }
-
-    public String readLine(long timeout) throws SerialPortTimeoutException {
-<span class="fc" id="L81">        long timeOutTime = System.currentTimeMillis() + timeout;</span>
-<span class="fc bfc" id="L82" title="All 2 branches covered.">        while (System.currentTimeMillis() &lt;= timeOutTime) {</span>
-<span class="fc" id="L83">            synchronized (lock) {</span>
-<span class="fc" id="L84">                int index = dataBuffer.indexOf('\n');</span>
-<span class="fc bfc" id="L85" title="All 2 branches covered.">                if (index == -1) {</span>
-<span class="fc" id="L86">                    Thread.yield();</span>
-                } else {
-<span class="fc" id="L88">                    String line = dataBuffer.substring(0, index);</span>
-<span class="fc bfc" id="L89" title="All 2 branches covered.">                    if (index == dataBuffer.length() - 1) {</span>
-<span class="fc" id="L90">                        dataBuffer = &quot;&quot;;</span>
-                    } else {
-<span class="fc" id="L92">                        dataBuffer = dataBuffer.substring(index + 1);</span>
-                    }
-<span class="fc" id="L94">                    return line;</span>
-                }
-<span class="pc" id="L96">            }</span>
+    /**
+     * Closes the serial port, making it available for further use.
+     *
+     * @throws SerialPortException Thrown by the underlying SerialPort when any
+     * errors opening the serial port occur, such as can't find serial port,
+     * serial port busy etc. See SerialPortException for more details.
+     */
+    public void closeSerialPort() throws SerialPortException {
+<span class="fc bfc" id="L75" title="All 2 branches covered.">        if (serialPort == null) {</span>
+<span class="fc" id="L76">            throw new NullPointerException(</span>
+                    &quot;Serial port is null; make sure the port is opened first.&quot;);
         }
-<span class="pc bpc" id="L98" title="1 of 2 branches missed.">        throw new SerialPortTimeoutException(serialPort == null ?&quot;no serial port&quot; : serialPort.getPortName(), &quot;readLine(), current buffer contents =&quot; + dataBuffer, (int) timeout);</span>
+<span class="fc" id="L79">        serialPort.closePort();</span>
+<span class="fc" id="L80">    }</span>
+
+    /**
+     * Sends the raw command to the serial port, appending with \r to signify a
+     * single command sent.
+     *
+     * @param command String with raw command, e.g. &quot;#D 0.2 0.2&quot;
+     * @throws SerialPortException Thrown by the underlying SerialPort when any
+     * errors opening the serial port occur, such as can't find serial port,
+     * serial port busy etc. See SerialPortException for more details.
+     */
+    public void sendCommand(String command) throws SerialPortException {
+<span class="fc" id="L92">        command = command + &quot;\r&quot;;</span>
+<span class="fc bfc" id="L93" title="All 2 branches covered.">        if (!serialPort.writeBytes(command.getBytes())) {</span>
+<span class="fc" id="L94">            throw new RuntimeException(&quot;Command could not be sent. Command: &quot;</span>
+                    + command);
+        }
+<span class="fc" id="L97">    }</span>
+
+<span class="fc" id="L99">    String dataBuffer = &quot;&quot;;</span>
+<span class="fc" id="L100">    private final Object lock = new Object();</span>
+
+    /**
+     * Adds the specified String to the buffer. Thread safe.
+     *
+     * @param s String to add.
+     */
+    void addToBuffer(String s) {
+<span class="fc" id="L108">        synchronized (lock) {</span>
+<span class="fc" id="L109">            dataBuffer += s;</span>
+<span class="pc" id="L110">        }</span>
+<span class="fc" id="L111">    }</span>
+
+    /**
+     * Waits for the serial port to read an entire line of data up until the \n
+     * character.
+     *
+     * @return String line of data from the serial port, without the ending
+     * newline character.
+     * @throws SerialPortTimeoutException If the timeout is reached without a
+     * full line of data being read. Normally thrown when communication with the
+     * robot is lost - check that its on, serial port is plugged in, or the
+     * battery hasn't run out!
+     */
+    public String readLine() throws SerialPortTimeoutException {
+<span class="fc" id="L125">        long timeOutTime = System.currentTimeMillis() + parameters.</span>
+                getTimeOutMSec();
+<span class="fc bfc" id="L127" title="All 2 branches covered.">        while (System.currentTimeMillis() &lt;= timeOutTime) {</span>
+<span class="fc" id="L128">            synchronized (lock) {</span>
+<span class="fc" id="L129">                int index = dataBuffer.indexOf('\n');</span>
+<span class="fc bfc" id="L130" title="All 2 branches covered.">                if (index == -1) {</span>
+<span class="fc" id="L131">                    Thread.yield();</span>
+                } else {
+<span class="fc" id="L133">                    String line = dataBuffer.substring(0, index);</span>
+<span class="fc bfc" id="L134" title="All 2 branches covered.">                    if (index == dataBuffer.length() - 1) {</span>
+<span class="fc" id="L135">                        dataBuffer = &quot;&quot;;</span>
+                    } else {
+<span class="fc" id="L137">                        dataBuffer = dataBuffer.substring(index + 1);</span>
+                    }
+<span class="fc" id="L139">                    return line;</span>
+                }
+<span class="pc" id="L141">            }</span>
+        }
+<span class="pc bpc" id="L143" title="1 of 2 branches missed.">        throw new SerialPortTimeoutException(serialPort == null</span>
+                ? &quot;no serial port&quot; : serialPort.getPortName(),
+                &quot;readLine(), current buffer contents =&quot; + dataBuffer,
+                (int) parameters.getTimeOutMSec());
     }
 
     /**
+     * Called by the SerialPort when a serial port event occurs, e.g. data is
+     * received.
      *
-     * @param spe
+     * @param spe SerialPortEvent
      */
     @Override
     public void serialEvent(SerialPortEvent spe) {
-<span class="pc bpc" id="L107" title="1 of 2 branches missed.">        if (spe.isRXCHAR()) {</span>
+<span class="pc bpc" id="L157" title="1 of 2 branches missed.">        if (spe.isRXCHAR()) {</span>
             try {
-<span class="nc" id="L109">                String data = serialPort.readString();</span>
-<span class="nc bnc" id="L110" title="All 2 branches missed.">                if (data != null) {</span>
-<span class="nc" id="L111">                    addToBuffer(data);</span>
+<span class="nc" id="L159">                String data = serialPort.readString();</span>
+<span class="nc bnc" id="L160" title="All 2 branches missed.">                if (data != null) {</span>
+<span class="nc" id="L161">                    addToBuffer(data);</span>
                 }
-<span class="nc" id="L113">            } catch (SerialPortException ex) {</span>
-<span class="nc" id="L114">                LOG.log(Level.SEVERE, null, ex);</span>
-<span class="nc" id="L115">            }</span>
+<span class="nc" id="L163">            } catch (SerialPortException ex) {</span>
+<span class="nc" id="L164">                LOG.log(Level.SEVERE, null, ex);</span>
+<span class="nc" id="L165">            }</span>
         }
-<span class="nc" id="L117">    }</span>
+<span class="nc" id="L167">    }</span>
 
+    /**
+     * Displays a Swing GUI error message with natural language describing the
+     * error.
+     *
+     * @param ex SerialPort
+     * @param parent Component to display this error message from.
+     */
     public static void showErrorDialog(SerialPortException ex, Component parent) {
-<span class="nc" id="L120">        Logger.getLogger(CalibrationUI.class.getName()).log(Level.SEVERE, null, ex);</span>
-<span class="nc" id="L121">        String errmsg = &quot;&quot;,</span>
-<span class="nc" id="L122">                errtitle = &quot;&quot;;</span>
-<span class="nc bnc" id="L123" title="All 14 branches missed.">        switch (ex.getExceptionType()) {</span>
+<span class="nc" id="L177">        Logger.getLogger(CalibrationUI.class.getName()).log(Level.SEVERE, null,</span>
+                ex);
+<span class="nc" id="L179">        String errmsg = &quot;&quot;,</span>
+<span class="nc" id="L180">                errtitle = &quot;&quot;;</span>
+<span class="nc bnc" id="L181" title="All 14 branches missed.">        switch (ex.getExceptionType()) {</span>
             case SerialPortException.TYPE_PORT_ALREADY_OPENED:
-<span class="nc" id="L125">                errtitle = &quot;Port already opened&quot;;</span>
-<span class="nc" id="L126">                errmsg = &quot;Serial port &quot; + ex.getPortName() + &quot; is already open. Check that another instance/application is not using it.&quot;;</span>
-<span class="nc" id="L127">                break;</span>
+<span class="nc" id="L183">                errtitle = &quot;Port already opened&quot;;</span>
+<span class="nc" id="L184">                errmsg = &quot;Serial port &quot; + ex.getPortName()</span>
+                        + &quot; is already open. Check that another instance/application is not using it.&quot;;
+<span class="nc" id="L186">                break;</span>
             case SerialPortException.TYPE_PORT_BUSY:
-<span class="nc" id="L129">                errtitle = &quot;Port busy&quot;;</span>
-<span class="nc" id="L130">                errmsg = &quot;Serial port &quot; + ex.getPortName() + &quot; is busy. Check that another instance/application is not using it.&quot;;</span>
-<span class="nc" id="L131">                break;</span>
+<span class="nc" id="L188">                errtitle = &quot;Port busy&quot;;</span>
+<span class="nc" id="L189">                errmsg = &quot;Serial port &quot; + ex.getPortName()</span>
+                        + &quot; is busy. Check that another instance/application is not using it.&quot;;
+<span class="nc" id="L191">                break;</span>
             case SerialPortException.TYPE_PORT_NOT_FOUND:
-<span class="nc" id="L133">                errtitle = &quot;Port not found&quot;;</span>
-<span class="nc" id="L134">                errmsg = &quot;Serial port &quot; + ex.getPortName() + &quot; was not found. Check that serial interface is plugged in.&quot;;</span>
+<span class="nc" id="L193">                errtitle = &quot;Port not found&quot;;</span>
+<span class="nc" id="L194">                errmsg = &quot;Serial port &quot; + ex.getPortName()</span>
+                        + &quot; was not found. Check that serial interface is plugged in.&quot;;
             default:
                 break;
         }
-<span class="nc" id="L138">        JOptionPane.showMessageDialog(parent,</span>
-                errmsg,
-                errtitle,
+<span class="nc" id="L199">        showErrorDialog(parent, errmsg, errtitle);</span>
+<span class="nc" id="L200">    }</span>
+
+    /**
+     * Displays a Swing GUI error message with natural language describing the
+     * error.
+     *
+     * @param ex SerialPort
+     * @param parent Component to display this error message from.
+     */
+    public static void showErrorDialog(SerialPortTimeoutException ex,
+            Component parent) {
+<span class="nc" id="L211">        showErrorDialog(parent,</span>
+                &quot;A timeout on the serial port &quot; + ex.getPortName()
+                + &quot; occurred whilst sending a command. Check that the robot is on.&quot;,
+                &quot;Time out occurred&quot;);
+<span class="nc" id="L215">    }</span>
+
+    private static void showErrorDialog(Component parent, String message,
+            String title) {
+<span class="nc" id="L219">        JOptionPane.showMessageDialog(parent,</span>
+                message,
+                title,
                 JOptionPane.ERROR_MESSAGE);
-<span class="nc" id="L142">    }</span>
+<span class="nc" id="L223">    }</span>
 
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.2.201409121644</span></div></body></html>

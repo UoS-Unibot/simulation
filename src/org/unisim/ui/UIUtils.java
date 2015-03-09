@@ -14,7 +14,7 @@ import java.io.File;
 public class UIUtils {
     public static File getUserDir() {
         File f = new File(System.getProperty("user.dir") + "/user/");
-        if(f.isDirectory() & f.exists())
+        if(f.isDirectory() && f.exists())
             return f;
         else
             return new File(System.getProperty("user.dir"));
@@ -22,7 +22,7 @@ public class UIUtils {
     
     public static File getUserDir(String subdir) {
         File f = new File(System.getProperty("user.dir") + "/user/" + subdir);
-        if(f.isDirectory() & f.exists())
+        if(f.isDirectory() && f.exists())
             return f;
         else
             return new File(System.getProperty("user.dir"));

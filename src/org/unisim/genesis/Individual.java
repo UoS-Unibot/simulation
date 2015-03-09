@@ -5,107 +5,140 @@
  */
 package org.unisim.genesis;
 
-import java.util.ArrayList;
-import java.util.Random;
+import java.util.Objects;
 
 /**
+ * Represents an individual in a population, with a genotype. It is immutable;
+ * fitness is calculated via phenotype.calculateFitness with the genotype's
+ * genes, or can be
  *
- * @author Miles
+ * @author Miles Bryant <mb459 at sussex.ac.uk>
  */
-public abstract class Individual implements Comparable<Individual> {
-    
-    //protected Genotype genotype;
-    private final Random rand = new Random();
-    
-//    public Object getGene(int index) {
-//        return genotype.getGene(index);
-//    }
-//    public void setGene(int index, Object value)  {
-//        genotype.setGene(index, value);
-//    }
-    
-//    public Genotype getGenotype() {
-//        return genotype;
-//    }
-//    
-//    Individual() {}
-//        
-//    Individual(Genotype prototype) {
-//        genotype = prototype.getInstanceOf();
-//    }
-        
+public final class Individual {
+
+    private final Genotype genotype;
+    private final float fitness;
+    private final Phenotype phenotype;
+
     /**
-     * Calculates HammingDistance between this instance and another.
+     * Creates a new Individual based on the phenotype given with random genes.
      *
-     * Calculates the HammingDistance between this instance and BinaryIndividual
-     * ind. http://en.wikipedia.org/wiki/Hamming_distance.
-     * @param ind Other individual to compare this instance with.
-     * @return Int value representing the Hamming Distance, or difference.
+     * @param phenotype phenotype specifying the genotype.
+     * @return a new Individual with random genes.
      */
-    //int HammingDistance(Individual ind)
-    
-    /**
-     * Fitness function for an individual - it should unambiguously provide a 
-     * quantitative measure of success from an individual's genotype.
-     * @return Fitness value.
-     */
-    public abstract float fitness();
+    public static Individual withRandomGenes(Phenotype phenotype) {
+        return new Individual(Genotype.withRandomGenome(phenotype.
+                getGenomeLength()), phenotype);
+    }
 
     /**
-     * Simulates biological gene crossover between this and another individual.
+     * Creates a new Individual with the specified genotype, phenotype and
+     * fitness.
      *
-     * Simulates biological gene crossover by replacing each gene with the copy
-     * in another individual with probability p_crossover.
-     * @param p_crossover Probability for each gene that it will be crossed over.
-     * @param ind Individual to cross over genes from.
+     * @param genotype genotype with specified genes.
+     * @param phenotype phenotype to specify
+     * @param fitness measured fitness of this individual
      */
-    //void crossover(float p_crossover, Individual ind);
+    protected Individual(Genotype genotype, Phenotype phenotype, float fitness) {
+        this.genotype = genotype;
+        this.fitness = fitness;
+        this.phenotype = phenotype;
+    }
 
     /**
-     * Mutates each gene with p_mutation probability.
-     * @param p_mutation Probability of mutation for each gene between 0 and 1.
+     * Creates a new Individual with the specified genotype and phenotype.
+     * Fitness is then calculated via the phenotype.
+     *
+     * @param genotype genotype with specified genes.
+     * @param phenotype measured fitness of this individual
      */
-    //void mutate(float p_mutation);
+    protected Individual(Genotype genotype, Phenotype phenotype) {
+        this(genotype, phenotype, phenotype.
+                calculateFitness(genotype.getGenes()));
+    }
 
     /**
-     * Returns size of the genotype in bits.
-     * @return size of the genotype in bits. size([0000]) -> 4
+     * Gets the fitness of this Individual.
+     *
+     * @return fitness
      */
-    //int size();
+    public float getFitness() {
+        return fitness;
+    }
 
     /**
-     * Provides a string representation of the individual, by default genotype
-     * and fitness.
-     * @return String to be outputted.
+     * Gets the genotype of this Individual.
+     *
+     * @return the genotype.
+     */
+    public Genotype getGenotype() {
+        return genotype;
+    }
+
+    /**
+     * Produces a new individual, mutating the genes and crossing them over from
+     * another array of genes.
+     *
+     * @param pCross probability that a given gene is copied from the second
+     * gene array; must be between 0 and 1.
+     * @param pMut variance of random Gaussian variable to be added to the
+     * genes. May be any value, but if it is over 1 the creep is likely to often
+     * take genes out of range causing a lot of reflections, and the genotype
+     * will be extremely unstable.
+     * @param crossOverGenes array of genes to copy from.
+     * @return a new Individual.
+     */
+    public Individual reproduce(float pCross, float pMut, float[] crossOverGenes) {
+        Genotype newGenotype = genotype.crossover(pCross, crossOverGenes).
+                mutate(pMut);
+        return new Individual(newGenotype, phenotype);
+    }
+
+    /**
+     *
+     * @param obj
+     * @return
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Individual other = (Individual) obj;
+        if (!Objects.equals(this.genotype, other.genotype)) {
+            return false;
+        }
+        if (Float.floatToIntBits(this.fitness) != Float.floatToIntBits(
+                other.fitness)) {
+            return false;
+        }
+        return Objects.equals(this.phenotype, other.phenotype);
+    }
+
+    /**
+     *
+     * @return
+     */
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 53 * hash + Objects.hashCode(this.genotype);
+        hash = 53 * hash + Float.floatToIntBits(this.fitness);
+        hash = 53 * hash + Objects.hashCode(this.phenotype);
+        return hash;
+    }
+
+    /**
+     *
+     * @return
      */
     @Override
     public String toString() {
-        return "";
+        return "Individual{" + "fitness=" + fitness + ", phenotype=" + phenotype
+                + '}';
     }
-    
-    @Override
-    public int compareTo(Individual ind)  {
-        if(this.fitness() > ind.fitness())  {
-            return 1;
-        } else if (this.fitness() < ind.fitness())  {
-            return -1;
-        } else  {
-            return 0;
-        }
-    }
-    
-    public abstract void crossover(float pCross, Individual ind);
-//    {
-//        for(int i = 0; i < genotype.size(); i++) {
-//            if(rand.nextFloat() < p_crossover)
-//                setGene(i, ind.getGene(i)); //probability matched, so crossover
-//        }
-//    }
 
-    public abstract Individual getInstanceOf();
-
-    abstract void mutate(float p_mutation) ;
-
-    
-    
 }

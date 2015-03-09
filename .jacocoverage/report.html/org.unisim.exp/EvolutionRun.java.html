@@ -9,7 +9,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.unisim.exp.params.Parameters;
 import org.unisim.genesis.MicrobialGA;
-import org.unisim.genesis.RobotGenotype;
+import org.unisim.genesis.Genotype;
 import org.unisim.genesis.Stats;
 
 /**
@@ -63,7 +63,7 @@ import org.unisim.genesis.Stats;
         }
 <span class="nc" id="L64">    }</span>
 
-    public RobotGenotype getBestGenotype() {
+    public Genotype getBestGenotype() {
 <span class="nc" id="L67">        return GA.getLastStats().bestInd.getGenotype();</span>
     }
 

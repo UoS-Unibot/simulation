@@ -50,4 +50,30 @@ public class Range {
                 return high;
             return x;
         }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 17 * hash + this.low;
+        hash = 17 * hash + this.high;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Range other = (Range) obj;
+        if (this.low != other.low) {
+            return false;
+        }
+        if (this.high != other.high) {
+            return false;
+        }
+        return true;
+    }
 }

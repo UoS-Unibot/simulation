@@ -2,6 +2,7 @@ package org.unisim.reality;
 
 import org.unisim.ui.reality.CalibrationUI;
 import java.awt.Component;
+import java.nio.charset.StandardCharsets;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -90,7 +91,7 @@ public class SerialCommunicator implements SerialPortEventListener {
      */
     public void sendCommand(String command) throws SerialPortException {
         command = command + "\r";
-        if (!serialPort.writeBytes(command.getBytes())) {
+        if (!serialPort.writeBytes(command.getBytes(StandardCharsets.UTF_8))) {
             throw new RuntimeException("Command could not be sent. Command: "
                     + command);
         }
@@ -194,6 +195,10 @@ public class SerialCommunicator implements SerialPortEventListener {
                 errmsg = "Serial port " + ex.getPortName()
                         + " was not found. Check that serial interface is plugged in.";
             default:
+                errtitle = "Unknown serial port error";
+                errmsg = "An unknown error occurred in the serial port " + ex.
+                        getPortName()
+                        + ".";
                 break;
         }
         showErrorDialog(parent, errmsg, errtitle);

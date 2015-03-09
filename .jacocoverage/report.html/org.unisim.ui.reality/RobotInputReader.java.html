@@ -5,11 +5,19 @@
  */
 package org.unisim.ui.reality;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import jssc.SerialPortException;
+import jssc.SerialPortTimeoutException;
+import org.unisim.reality.RealRobotBody;
+import org.unisim.reality.SerialCommunicator;
+import org.unisim.util.DataFile;
 
 /**
  *
@@ -17,38 +25,60 @@ import jssc.SerialPortException;
  */
 public class RobotInputReader extends javax.swing.JFrame {
 
-//    private SimpleUnibotController unibot;
-
-<span class="nc" id="L22">    private final long timerUpdateInterval = Math.round(1.0 / 60.0);</span>
+<span class="nc" id="L28">    private final long timerUpdateInterval = Math.round(1000.0 / 60.0);</span>
+    private RealRobotBody robot;
+<span class="nc" id="L30">    private boolean logData = false;</span>
+    private DataFile data;
 
     public void updateData() {
-//        try {
-//            unibot.requestRange();
-//            unibot.requestData(SimpleUnibotController.PacketType.SONAR);
-//        } catch (SerialPortException ex) {
-//            SerialCommunicator.showErrorDialog(ex, this);
-//        }
-//        lblRange.setText(String.valueOf(unibot.getLastData(SimpleUnibotController.PacketType.RANGE_SINGLE)[0]));
-//
-//        double[] sonarVals = unibot.getLastData(SimpleUnibotController.PacketType.RANGE_SINGLE);
-//        lblSonar1.setText(String.valueOf(sonarVals[0]));
-//        lblSonar2.setText(String.valueOf(sonarVals[1]));
-//        lblSonar3.setText(String.valueOf(sonarVals[2]));
-//        lblSonar4.setText(String.valueOf(sonarVals[3]));
-<span class="nc" id="L38">    }</span>
+<span class="nc" id="L34">        double range = robot.getRange();</span>
+<span class="nc" id="L35">        double[] sonars = robot.getSonars();</span>
+<span class="nc" id="L36">        lblRange.setText(String.valueOf(range));</span>
+<span class="nc" id="L37">        lblSonar1.setText(String.valueOf(sonars[0]));</span>
+<span class="nc" id="L38">        lblSonar2.setText(String.valueOf(sonars[1]));</span>
+<span class="nc" id="L39">        lblSonar3.setText(String.valueOf(sonars[2]));</span>
+<span class="nc" id="L40">        lblSonar4.setText(String.valueOf(sonars[3]));</span>
+<span class="nc bnc" id="L41" title="All 2 branches missed.">        if (logData) {</span>
+<span class="nc" id="L42">            data.addDataRow(range, sonars[0], sonars[1], sonars[2], sonars[3]);</span>
+        }
+<span class="nc" id="L44">    }</span>
 
     /**
      * Creates new form RobotInputReader
      */
-<span class="nc" id="L43">    public RobotInputReader() {</span>
-//        initComponents();
-//        try {
-//            unibot = new SimpleUnibotController();
-//        } catch (SerialPortException ex) {
-//            SerialCommunicator.showErrorDialog(ex, this);
-//            System.exit(0);
-//        }
-<span class="nc" id="L51">    }</span>
+<span class="nc" id="L49">    public RobotInputReader() {</span>
+<span class="nc" id="L50">        initComponents();</span>
+
+<span class="nc" id="L52">        DocumentListener filenameListener = new DocumentListener() {</span>
+
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+<span class="nc" id="L56">                updateFilename();</span>
+<span class="nc" id="L57">            }</span>
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+<span class="nc" id="L61">                updateFilename();</span>
+<span class="nc" id="L62">            }</span>
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+<span class="nc" id="L66">                updateFilename();</span>
+<span class="nc" id="L67">            }</span>
+        };
+
+<span class="nc" id="L70">        txtDirectory.getDocument().addDocumentListener(filenameListener);</span>
+<span class="nc" id="L71">        txtFilename.getDocument().addDocumentListener(filenameListener);</span>
+<span class="nc" id="L72">        updateFilename();</span>
+
+<span class="nc" id="L74">    }</span>
+
+    private void updateFilename() {
+<span class="nc" id="L77">        lblFilename.setText(txtDirectory.getText() + spnAngle.getValue().</span>
+                toString() + &quot;deg_&quot; + spnDist.getValue().toString() + &quot;cm&quot;
+                + txtFilename.
+                getText());
+<span class="nc" id="L81">    }</span>
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -58,151 +88,430 @@ public class RobotInputReader extends javax.swing.JFrame {
     @SuppressWarnings(&quot;unchecked&quot;)
     // &lt;editor-fold defaultstate=&quot;collapsed&quot; desc=&quot;Generated Code&quot;&gt;//GEN-BEGIN:initComponents
     private void initComponents() {
+        java.awt.GridBagConstraints gridBagConstraints;
 
-<span class="nc" id="L62">        lblRange = new javax.swing.JLabel();</span>
-<span class="nc" id="L63">        lblSonar1 = new javax.swing.JLabel();</span>
-<span class="nc" id="L64">        lblSonar2 = new javax.swing.JLabel();</span>
-<span class="nc" id="L65">        lblSonar3 = new javax.swing.JLabel();</span>
-<span class="nc" id="L66">        lblSonar4 = new javax.swing.JLabel();</span>
-<span class="nc" id="L67">        jLabel1 = new javax.swing.JLabel();</span>
-<span class="nc" id="L68">        jLabel2 = new javax.swing.JLabel();</span>
-<span class="nc" id="L69">        chkSave = new javax.swing.JCheckBox();</span>
-<span class="nc" id="L70">        btnRead = new javax.swing.JButton();</span>
-<span class="nc" id="L71">        jScrollPane1 = new javax.swing.JScrollPane();</span>
-<span class="nc" id="L72">        txtFilename = new javax.swing.JTextPane();</span>
-<span class="nc" id="L73">        jLabel3 = new javax.swing.JLabel();</span>
-<span class="nc" id="L74">        spnN = new javax.swing.JSpinner();</span>
-<span class="nc" id="L75">        jLabel4 = new javax.swing.JLabel();</span>
+<span class="nc" id="L93">        jPanel2 = new javax.swing.JPanel();</span>
+<span class="nc" id="L94">        jPanel1 = new javax.swing.JPanel();</span>
+<span class="nc" id="L95">        jScrollPane1 = new javax.swing.JScrollPane();</span>
+<span class="nc" id="L96">        txtFilename = new javax.swing.JTextPane();</span>
+<span class="nc" id="L97">        jLabel6 = new javax.swing.JLabel();</span>
+<span class="nc" id="L98">        spnDist = new javax.swing.JSpinner();</span>
+<span class="nc" id="L99">        jLabel5 = new javax.swing.JLabel();</span>
+<span class="nc" id="L100">        spnAngle = new javax.swing.JSpinner();</span>
+<span class="nc" id="L101">        jScrollPane2 = new javax.swing.JScrollPane();</span>
+<span class="nc" id="L102">        txtDirectory = new javax.swing.JTextPane();</span>
+<span class="nc" id="L103">        chkSave = new javax.swing.JCheckBox();</span>
+<span class="nc" id="L104">        jPanel3 = new javax.swing.JPanel();</span>
+<span class="nc" id="L105">        jLabel3 = new javax.swing.JLabel();</span>
+<span class="nc" id="L106">        spnTime = new javax.swing.JSpinner();</span>
+<span class="nc" id="L107">        jLabel4 = new javax.swing.JLabel();</span>
+<span class="nc" id="L108">        btnRead = new javax.swing.JButton();</span>
+<span class="nc" id="L109">        lblFilename = new javax.swing.JLabel();</span>
+<span class="nc" id="L110">        btnOpen = new javax.swing.JButton();</span>
+<span class="nc" id="L111">        jPanel4 = new javax.swing.JPanel();</span>
+<span class="nc" id="L112">        jLabel1 = new javax.swing.JLabel();</span>
+<span class="nc" id="L113">        lblRange = new javax.swing.JLabel();</span>
+<span class="nc" id="L114">        jPanel5 = new javax.swing.JPanel();</span>
+<span class="nc" id="L115">        jLabel2 = new javax.swing.JLabel();</span>
+<span class="nc" id="L116">        lblSonar1 = new javax.swing.JLabel();</span>
+<span class="nc" id="L117">        lblSonar2 = new javax.swing.JLabel();</span>
+<span class="nc" id="L118">        lblSonar4 = new javax.swing.JLabel();</span>
+<span class="nc" id="L119">        lblSonar3 = new javax.swing.JLabel();</span>
 
-<span class="nc" id="L77">        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);</span>
+<span class="nc" id="L121">        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);</span>
 
-<span class="nc" id="L79">        lblRange.setFont(new java.awt.Font(&quot;Dialog&quot;, 0, 18)); // NOI18N</span>
-<span class="nc" id="L80">        lblRange.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);</span>
-<span class="nc" id="L81">        lblRange.setText(&quot;0&quot;);</span>
+<span class="nc" id="L123">        jPanel2.setLayout(new java.awt.GridBagLayout());</span>
 
-<span class="nc" id="L83">        lblSonar1.setFont(new java.awt.Font(&quot;Dialog&quot;, 0, 18)); // NOI18N</span>
-<span class="nc" id="L84">        lblSonar1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);</span>
-<span class="nc" id="L85">        lblSonar1.setText(&quot;0&quot;);</span>
+<span class="nc" id="L125">        jPanel1.setBorder(javax.swing.BorderFactory.createEtchedBorder());</span>
+<span class="nc" id="L126">        jPanel1.setLayout(new java.awt.GridBagLayout());</span>
 
-<span class="nc" id="L87">        lblSonar2.setFont(new java.awt.Font(&quot;Dialog&quot;, 0, 18)); // NOI18N</span>
-<span class="nc" id="L88">        lblSonar2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);</span>
-<span class="nc" id="L89">        lblSonar2.setText(&quot;0&quot;);</span>
+<span class="nc" id="L128">        jScrollPane1.setMinimumSize(new java.awt.Dimension(300, 35));</span>
+<span class="nc" id="L129">        jScrollPane1.setPreferredSize(new java.awt.Dimension(300, 35));</span>
+<span class="nc" id="L130">        jScrollPane1.setRequestFocusEnabled(false);</span>
 
-<span class="nc" id="L91">        lblSonar3.setFont(new java.awt.Font(&quot;Dialog&quot;, 0, 18)); // NOI18N</span>
-<span class="nc" id="L92">        lblSonar3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);</span>
-<span class="nc" id="L93">        lblSonar3.setText(&quot;0&quot;);</span>
+<span class="nc" id="L132">        txtFilename.setFont(new java.awt.Font(&quot;Dialog&quot;, 0, 24)); // NOI18N</span>
+<span class="nc" id="L133">        txtFilename.setText(&quot;.csv&quot;);</span>
+<span class="nc" id="L134">        txtFilename.setMinimumSize(new java.awt.Dimension(300, 35));</span>
+<span class="nc" id="L135">        txtFilename.setPreferredSize(new java.awt.Dimension(300, 35));</span>
+<span class="nc" id="L136">        jScrollPane1.setViewportView(txtFilename);</span>
 
-<span class="nc" id="L95">        lblSonar4.setFont(new java.awt.Font(&quot;Dialog&quot;, 0, 18)); // NOI18N</span>
-<span class="nc" id="L96">        lblSonar4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);</span>
-<span class="nc" id="L97">        lblSonar4.setText(&quot;0&quot;);</span>
+<span class="nc" id="L138">        gridBagConstraints = new java.awt.GridBagConstraints();</span>
+<span class="nc" id="L139">        gridBagConstraints.gridx = 4;</span>
+<span class="nc" id="L140">        gridBagConstraints.gridy = 0;</span>
+<span class="nc" id="L141">        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;</span>
+<span class="nc" id="L142">        gridBagConstraints.weightx = 1.0;</span>
+<span class="nc" id="L143">        gridBagConstraints.weighty = 1.0;</span>
+<span class="nc" id="L144">        gridBagConstraints.insets = new java.awt.Insets(15, 15, 15, 15);</span>
+<span class="nc" id="L145">        jPanel1.add(jScrollPane1, gridBagConstraints);</span>
 
-<span class="nc" id="L99">        jLabel1.setText(&quot;Range&quot;);</span>
+<span class="nc" id="L147">        jLabel6.setFont(new java.awt.Font(&quot;Dialog&quot;, 0, 24)); // NOI18N</span>
+<span class="nc" id="L148">        jLabel6.setText(&quot;cm&quot;);</span>
+<span class="nc" id="L149">        gridBagConstraints = new java.awt.GridBagConstraints();</span>
+<span class="nc" id="L150">        gridBagConstraints.gridx = 3;</span>
+<span class="nc" id="L151">        gridBagConstraints.gridy = 0;</span>
+<span class="nc" id="L152">        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;</span>
+<span class="nc" id="L153">        gridBagConstraints.weightx = 1.0;</span>
+<span class="nc" id="L154">        gridBagConstraints.weighty = 1.0;</span>
+<span class="nc" id="L155">        gridBagConstraints.insets = new java.awt.Insets(7, 7, 7, 7);</span>
+<span class="nc" id="L156">        jPanel1.add(jLabel6, gridBagConstraints);</span>
 
-<span class="nc" id="L101">        jLabel2.setText(&quot;Sonars&quot;);</span>
-
-<span class="nc" id="L103">        chkSave.setText(&quot;Save reading(s) to&quot;);</span>
-
-<span class="nc" id="L105">        btnRead.setText(&quot;Read&quot;);</span>
-<span class="nc" id="L106">        btnRead.addActionListener(new java.awt.event.ActionListener() {</span>
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-<span class="nc" id="L108">                btnReadActionPerformed(evt);</span>
-<span class="nc" id="L109">            }</span>
+<span class="nc" id="L158">        spnDist.setFont(new java.awt.Font(&quot;Dialog&quot;, 0, 24)); // NOI18N</span>
+<span class="nc" id="L159">        spnDist.setModel(new javax.swing.SpinnerNumberModel(Double.valueOf(0.0d), Double.valueOf(0.0d), null, Double.valueOf(10.0d)));</span>
+<span class="nc" id="L160">        spnDist.setPreferredSize(new java.awt.Dimension(80, 34));</span>
+<span class="nc" id="L161">        spnDist.addChangeListener(new javax.swing.event.ChangeListener() {</span>
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+<span class="nc" id="L163">                spnDistStateChanged(evt);</span>
+<span class="nc" id="L164">            }</span>
         });
+<span class="nc" id="L166">        gridBagConstraints = new java.awt.GridBagConstraints();</span>
+<span class="nc" id="L167">        gridBagConstraints.gridx = 2;</span>
+<span class="nc" id="L168">        gridBagConstraints.gridy = 0;</span>
+<span class="nc" id="L169">        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;</span>
+<span class="nc" id="L170">        gridBagConstraints.weightx = 1.0;</span>
+<span class="nc" id="L171">        gridBagConstraints.weighty = 1.0;</span>
+<span class="nc" id="L172">        gridBagConstraints.insets = new java.awt.Insets(7, 7, 7, 7);</span>
+<span class="nc" id="L173">        jPanel1.add(spnDist, gridBagConstraints);</span>
 
-<span class="nc" id="L112">        txtFilename.setText(&quot;.csv&quot;);</span>
-<span class="nc" id="L113">        jScrollPane1.setViewportView(txtFilename);</span>
+<span class="nc" id="L175">        jLabel5.setFont(new java.awt.Font(&quot;Dialog&quot;, 0, 24)); // NOI18N</span>
+<span class="nc" id="L176">        jLabel5.setText(&quot;deg_&quot;);</span>
+<span class="nc" id="L177">        gridBagConstraints = new java.awt.GridBagConstraints();</span>
+<span class="nc" id="L178">        gridBagConstraints.gridx = 1;</span>
+<span class="nc" id="L179">        gridBagConstraints.gridy = 0;</span>
+<span class="nc" id="L180">        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;</span>
+<span class="nc" id="L181">        gridBagConstraints.weightx = 1.0;</span>
+<span class="nc" id="L182">        gridBagConstraints.weighty = 1.0;</span>
+<span class="nc" id="L183">        gridBagConstraints.insets = new java.awt.Insets(7, 7, 7, 7);</span>
+<span class="nc" id="L184">        jPanel1.add(jLabel5, gridBagConstraints);</span>
 
-<span class="nc" id="L115">        jLabel3.setText(&quot;Take&quot;);</span>
+<span class="nc" id="L186">        spnAngle.setFont(new java.awt.Font(&quot;Dialog&quot;, 0, 24)); // NOI18N</span>
+<span class="nc" id="L187">        spnAngle.setModel(new javax.swing.SpinnerNumberModel(0.0d, 0.0d, 360.0d, 22.5d));</span>
+<span class="nc" id="L188">        spnAngle.addChangeListener(new javax.swing.event.ChangeListener() {</span>
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+<span class="nc" id="L190">                spnAngleStateChanged(evt);</span>
+<span class="nc" id="L191">            }</span>
+        });
+<span class="nc" id="L193">        gridBagConstraints = new java.awt.GridBagConstraints();</span>
+<span class="nc" id="L194">        gridBagConstraints.gridx = 0;</span>
+<span class="nc" id="L195">        gridBagConstraints.gridy = 0;</span>
+<span class="nc" id="L196">        gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;</span>
+<span class="nc" id="L197">        gridBagConstraints.weightx = 1.0;</span>
+<span class="nc" id="L198">        gridBagConstraints.weighty = 1.0;</span>
+<span class="nc" id="L199">        gridBagConstraints.insets = new java.awt.Insets(7, 7, 7, 7);</span>
+<span class="nc" id="L200">        jPanel1.add(spnAngle, gridBagConstraints);</span>
 
-<span class="nc" id="L117">        spnN.setModel(new javax.swing.SpinnerNumberModel(Integer.valueOf(1), Integer.valueOf(1), null, Integer.valueOf(1)));</span>
+<span class="nc" id="L202">        gridBagConstraints = new java.awt.GridBagConstraints();</span>
+<span class="nc" id="L203">        gridBagConstraints.gridx = 0;</span>
+<span class="nc" id="L204">        gridBagConstraints.gridy = 3;</span>
+<span class="nc" id="L205">        gridBagConstraints.gridwidth = 2;</span>
+<span class="nc" id="L206">        gridBagConstraints.ipadx = 181;</span>
+<span class="nc" id="L207">        gridBagConstraints.ipady = 4;</span>
+<span class="nc" id="L208">        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;</span>
+<span class="nc" id="L209">        gridBagConstraints.weightx = 1.0;</span>
+<span class="nc" id="L210">        gridBagConstraints.weighty = 1.0;</span>
+<span class="nc" id="L211">        gridBagConstraints.insets = new java.awt.Insets(18, 35, 18, 35);</span>
+<span class="nc" id="L212">        jPanel2.add(jPanel1, gridBagConstraints);</span>
 
-<span class="nc" id="L119">        jLabel4.setText(&quot;reading(s)&quot;);</span>
+<span class="nc" id="L214">        jScrollPane2.setMinimumSize(new java.awt.Dimension(503, 83));</span>
+<span class="nc" id="L215">        jScrollPane2.setPreferredSize(new java.awt.Dimension(503, 83));</span>
 
-<span class="nc" id="L121">        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());</span>
-<span class="nc" id="L122">        getContentPane().setLayout(layout);</span>
-<span class="nc" id="L123">        layout.setHorizontalGroup(</span>
+<span class="nc" id="L217">        txtDirectory.setFont(new java.awt.Font(&quot;Dialog&quot;, 0, 14)); // NOI18N</span>
+<span class="nc" id="L218">        txtDirectory.setText(System.getProperty(&quot;user.dir&quot;) + &quot;/Calibration Data/&quot;);</span>
+<span class="nc" id="L219">        txtDirectory.setMinimumSize(new java.awt.Dimension(200, 35));</span>
+<span class="nc" id="L220">        txtDirectory.setPreferredSize(new java.awt.Dimension(200, 35));</span>
+<span class="nc" id="L221">        jScrollPane2.setViewportView(txtDirectory);</span>
+
+<span class="nc" id="L223">        gridBagConstraints = new java.awt.GridBagConstraints();</span>
+<span class="nc" id="L224">        gridBagConstraints.gridx = 1;</span>
+<span class="nc" id="L225">        gridBagConstraints.gridy = 2;</span>
+<span class="nc" id="L226">        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;</span>
+<span class="nc" id="L227">        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;</span>
+<span class="nc" id="L228">        gridBagConstraints.weightx = 1.0;</span>
+<span class="nc" id="L229">        gridBagConstraints.weighty = 1.0;</span>
+<span class="nc" id="L230">        gridBagConstraints.insets = new java.awt.Insets(15, 15, 15, 15);</span>
+<span class="nc" id="L231">        jPanel2.add(jScrollPane2, gridBagConstraints);</span>
+
+<span class="nc" id="L233">        chkSave.setFont(new java.awt.Font(&quot;Dialog&quot;, 0, 24)); // NOI18N</span>
+<span class="nc" id="L234">        chkSave.setText(&quot;Save reading(s) to&quot;);</span>
+<span class="nc" id="L235">        gridBagConstraints = new java.awt.GridBagConstraints();</span>
+<span class="nc" id="L236">        gridBagConstraints.gridx = 0;</span>
+<span class="nc" id="L237">        gridBagConstraints.gridy = 2;</span>
+<span class="nc" id="L238">        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;</span>
+<span class="nc" id="L239">        gridBagConstraints.weightx = 1.0;</span>
+<span class="nc" id="L240">        gridBagConstraints.weighty = 1.0;</span>
+<span class="nc" id="L241">        gridBagConstraints.insets = new java.awt.Insets(13, 13, 13, 13);</span>
+<span class="nc" id="L242">        jPanel2.add(chkSave, gridBagConstraints);</span>
+
+<span class="nc" id="L244">        jPanel3.setBorder(javax.swing.BorderFactory.createEtchedBorder());</span>
+<span class="nc" id="L245">        jPanel3.setLayout(new java.awt.GridBagLayout());</span>
+
+<span class="nc" id="L247">        jLabel3.setFont(new java.awt.Font(&quot;Dialog&quot;, 0, 24)); // NOI18N</span>
+<span class="nc" id="L248">        jLabel3.setText(&quot;Read for&quot;);</span>
+<span class="nc" id="L249">        gridBagConstraints = new java.awt.GridBagConstraints();</span>
+<span class="nc" id="L250">        gridBagConstraints.gridx = 0;</span>
+<span class="nc" id="L251">        gridBagConstraints.gridy = 0;</span>
+<span class="nc" id="L252">        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;</span>
+<span class="nc" id="L253">        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);</span>
+<span class="nc" id="L254">        jPanel3.add(jLabel3, gridBagConstraints);</span>
+
+<span class="nc" id="L256">        spnTime.setFont(new java.awt.Font(&quot;Dialog&quot;, 0, 24)); // NOI18N</span>
+<span class="nc" id="L257">        spnTime.setModel(new javax.swing.SpinnerNumberModel(Integer.valueOf(500), Integer.valueOf(500), null, Integer.valueOf(500)));</span>
+<span class="nc" id="L258">        spnTime.setPreferredSize(new java.awt.Dimension(100, 34));</span>
+<span class="nc" id="L259">        gridBagConstraints = new java.awt.GridBagConstraints();</span>
+<span class="nc" id="L260">        gridBagConstraints.gridx = 1;</span>
+<span class="nc" id="L261">        gridBagConstraints.gridy = 0;</span>
+<span class="nc" id="L262">        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;</span>
+<span class="nc" id="L263">        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);</span>
+<span class="nc" id="L264">        jPanel3.add(spnTime, gridBagConstraints);</span>
+
+<span class="nc" id="L266">        jLabel4.setFont(new java.awt.Font(&quot;Dialog&quot;, 0, 24)); // NOI18N</span>
+<span class="nc" id="L267">        jLabel4.setText(&quot;msec&quot;);</span>
+<span class="nc" id="L268">        gridBagConstraints = new java.awt.GridBagConstraints();</span>
+<span class="nc" id="L269">        gridBagConstraints.gridx = 2;</span>
+<span class="nc" id="L270">        gridBagConstraints.gridy = 0;</span>
+<span class="nc" id="L271">        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;</span>
+<span class="nc" id="L272">        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);</span>
+<span class="nc" id="L273">        jPanel3.add(jLabel4, gridBagConstraints);</span>
+
+<span class="nc" id="L275">        gridBagConstraints = new java.awt.GridBagConstraints();</span>
+<span class="nc" id="L276">        gridBagConstraints.gridx = 0;</span>
+<span class="nc" id="L277">        gridBagConstraints.gridy = 1;</span>
+<span class="nc" id="L278">        gridBagConstraints.gridwidth = 2;</span>
+<span class="nc" id="L279">        gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;</span>
+<span class="nc" id="L280">        gridBagConstraints.weightx = 1.0;</span>
+<span class="nc" id="L281">        gridBagConstraints.weighty = 1.0;</span>
+<span class="nc" id="L282">        gridBagConstraints.insets = new java.awt.Insets(13, 13, 13, 13);</span>
+<span class="nc" id="L283">        jPanel2.add(jPanel3, gridBagConstraints);</span>
+
+<span class="nc" id="L285">        btnRead.setFont(new java.awt.Font(&quot;Dialog&quot;, 0, 24)); // NOI18N</span>
+<span class="nc" id="L286">        btnRead.setText(&quot;Run&quot;);</span>
+<span class="nc" id="L287">        btnRead.addActionListener(new java.awt.event.ActionListener() {</span>
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+<span class="nc" id="L289">                btnReadActionPerformed(evt);</span>
+<span class="nc" id="L290">            }</span>
+        });
+<span class="nc" id="L292">        gridBagConstraints = new java.awt.GridBagConstraints();</span>
+<span class="nc" id="L293">        gridBagConstraints.gridx = 0;</span>
+<span class="nc" id="L294">        gridBagConstraints.gridy = 5;</span>
+<span class="nc" id="L295">        gridBagConstraints.gridwidth = 2;</span>
+<span class="nc" id="L296">        gridBagConstraints.weightx = 1.0;</span>
+<span class="nc" id="L297">        gridBagConstraints.weighty = 1.0;</span>
+<span class="nc" id="L298">        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);</span>
+<span class="nc" id="L299">        jPanel2.add(btnRead, gridBagConstraints);</span>
+
+<span class="nc" id="L301">        lblFilename.setBackground(new java.awt.Color(204, 255, 204));</span>
+<span class="nc" id="L302">        lblFilename.setFont(new java.awt.Font(&quot;Dialog&quot;, 0, 14)); // NOI18N</span>
+<span class="nc" id="L303">        lblFilename.setText(&quot;Filename&quot;);</span>
+<span class="nc" id="L304">        gridBagConstraints = new java.awt.GridBagConstraints();</span>
+<span class="nc" id="L305">        gridBagConstraints.gridx = 0;</span>
+<span class="nc" id="L306">        gridBagConstraints.gridy = 4;</span>
+<span class="nc" id="L307">        gridBagConstraints.gridwidth = 2;</span>
+<span class="nc" id="L308">        gridBagConstraints.weightx = 1.0;</span>
+<span class="nc" id="L309">        gridBagConstraints.weighty = 1.0;</span>
+<span class="nc" id="L310">        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);</span>
+<span class="nc" id="L311">        jPanel2.add(lblFilename, gridBagConstraints);</span>
+
+<span class="nc" id="L313">        btnOpen.setFont(new java.awt.Font(&quot;Dialog&quot;, 0, 24)); // NOI18N</span>
+<span class="nc" id="L314">        btnOpen.setText(&quot;Open Serial Port&quot;);</span>
+<span class="nc" id="L315">        btnOpen.addActionListener(new java.awt.event.ActionListener() {</span>
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+<span class="nc" id="L317">                btnOpenActionPerformed(evt);</span>
+<span class="nc" id="L318">            }</span>
+        });
+<span class="nc" id="L320">        gridBagConstraints = new java.awt.GridBagConstraints();</span>
+<span class="nc" id="L321">        gridBagConstraints.gridx = 0;</span>
+<span class="nc" id="L322">        gridBagConstraints.gridy = 0;</span>
+<span class="nc" id="L323">        gridBagConstraints.gridwidth = 2;</span>
+<span class="nc" id="L324">        gridBagConstraints.weightx = 1.0;</span>
+<span class="nc" id="L325">        gridBagConstraints.weighty = 1.0;</span>
+<span class="nc" id="L326">        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);</span>
+<span class="nc" id="L327">        jPanel2.add(btnOpen, gridBagConstraints);</span>
+
+<span class="nc" id="L329">        jPanel4.setLayout(new java.awt.GridBagLayout());</span>
+
+<span class="nc" id="L331">        jLabel1.setFont(new java.awt.Font(&quot;Dialog&quot;, 0, 24)); // NOI18N</span>
+<span class="nc" id="L332">        jLabel1.setText(&quot;Range&quot;);</span>
+<span class="nc" id="L333">        gridBagConstraints = new java.awt.GridBagConstraints();</span>
+<span class="nc" id="L334">        gridBagConstraints.gridx = 0;</span>
+<span class="nc" id="L335">        gridBagConstraints.gridy = 0;</span>
+<span class="nc" id="L336">        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;</span>
+<span class="nc" id="L337">        gridBagConstraints.insets = new java.awt.Insets(12, 12, 12, 12);</span>
+<span class="nc" id="L338">        jPanel4.add(jLabel1, gridBagConstraints);</span>
+
+<span class="nc" id="L340">        lblRange.setBackground(new java.awt.Color(204, 255, 204));</span>
+<span class="nc" id="L341">        lblRange.setFont(new java.awt.Font(&quot;Dialog&quot;, 0, 24)); // NOI18N</span>
+<span class="nc" id="L342">        lblRange.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);</span>
+<span class="nc" id="L343">        lblRange.setText(&quot;0&quot;);</span>
+<span class="nc" id="L344">        lblRange.setPreferredSize(new java.awt.Dimension(90, 29));</span>
+<span class="nc" id="L345">        gridBagConstraints = new java.awt.GridBagConstraints();</span>
+<span class="nc" id="L346">        gridBagConstraints.gridx = 1;</span>
+<span class="nc" id="L347">        gridBagConstraints.gridy = 0;</span>
+<span class="nc" id="L348">        gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;</span>
+<span class="nc" id="L349">        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;</span>
+<span class="nc" id="L350">        gridBagConstraints.insets = new java.awt.Insets(12, 12, 12, 12);</span>
+<span class="nc" id="L351">        jPanel4.add(lblRange, gridBagConstraints);</span>
+
+<span class="nc" id="L353">        gridBagConstraints = new java.awt.GridBagConstraints();</span>
+<span class="nc" id="L354">        gridBagConstraints.gridx = 0;</span>
+<span class="nc" id="L355">        gridBagConstraints.gridy = 6;</span>
+<span class="nc" id="L356">        gridBagConstraints.gridwidth = 2;</span>
+<span class="nc" id="L357">        gridBagConstraints.weightx = 1.0;</span>
+<span class="nc" id="L358">        gridBagConstraints.weighty = 1.0;</span>
+<span class="nc" id="L359">        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);</span>
+<span class="nc" id="L360">        jPanel2.add(jPanel4, gridBagConstraints);</span>
+
+<span class="nc" id="L362">        jPanel5.setLayout(new java.awt.GridBagLayout());</span>
+
+<span class="nc" id="L364">        jLabel2.setFont(new java.awt.Font(&quot;Dialog&quot;, 0, 24)); // NOI18N</span>
+<span class="nc" id="L365">        jLabel2.setText(&quot;Sonars&quot;);</span>
+<span class="nc" id="L366">        gridBagConstraints = new java.awt.GridBagConstraints();</span>
+<span class="nc" id="L367">        gridBagConstraints.gridx = 0;</span>
+<span class="nc" id="L368">        gridBagConstraints.gridy = 0;</span>
+<span class="nc" id="L369">        gridBagConstraints.gridheight = 2;</span>
+<span class="nc" id="L370">        gridBagConstraints.insets = new java.awt.Insets(12, 12, 12, 12);</span>
+<span class="nc" id="L371">        jPanel5.add(jLabel2, gridBagConstraints);</span>
+
+<span class="nc" id="L373">        lblSonar1.setBackground(new java.awt.Color(204, 255, 204));</span>
+<span class="nc" id="L374">        lblSonar1.setFont(new java.awt.Font(&quot;Dialog&quot;, 0, 24)); // NOI18N</span>
+<span class="nc" id="L375">        lblSonar1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);</span>
+<span class="nc" id="L376">        lblSonar1.setText(&quot;0&quot;);</span>
+<span class="nc" id="L377">        lblSonar1.setPreferredSize(new java.awt.Dimension(40, 40));</span>
+<span class="nc" id="L378">        gridBagConstraints = new java.awt.GridBagConstraints();</span>
+<span class="nc" id="L379">        gridBagConstraints.gridx = 1;</span>
+<span class="nc" id="L380">        gridBagConstraints.gridy = 0;</span>
+<span class="nc" id="L381">        gridBagConstraints.ipadx = 15;</span>
+<span class="nc" id="L382">        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;</span>
+<span class="nc" id="L383">        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);</span>
+<span class="nc" id="L384">        jPanel5.add(lblSonar1, gridBagConstraints);</span>
+
+<span class="nc" id="L386">        lblSonar2.setBackground(new java.awt.Color(204, 255, 204));</span>
+<span class="nc" id="L387">        lblSonar2.setFont(new java.awt.Font(&quot;Dialog&quot;, 0, 24)); // NOI18N</span>
+<span class="nc" id="L388">        lblSonar2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);</span>
+<span class="nc" id="L389">        lblSonar2.setText(&quot;0&quot;);</span>
+<span class="nc" id="L390">        lblSonar2.setPreferredSize(new java.awt.Dimension(40, 40));</span>
+<span class="nc" id="L391">        gridBagConstraints = new java.awt.GridBagConstraints();</span>
+<span class="nc" id="L392">        gridBagConstraints.gridx = 2;</span>
+<span class="nc" id="L393">        gridBagConstraints.gridy = 0;</span>
+<span class="nc" id="L394">        gridBagConstraints.ipadx = 15;</span>
+<span class="nc" id="L395">        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;</span>
+<span class="nc" id="L396">        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);</span>
+<span class="nc" id="L397">        jPanel5.add(lblSonar2, gridBagConstraints);</span>
+
+<span class="nc" id="L399">        lblSonar4.setBackground(new java.awt.Color(204, 255, 204));</span>
+<span class="nc" id="L400">        lblSonar4.setFont(new java.awt.Font(&quot;Dialog&quot;, 0, 24)); // NOI18N</span>
+<span class="nc" id="L401">        lblSonar4.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);</span>
+<span class="nc" id="L402">        lblSonar4.setText(&quot;0&quot;);</span>
+<span class="nc" id="L403">        lblSonar4.setPreferredSize(new java.awt.Dimension(40, 40));</span>
+<span class="nc" id="L404">        gridBagConstraints = new java.awt.GridBagConstraints();</span>
+<span class="nc" id="L405">        gridBagConstraints.gridx = 2;</span>
+<span class="nc" id="L406">        gridBagConstraints.gridy = 1;</span>
+<span class="nc" id="L407">        gridBagConstraints.ipadx = 15;</span>
+<span class="nc" id="L408">        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;</span>
+<span class="nc" id="L409">        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);</span>
+<span class="nc" id="L410">        jPanel5.add(lblSonar4, gridBagConstraints);</span>
+
+<span class="nc" id="L412">        lblSonar3.setBackground(new java.awt.Color(204, 255, 204));</span>
+<span class="nc" id="L413">        lblSonar3.setFont(new java.awt.Font(&quot;Dialog&quot;, 0, 24)); // NOI18N</span>
+<span class="nc" id="L414">        lblSonar3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);</span>
+<span class="nc" id="L415">        lblSonar3.setText(&quot;0&quot;);</span>
+<span class="nc" id="L416">        lblSonar3.setPreferredSize(new java.awt.Dimension(40, 40));</span>
+<span class="nc" id="L417">        gridBagConstraints = new java.awt.GridBagConstraints();</span>
+<span class="nc" id="L418">        gridBagConstraints.gridx = 1;</span>
+<span class="nc" id="L419">        gridBagConstraints.gridy = 1;</span>
+<span class="nc" id="L420">        gridBagConstraints.ipadx = 15;</span>
+<span class="nc" id="L421">        gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;</span>
+<span class="nc" id="L422">        gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);</span>
+<span class="nc" id="L423">        jPanel5.add(lblSonar3, gridBagConstraints);</span>
+
+<span class="nc" id="L425">        gridBagConstraints = new java.awt.GridBagConstraints();</span>
+<span class="nc" id="L426">        gridBagConstraints.gridx = 0;</span>
+<span class="nc" id="L427">        gridBagConstraints.gridy = 7;</span>
+<span class="nc" id="L428">        gridBagConstraints.gridwidth = 2;</span>
+<span class="nc" id="L429">        gridBagConstraints.weightx = 1.0;</span>
+<span class="nc" id="L430">        gridBagConstraints.weighty = 1.0;</span>
+<span class="nc" id="L431">        gridBagConstraints.insets = new java.awt.Insets(10, 10, 10, 10);</span>
+<span class="nc" id="L432">        jPanel2.add(jPanel5, gridBagConstraints);</span>
+
+<span class="nc" id="L434">        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());</span>
+<span class="nc" id="L435">        getContentPane().setLayout(layout);</span>
+<span class="nc" id="L436">        layout.setHorizontalGroup(</span>
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnRead, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addContainerGap())
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(41, 41, 41)
-                        .addComponent(lblRange, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(lblSonar3, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(lblSonar4, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(lblSonar1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(lblSonar2, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(51, 51, 51))
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(chkSave)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane1)
-                        .addContainerGap())
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel3)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(spnN, javax.swing.GroupLayout.PREFERRED_SIZE, 64, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 68, Short.MAX_VALUE))))
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 870, Short.MAX_VALUE)
+                .addContainerGap())
         );
-<span class="nc" id="L161">        layout.setVerticalGroup(</span>
+<span class="nc" id="L443">        layout.setVerticalGroup(</span>
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(spnN, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(chkSave)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(btnRead)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lblRange, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(lblSonar1, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblSonar2, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblSonar4, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblSonar3, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, 640, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
-<span class="nc" id="L193">        pack();</span>
-<span class="nc" id="L194">    }// &lt;/editor-fold&gt;//GEN-END:initComponents</span>
+<span class="nc" id="L451">        pack();</span>
+<span class="nc" id="L452">    }// &lt;/editor-fold&gt;//GEN-END:initComponents</span>
 
     private void btnReadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReadActionPerformed
-<span class="nc" id="L197">        Timer t = new Timer();</span>
-<span class="nc" id="L198">        t.schedule(new TimerTask() {</span>
+        try {
+<span class="nc bnc" id="L456" title="All 2 branches missed.">            if (robot == null) {</span>
+<span class="nc" id="L457">                robot = new RealRobotBody();</span>
+            }
 
-            @Override
-            public void run() {
-<span class="nc" id="L202">                updateData();</span>
-<span class="nc" id="L203">            }</span>
-        }, timerUpdateInterval);
-<span class="nc" id="L205">    }//GEN-LAST:event_btnReadActionPerformed</span>
+<span class="nc" id="L460">            logData = chkSave.isSelected();</span>
+<span class="nc bnc" id="L461" title="All 2 branches missed.">            if (logData) {</span>
+<span class="nc" id="L462">                data = new DataFile(&quot;Range&quot;, &quot;Sonar1&quot;, &quot;Sonar2&quot;, &quot;Sonar3&quot;,</span>
+                        &quot;Sonar4&quot;);
+            }
+
+<span class="nc" id="L466">            final Timer t = new Timer();</span>
+<span class="nc" id="L467">            t.schedule(new TimerTask() {</span>
+
+                @Override
+                public void run() {
+<span class="nc" id="L471">                    updateData();</span>
+<span class="nc" id="L472">                }</span>
+            }, 1, timerUpdateInterval);
+<span class="nc" id="L474">            t.schedule(new TimerTask() {</span>
+
+                @Override
+                public void run() {
+<span class="nc" id="L478">                    t.cancel();</span>
+<span class="nc bnc" id="L479" title="All 2 branches missed.">                    if (logData) {</span>
+                        try {
+<span class="nc" id="L481">                            data.saveToCSV(new File(lblFilename.getText()));</span>
+<span class="nc" id="L482">                        } catch (IOException ex) {</span>
+<span class="nc" id="L483">                            Logger.getLogger(RobotInputReader.class.getName()).</span>
+                                    log(Level.SEVERE, null, ex);
+<span class="nc" id="L485">                        }</span>
+                    }
+<span class="nc" id="L487">                }</span>
+            }, (int) spnTime.getValue());
+
+<span class="nc" id="L490">        } catch (SerialPortException ex) {</span>
+<span class="nc" id="L491">            SerialCommunicator.showErrorDialog(ex, jLabel1);</span>
+<span class="nc" id="L492">        } catch (SerialPortTimeoutException ex) {</span>
+<span class="nc" id="L493">            SerialCommunicator.showErrorDialog(ex, jLabel1);</span>
+<span class="nc" id="L494">        }</span>
+<span class="nc" id="L495">    }//GEN-LAST:event_btnReadActionPerformed</span>
+
+    private void btnOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnOpenActionPerformed
+        try {
+<span class="nc" id="L499">            robot = new RealRobotBody();</span>
+
+<span class="nc" id="L501">        } catch (SerialPortException ex) {</span>
+<span class="nc" id="L502">            SerialCommunicator.showErrorDialog(ex, jLabel1);</span>
+<span class="nc" id="L503">        } catch (SerialPortTimeoutException ex) {</span>
+<span class="nc" id="L504">            SerialCommunicator.showErrorDialog(ex, jLabel1);</span>
+<span class="nc" id="L505">        }</span>
+<span class="nc" id="L506">    }//GEN-LAST:event_btnOpenActionPerformed</span>
+
+    private void spnAngleStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spnAngleStateChanged
+<span class="nc" id="L509">        updateFilename();</span>
+<span class="nc" id="L510">    }//GEN-LAST:event_spnAngleStateChanged</span>
+
+    private void spnDistStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spnDistStateChanged
+<span class="nc" id="L513">        updateFilename();</span>
+<span class="nc" id="L514">    }//GEN-LAST:event_spnDistStateChanged</span>
 
     /**
      * @param args the command line arguments
@@ -214,45 +523,63 @@ public class RobotInputReader extends javax.swing.JFrame {
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
         try {
-<span class="nc bnc" id="L217" title="All 2 branches missed.">            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {</span>
-<span class="nc bnc" id="L218" title="All 2 branches missed.">                if (&quot;Nimbus&quot;.equals(info.getName())) {</span>
-<span class="nc" id="L219">                    javax.swing.UIManager.setLookAndFeel(info.getClassName());</span>
-<span class="nc" id="L220">                    break;</span>
+            for (javax.swing.UIManager.LookAndFeelInfo info
+<span class="nc bnc" id="L527" title="All 2 branches missed.">                    : javax.swing.UIManager.getInstalledLookAndFeels()) {</span>
+<span class="nc bnc" id="L528" title="All 2 branches missed.">                if (&quot;Nimbus&quot;.equals(info.getName())) {</span>
+<span class="nc" id="L529">                    javax.swing.UIManager.setLookAndFeel(info.getClassName());</span>
+<span class="nc" id="L530">                    break;</span>
                 }
             }
-<span class="nc" id="L223">        } catch (ClassNotFoundException ex) {</span>
-<span class="nc" id="L224">            java.util.logging.Logger.getLogger(RobotInputReader.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);</span>
-<span class="nc" id="L225">        } catch (InstantiationException ex) {</span>
-<span class="nc" id="L226">            java.util.logging.Logger.getLogger(RobotInputReader.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);</span>
-<span class="nc" id="L227">        } catch (IllegalAccessException ex) {</span>
-<span class="nc" id="L228">            java.util.logging.Logger.getLogger(RobotInputReader.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);</span>
-<span class="nc" id="L229">        } catch (javax.swing.UnsupportedLookAndFeelException ex) {</span>
-<span class="nc" id="L230">            java.util.logging.Logger.getLogger(RobotInputReader.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);</span>
-<span class="nc" id="L231">        }</span>
+<span class="nc" id="L533">        } catch (ClassNotFoundException ex) {</span>
+<span class="nc" id="L534">            java.util.logging.Logger.getLogger(RobotInputReader.class.getName()).</span>
+                    log(java.util.logging.Level.SEVERE, null, ex);
+<span class="nc" id="L536">        } catch (InstantiationException ex) {</span>
+<span class="nc" id="L537">            java.util.logging.Logger.getLogger(RobotInputReader.class.getName()).</span>
+                    log(java.util.logging.Level.SEVERE, null, ex);
+<span class="nc" id="L539">        } catch (IllegalAccessException ex) {</span>
+<span class="nc" id="L540">            java.util.logging.Logger.getLogger(RobotInputReader.class.getName()).</span>
+                    log(java.util.logging.Level.SEVERE, null, ex);
+<span class="nc" id="L542">        } catch (javax.swing.UnsupportedLookAndFeelException ex) {</span>
+<span class="nc" id="L543">            java.util.logging.Logger.getLogger(RobotInputReader.class.getName()).</span>
+                    log(java.util.logging.Level.SEVERE, null, ex);
+<span class="nc" id="L545">        }</span>
         //&lt;/editor-fold&gt;
 
         /* Create and display the form */
-<span class="nc" id="L235">        java.awt.EventQueue.invokeLater(new Runnable() {</span>
+<span class="nc" id="L549">        java.awt.EventQueue.invokeLater(new Runnable() {</span>
             public void run() {
-<span class="nc" id="L237">                new RobotInputReader().setVisible(true);</span>
-<span class="nc" id="L238">            }</span>
+<span class="nc" id="L551">                new RobotInputReader().setVisible(true);</span>
+<span class="nc" id="L552">            }</span>
         });
-<span class="nc" id="L240">    }</span>
+<span class="nc" id="L554">    }</span>
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnOpen;
     private javax.swing.JButton btnRead;
     private javax.swing.JCheckBox chkSave;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JLabel lblFilename;
     private javax.swing.JLabel lblRange;
     private javax.swing.JLabel lblSonar1;
     private javax.swing.JLabel lblSonar2;
     private javax.swing.JLabel lblSonar3;
     private javax.swing.JLabel lblSonar4;
-    private javax.swing.JSpinner spnN;
+    private javax.swing.JSpinner spnAngle;
+    private javax.swing.JSpinner spnDist;
+    private javax.swing.JSpinner spnTime;
+    private javax.swing.JTextPane txtDirectory;
     private javax.swing.JTextPane txtFilename;
     // End of variables declaration//GEN-END:variables
 }

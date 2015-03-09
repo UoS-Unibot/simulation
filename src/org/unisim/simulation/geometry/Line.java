@@ -120,7 +120,7 @@ public class Line extends Shape2D {
         return v1.getX() * v2.getY() - v1.getY() * v2.getX();
     }
     
-    public static LineIntersection NoIntersection() {
+    public static LineIntersection getNoIntersection() {
         return LineIntersection.noIntersection();
     }
 
@@ -168,7 +168,7 @@ public class Line extends Shape2D {
                 intersectionPoint = Vector2D.NaN;
                 line1DistToIntersect = NaN;
                 line2DistToIntersect = NaN;
-            } else if (0 < t & t < 1
+            } else if (0 < t && t < 1
                     & 0 < u & u < 1) {
                 //lines intersect, return p + tr
                 intersectionPoint = p.add(t, r);

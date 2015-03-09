@@ -33,7 +33,7 @@ public class RealRobotBodyTest {
     RealRobotBody robot;
     
     @Before
-    public void setUp() throws SerialPortException {
+    public void setUp() throws SerialPortException, SerialPortTimeoutException {
         
         robot = new RealRobotBody();
         LOG.setLevel(Level.ALL);
@@ -41,7 +41,7 @@ public class RealRobotBodyTest {
     }
 
     @Test
-    public void initialisationSetsPacketTypeTo3() throws SerialPortException {
+    public void initialisationSetsPacketTypeTo3() throws SerialPortException, SerialPortTimeoutException {
         new Expectations() {{
            serial.sendCommand("#t3");
         }};

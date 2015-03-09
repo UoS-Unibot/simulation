@@ -5,7 +5,6 @@
  */
 package org.unisim.genesis;
 
-import java.util.Random;
 import org.unisim.exp.Experiment;
 import org.unisim.exp.Trial;
 import org.unisim.exp.params.Parameters;
@@ -13,47 +12,32 @@ import org.unisim.reality.RunController;
 import org.unisim.simulation.core.SimulationBuilder;
 import org.unisim.simulation.core.SimulationWorld;
 import org.unisim.simulation.robot.ctrnn.CTRNNController;
+import org.unisim.simulation.robot.ctrnn.CTRNNLayout;
 
 /**
  *
  * @author Miles
  */
-public class RobotIndividual implements Comparable<RobotIndividual> {
+public class RobotIndividual extends AbstractIndividual {
 
-    protected RobotGenotype genotype;
+    protected CTRNNLayout layout;
     protected Parameters params;
     protected SimulationWorld world;
     protected int nTrials;
 
     public RobotIndividual(Experiment exp) {
-        genotype = new RobotGenotype(exp.getLayout());
+        this(exp, Genotype.withRandomGenome(exp.getLayout().getGenomeLength()));
+    }    
+
+    public RobotIndividual(Experiment exp, Genotype genotype) {
+        super(exp.getLayout(),genotype);
+        layout = exp.getLayout();
         params = exp.getParam();
         world = exp.getWorld();
         nTrials = params.getFitness_n_trials();
     }
     
-    
-
-    public RobotGenotype getGenotype() {
-        return genotype;
-    }
-
-    void mutate(float p_mutation) {
-        genotype.mutate(p_mutation);
-        rawFitness = calcRawFitness();
-    }
-
-    private float rawFitness = 0.0f;
-    private boolean rawFitnessSet = false;
-
-    public float rawFitness() {
-        if (!rawFitnessSet) {
-            rawFitness = calcRawFitness();
-            rawFitnessSet = true;
-        }
-        return rawFitness;
-    }
-
+    @Override
     public float calcRawFitness() {
         float sum = 0.0f;
 
@@ -61,7 +45,9 @@ public class RobotIndividual implements Comparable<RobotIndividual> {
 
         //float[] angs = {1,-3,-2,-4,4,-6,5,-5,-1,2,6,3};
         RunController sc
-                = new SimulationBuilder(new CTRNNController(genotype.layout, params.getController_timestep())).setWorld(world).build();
+                = new SimulationBuilder(new CTRNNController(layout, params.
+                                getController_timestep())).setWorld(world).
+                build();
 
         for (int i = 0; i < nTrials; i++) {
 
@@ -73,21 +59,6 @@ public class RobotIndividual implements Comparable<RobotIndividual> {
         return (sum / nTrials);
     }
 
-    public void crossover(float pCross, RobotIndividual ind) {
 
-        Random rand = new Random();
-        for (int i = 0; i < genotype.genes.length; i++) {
-            if (rand.nextFloat() < pCross) {
-                genotype.genes[i] = ind.genotype.genes[i];
-            }
-        }
-
-        rawFitness = calcRawFitness();
-    }
-
-    @Override
-    public int compareTo(RobotIndividual o) {
-        return Float.valueOf(this.rawFitness()).compareTo(o.rawFitness());
-    }
 
 }

@@ -5,7 +5,6 @@
  */
 package org.unisim.exp;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,8 +17,6 @@ import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.SimpleFormatter;
-import org.apache.commons.io.FileUtils;
-import org.unisim.simulation.robot.ctrnn.CTRNNLayout;
 import org.unisim.exp.params.Parameters;
 import org.unisim.genesis.Stats;
 import org.unisim.ui.TextOutput;
@@ -33,7 +30,6 @@ public class ExperimentController {
     private static final Logger LOG = Logger.getLogger(ExperimentController.class.getName());
 
     private final Parameters params;
-    private final CTRNNLayout layout;
     private final Experiment experiment;
     private ArrayList<EvolutionRun> experiments = new ArrayList<>();
 
@@ -59,7 +55,6 @@ public class ExperimentController {
 
     public ExperimentController(Experiment exp) {
         this.params = exp.getParam();
-        this.layout = exp.getLayout();
         experiment = exp;
         try {
             FileHandler handler = new FileHandler("prog.%u.%g.txt", 1024 * 1024, 3, true);
