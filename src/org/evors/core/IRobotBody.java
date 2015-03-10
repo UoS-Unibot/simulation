@@ -1,20 +1,43 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.evors.core;
 
 /**
+ * Represents a simulated or real robot that can be controlled by setting
+ * velocity and angular velocity at each timestep and provides sensor input.
  *
- * @author mb459
+ * @author Miles Bryant <mb459 at sussex.ac.uk>
  */
 public interface IRobotBody {
-    
-    
+
+    /**
+     * Gets the rangefinder value of this robot.
+     *
+     * @return
+     */
     public double getRange();
+
+    /**
+     * Gets sonar data from this robot.
+     *
+     * @return
+     */
     public double[] getSonars();
+
+    /**
+     * Whether this robot is live and able to move; this can be used to
+     * terminate a trial in the simulation e.g. if a collision occurs, or an
+     * emergency stop in serial communication.
+     *
+     * @return
+     */
     public boolean isLive();
 
+    /**
+     * Updates this robot by one time step. If simulated, odometry will be
+     * integrated from the given commands, whilst a real robot will be sent the
+     * velocity commands.
+     *
+     * @param velocity Forward velocity of the robot.
+     * @param angularVelocity Angular velocity of the robot.
+     */
     void step(double velocity, double angularVelocity);
 }
