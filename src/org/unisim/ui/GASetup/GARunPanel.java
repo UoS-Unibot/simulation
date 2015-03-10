@@ -5,22 +5,26 @@
  */
 package org.unisim.ui.GASetup;
 
+import java.awt.Container;
+import java.beans.PropertyVetoException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.PrintStream;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JDesktopPane;
 import javax.swing.JFileChooser;
 import org.unisim.genesis.GAParameters;
 import org.unisim.genesis.robotGA.RobotExperiment;
 import org.unisim.genesis.robotGA.RobotGARunner;
 import org.unisim.genesis.robotGA.RobotPhenotype;
+import org.unisim.io.pop.JSONPopulation;
 import org.unisim.simulation.core.SimulationWorld;
 import org.unisim.simulation.robot.ctrnn.CTRNNLayout;
 import org.unisim.ui.TextOutput;
+import org.unisim.ui.frames.PopulationViewer;
 
 /**
  *
@@ -36,15 +40,15 @@ public class GARunPanel extends javax.swing.JPanel implements TextOutput {
         lblDir.setText(generateUniqueFilename());
         lblOutputSaved.setText("");
     }
-    
+
     private RobotExperiment exp;
     private RobotGARunner gaRunner;
 
-    public void setUpExperiment(GAParameters params, SimulationWorld world, CTRNNLayout layout) {
+    public void setUpExperiment(GAParameters params, SimulationWorld world,
+            CTRNNLayout layout) {
         exp = new RobotExperiment(layout, world);
         btnStart.setEnabled(true);
     }
-
 
     private String generateUniqueFilename() {
         StringBuilder sb = new StringBuilder();
@@ -58,7 +62,7 @@ public class GARunPanel extends javax.swing.JPanel implements TextOutput {
     }
 
     Thread gaThread;
-    
+
     private void startPressed() {
         if (btnStart.isSelected()) {
             gaRunner = new RobotGARunner(
@@ -69,6 +73,25 @@ public class GARunPanel extends javax.swing.JPanel implements TextOutput {
                 public void doUpdate() {
                     prgProgress.setValue(Math.round(gaRunner.getProgress()));
                     addLine(gaRunner.getProgressReportLine());
+                }
+
+                @Override
+                public void finished() {
+                    PopulationViewer popView = new PopulationViewer();
+                    popView.loadJSONPopulation(exp, JSONPopulation.
+                            fromPopulation(gaRunner.getPopulation()));
+                    popView.setVisible(true);
+                    Container parent = getParent();
+                    while(parent.getClass() != JDesktopPane.class) {
+                        parent = parent.getParent();
+                    }
+                    parent.add(popView);
+                    try {
+                        popView.setSelected(true);
+                    } catch (PropertyVetoException ex) {
+                        Logger.getLogger(GARunPanel.class.getName()).log(
+                                Level.SEVERE, null, ex);
+                    }
                 }
             });
             gaThread = new Thread(gaRunner);
@@ -270,7 +293,8 @@ public class GARunPanel extends javax.swing.JPanel implements TextOutput {
                 PrintStream out = new PrintStream(file);
                 out.print(txtOut.getText());
             } catch (FileNotFoundException ex) {
-                Logger.getLogger(GARunPanel.class.getName()).log(Level.SEVERE, null, ex);
+                Logger.getLogger(GARunPanel.class.getName()).log(Level.SEVERE,
+                        null, ex);
             }
         }
     }//GEN-LAST:event_btnSaveOutActionPerformed

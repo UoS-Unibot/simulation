@@ -20,11 +20,15 @@ public class UIUtils {
             return new File(System.getProperty("user.dir"));
     }
     
-    public static File getUserDir(String subdir) {
-        File f = new File(System.getProperty("user.dir") + "/user/" + subdir);
+    public static File getDir(String subdir) {
+        File f = new File(System.getProperty("user.dir") + "/" + subdir);
         if(f.isDirectory() && f.exists())
             return f;
         else
             return new File(System.getProperty("user.dir"));
+    }
+    
+    public static File getUserDir(String subdir) {
+        return getDir("user/" + subdir);
     }
 }

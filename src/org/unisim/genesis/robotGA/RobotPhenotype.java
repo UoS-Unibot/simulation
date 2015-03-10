@@ -33,12 +33,14 @@ public final class RobotPhenotype implements Phenotype {
                 = new SimulationBuilder(layout.getCTRNNController(genes)).setWorld(world).
                 build();
         
-        int trialLength = 10000;
+        float totalTrialLength = (float) (30000f *sc.getTimeStep());
         float i;
-        for(i = 0; i< (float)trialLength*sc.getTimeStep() && sc.isLive();i += sc.getTimeStep()) {
+        float sum = 0;
+        for(i = 0; sc.isLive() & i < totalTrialLength;i += sc.getTimeStep()) {
             sc.step();
+            sum += sc.getController().getVelocity();
         }
-        return i / trialLength;
+        return (float) (i / (totalTrialLength)) * sum/totalTrialLength;
     }
 
 }

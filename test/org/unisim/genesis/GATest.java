@@ -25,6 +25,7 @@ public class GATest {
     @Mocked GAParameters gaparams;
     @Mocked Phenotype phenotype;
     @Mocked Population population;
+    @Mocked Stats stats;
 
     @Before
     public void setUp() {

@@ -18,7 +18,7 @@ public class GA implements Loggable<Float> {
     private final GAParameters parameters;
     private final Population population;
     private volatile int currentGen = 0;
-    private volatile Stats lastStats;
+    private Stats lastStats;
 
     /**
      * Creates a new GA with specified phenotype and default parameters.
@@ -37,8 +37,7 @@ public class GA implements Loggable<Float> {
      */
     public GA(Phenotype phenotype, GAParameters parameters) {
         this.parameters = parameters;
-        population
-                = new Population(phenotype, parameters.getPopulationSize());
+        population = new Population(phenotype, parameters.getPopulationSize());
         lastStats = new Stats(0, population);
     }
 
@@ -55,6 +54,12 @@ public class GA implements Loggable<Float> {
     public int getCurrentGen() {
         return currentGen;
     }
+
+    public Population getPopulation() {
+        return population;
+    }
+    
+    
 
     /**
      * Iterates this GA one step, performing a reproduction event for every

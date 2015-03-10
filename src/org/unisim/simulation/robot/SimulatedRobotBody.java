@@ -23,6 +23,7 @@ public class SimulatedRobotBody implements IRobotBody, Loggable<Double> {
     private Line rangeFinderLine;
     private final Shape2D shape;
     private boolean live = true;
+    private double range;
 
     public SimulatedRobotBody(SimulationWorld world) {
         this(world, new Vector2D(0.6, 0.6), 1f / 60f);
@@ -49,12 +50,17 @@ public class SimulatedRobotBody implements IRobotBody, Loggable<Double> {
     }
 
     public Line getShortenedRangeFinderLine() {
-        return Line.fromPolarVec(getRangeFinderBase(), heading, getRange());
+        System.out.println(range);
+        fromPolarVec
+                = Line.fromPolarVec(getRangeFinderBase(), heading, getRange());
+        System.out.println(fromPolarVec.p2.toString());
+        return fromPolarVec;
     }
+    private Line fromPolarVec;
 
     @Override
     public double getRange() {
-        return world.findRange(rangeFinderLine);
+        return range;
     }
 
     @Override
@@ -103,6 +109,7 @@ public class SimulatedRobotBody implements IRobotBody, Loggable<Double> {
         heading += changeA;
 
         world.checkCollisions(this);
+        range = world.findRange(rangeFinderLine);
     }
 
     public void doCollision(Shape2D obj) {

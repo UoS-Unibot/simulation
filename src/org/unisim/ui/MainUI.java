@@ -6,11 +6,15 @@
 package org.unisim.ui;
 
 import java.beans.PropertyVetoException;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
+import org.unisim.genesis.Genotype;
+import org.unisim.genesis.robotGA.RobotExperiment;
 import org.unisim.ui.GASetup.GASetupFrame;
 import org.unisim.ui.frames.PopulationViewer;
+import org.unisim.ui.frames.TrialViewerFrame;
 
 /**
  *
@@ -38,6 +42,7 @@ public class MainUI extends javax.swing.JFrame {
         menuBar = new javax.swing.JMenuBar();
         fileMenu = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
         jMenu1 = new javax.swing.JMenu();
         openPopMenuItem = new javax.swing.JMenuItem();
         exitMenuItem = new javax.swing.JMenuItem();
@@ -59,6 +64,14 @@ public class MainUI extends javax.swing.JFrame {
             }
         });
         fileMenu.add(jMenuItem1);
+
+        jMenuItem2.setText("Random demo...");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
+        fileMenu.add(jMenuItem2);
 
         jMenu1.setText("Open");
 
@@ -125,6 +138,7 @@ public class MainUI extends javax.swing.JFrame {
         desktopPane.add(popView);
         try {
             popView.setSelected(true);
+            popView.showOpenDialog();
         } catch (PropertyVetoException ex) {
             Logger.getLogger(MainUI.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -140,6 +154,23 @@ public class MainUI extends javax.swing.JFrame {
             Logger.getLogger(MainUI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        TrialViewerFrame tvf = new TrialViewerFrame();
+        try {
+            RobotExperiment exp = RobotExperiment.fromDirectory(UIUtils.getDir("demo/").getAbsolutePath());
+            tvf.loadSimulation(exp, Genotype.withRandomGenome(exp.getLayout().getGenotypeLength()));
+        } catch (IOException ex) {
+            Logger.getLogger(MainUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        tvf.setVisible(true);
+        desktopPane.add(tvf);
+        try {
+            tvf.setSelected(true);
+        } catch (PropertyVetoException ex) {
+            Logger.getLogger(MainUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -185,6 +216,7 @@ public class MainUI extends javax.swing.JFrame {
     private javax.swing.JMenu helpMenu;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JMenuItem openPopMenuItem;
     // End of variables declaration//GEN-END:variables

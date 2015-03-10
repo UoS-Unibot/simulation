@@ -5,8 +5,8 @@
  */
 package org.unisim.ui;
 
-import org.unisim.io.CSVPopulation;
 import javax.swing.table.AbstractTableModel;
+import org.unisim.io.pop.JSONPopulation;
 
 /**
  *
@@ -14,29 +14,29 @@ import javax.swing.table.AbstractTableModel;
  */
 public class PopulationTM extends AbstractTableModel {
 
-    public PopulationTM(CSVPopulation pop) {
+    public PopulationTM(JSONPopulation pop) {
         this.pop = pop;
     }
 
     public PopulationTM() {
     }
 
-    public CSVPopulation getPop() {
+    public JSONPopulation getPop() {
         return pop;
     }
 
-    public void setPop(CSVPopulation pop) {
+    public void setPop(JSONPopulation pop) {
         this.pop = pop;
     }
 
-    CSVPopulation pop;
+    JSONPopulation pop;
 
     @Override
     public int getRowCount() {
         if (pop == null) {
             return 0;
         } else {
-            return pop.getSize();
+            return pop.getIndividuals().length;
         }
     }
 
@@ -48,9 +48,9 @@ public class PopulationTM extends AbstractTableModel {
     @Override
     public Object getValueAt(int row, int col) {
         if (col == 0) {
-            return pop.getIDAt(row);
+            return row;
         } else if (col == 1) {
-            return pop.getFitnessAt(row);
+            return pop.getIndividuals()[row].getFitness();
         }
         return null;
     }

@@ -108,7 +108,7 @@ public class SimulatedRobotBodyTest {
     @Test
     public void robotTurnsQuarterCircleNorthInFiveSecondsIfAngVelocityIsPiOver2() {
         double angVelo = Math.PI / 2;
-        for (int i = 0; i < 300; i++) {
+        for (int i = 0; i < 60; i++) {
             robot.step(0, angVelo);
         }
         assertEquals(angVelo, robot.getHeading(), 0.0001);

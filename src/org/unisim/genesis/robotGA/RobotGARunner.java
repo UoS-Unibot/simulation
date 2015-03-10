@@ -8,6 +8,7 @@ package org.unisim.genesis.robotGA;
 import com.google.common.base.Joiner;
 import org.unisim.genesis.GA;
 import org.unisim.genesis.GAParameters;
+import org.unisim.genesis.Population;
 import org.unisim.io.DataFile;
 
 /**
@@ -19,6 +20,7 @@ public class RobotGARunner implements Runnable {
     public static interface GAListener {
 
         public void doUpdate();
+        public void finished();
     }
 
     private volatile boolean running = false;
@@ -75,6 +77,10 @@ public class RobotGARunner implements Runnable {
     public void setListener(GAListener listener) {
         this.listener = listener;
     }
+    
+    public Population getPopulation() {
+        return ga.getPopulation();
+    }
 
     @Override
     public void run() {
@@ -88,6 +94,8 @@ public class RobotGARunner implements Runnable {
                 listener.doUpdate();
             }
         }
+        if(listener != null)
+            listener.finished();
     }
 
 }

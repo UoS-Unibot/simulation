@@ -70,7 +70,7 @@ public class GAParameters {
         private float mutrate = 0.4f;
         private float crossrate = 0.05f;
         private int populationSize = 100;
-        private int generations = 200;
+        private int generations = 10;
         private int demesize = 5;
 
         public GABuilder() {

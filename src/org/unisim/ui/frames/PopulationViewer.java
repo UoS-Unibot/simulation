@@ -8,7 +8,9 @@ package org.unisim.ui.frames;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -20,10 +22,13 @@ import javax.swing.RowSorter;
 import javax.swing.SortOrder;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
+import org.apache.commons.io.FileUtils;
+import org.unisim.genesis.Genotype;
 import org.unisim.genesis.robotGA.RobotExperiment;
+import org.unisim.io.ctrnn.JSONCTRNNLayout;
 import org.unisim.ui.frames.TrialViewerFrame;
 import org.unisim.ui.UIUtils;
-import org.unisim.io.CSVPopulation;
+import org.unisim.io.pop.JSONPopulation;
 import org.unisim.ui.PopulationTM;
 
 /**
@@ -33,6 +38,9 @@ import org.unisim.ui.PopulationTM;
 public class PopulationViewer extends javax.swing.JInternalFrame {
 
     private final JPopupMenu menu;
+    private String currentFileName = "";
+    private RobotExperiment exp;
+    JMenuItem miTrial;
 
     /**
      * Creates new form PopulationViewer
@@ -41,26 +49,67 @@ public class PopulationViewer extends javax.swing.JInternalFrame {
         initComponents();
 
         menu = new JPopupMenu();
-        
-        JMenuItem miTrial = new JMenuItem("View trial...");
+
+        miTrial = new JMenuItem("View trial...");
+        miTrial.setEnabled(false);
         miTrial.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                try {
-                    TrialViewerFrame tvf = new TrialViewerFrame();
-                    tvf.setVisible(true);
-                    CSVPopulation pop = ((PopulationTM)jTable1.getModel()).getPop();
-                    
-                    tvf.loadSimulation(RobotExperiment.fromDirectory(new File(pop.getFilename()).getParent()), ((PopulationTM)jTable1.getModel()).getPop().getGenotypeAt(jTable1.getSelectedRow()));
-                    getParent().add(tvf);
-                } catch (IOException ex) {
-                    Logger.getLogger(PopulationViewer.class.getName()).log(Level.SEVERE, null, ex);
-                }
+
+                TrialViewerFrame tvf = new TrialViewerFrame();
+                tvf.setVisible(true);
+                JSONPopulation pop = ((PopulationTM) jTable1.getModel()).
+                        getPop();
+
+                tvf.loadSimulation(
+                        exp,
+                        Genotype.withGenes(
+                                pop.getIndividuals()[jTable1.
+                                getSelectedRow()]
+                                .getGenes()
+                        )
+                );
+                getParent().add(tvf);
             }
         });
         menu.add(miTrial);
 
+    }
+
+    public String getCurrentFileName() {
+        return currentFileName;
+    }
+
+    public void setCurrentFileName(String currentFileName) {
+        this.currentFileName = currentFileName;
+    }
+
+    public void loadJSONPopulation(RobotExperiment exp, JSONPopulation jpop) {
+        this.exp = exp;
+        jTable1.setModel(new PopulationTM(jpop));
+        sortByFitness();
+        miTrial.setEnabled(true);
+    }
+
+    public void showOpenDialog() {
+        JFileChooser fc = new JFileChooser();
+        fc.setCurrentDirectory(UIUtils.getUserDir("/user/"));
+        int result = fc.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            try {
+                loadJSONPopulation(
+                        RobotExperiment.fromDirectory(fc.getSelectedFile().
+                                getParent()),
+                        JSONPopulation.fromJSONFile(fc.
+                                getSelectedFile()));
+
+            } catch (IOException ex) {
+                System.out.println(ex.toString());
+            }
+        } else {
+            this.dispose();
+        }
     }
 
     /**
@@ -74,6 +123,10 @@ public class PopulationViewer extends javax.swing.JInternalFrame {
 
         jScrollPane1 = new javax.swing.JScrollPane();
         jTable1 = new javax.swing.JTable();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
 
         setClosable(true);
         setMaximizable(true);
@@ -108,6 +161,28 @@ public class PopulationViewer extends javax.swing.JInternalFrame {
         });
         jScrollPane1.setViewportView(jTable1);
 
+        jMenu1.setText("File");
+
+        jMenuItem1.setText("Open...");
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem1ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem1);
+
+        jMenuItem2.setText("Save...");
+        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem2);
+
+        jMenuBar1.add(jMenu1);
+
+        setJMenuBar(jMenuBar1);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -116,26 +191,14 @@ public class PopulationViewer extends javax.swing.JInternalFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 299, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 278, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void formInternalFrameOpened(javax.swing.event.InternalFrameEvent evt) {//GEN-FIRST:event_formInternalFrameOpened
-        JFileChooser fc = new JFileChooser();
-        fc.setCurrentDirectory(UIUtils.getUserDir("/user/"));
-        int result = fc.showOpenDialog(this);
-        if (result == JFileChooser.APPROVE_OPTION) {
-            try {
-                jTable1.setModel(new PopulationTM(CSVPopulation.fromFile(fc.getSelectedFile())));
-                sortByFitness();
-            } catch (IOException ex) {
-                System.out.println(ex.toString());
-            }
-        } else {
-            this.dispose();
-        }
+
     }//GEN-LAST:event_formInternalFrameOpened
 
     private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
@@ -146,19 +209,57 @@ public class PopulationViewer extends javax.swing.JInternalFrame {
         menu.show(jTable1, evt.getX(), evt.getY());
     }//GEN-LAST:event_jTable1MouseClicked
 
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        showOpenDialog();
+    }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        JFileChooser fc = new JFileChooser();
+        fc.setCurrentDirectory(UIUtils.getUserDir("/user/"));
+        int result = fc.showSaveDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+
+            PrintWriter out = null;
+            try {
+                FileUtils.copyFile(new File(exp.getLayout().getFilename()), new File(fc.
+                        getSelectedFile().getParent() + "layout.json"));
+                FileUtils.copyFile(new File(exp.getWorld().getFilename()), new File(fc.
+                        getSelectedFile().getParent() + "world.json"));
+                JSONPopulation pop = ((PopulationTM) jTable1.getModel()).
+                        getPop();
+                out = new PrintWriter(fc.getSelectedFile());
+                out.print(pop.toJSONString());
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(PopulationViewer.class.getName()).
+                        log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(PopulationViewer.class.getName()).
+                        log(Level.SEVERE, null, ex);
+            } finally {
+                out.close();
+            }
+        }
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
+
     private void sortByFitness() {
-        TableRowSorter<TableModel> sorter = new TableRowSorter<>(jTable1.getModel());
+        TableRowSorter<TableModel> sorter = new TableRowSorter<>(jTable1.
+                getModel());
         jTable1.setRowSorter(sorter);
         List<RowSorter.SortKey> sortKeys = new ArrayList<>();
 
         int columnIndexToSort = 1;
-        sortKeys.add(new RowSorter.SortKey(columnIndexToSort, SortOrder.ASCENDING));
+        sortKeys.add(new RowSorter.SortKey(columnIndexToSort,
+                SortOrder.ASCENDING));
 
         sorter.setSortKeys(sortKeys);
         sorter.sort();
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables

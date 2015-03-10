@@ -44,10 +44,10 @@ public class CTRNN implements Loggable<Float>{
             inputarray[sensorIndices[i]] = inputs[i];
         for (int i = 0; i < neurons.length; i++) {
             float preSynInput = 0;
-            for (int j = 0; j < neurons.length; j++) {
-                preSynInput += neurons[j].weights[i] * neurons[j].activation;
+            for (CTRNNNeuron neuron : neurons) {
+                preSynInput += neuron.weights[i] * neuron.activation;
             }
-            neurons[i].state = stepSize * neurons[i].tau * (inputarray[i] + preSynInput - neurons[i].state);
+            neurons[i].state += stepSize * neurons[i].tau * (inputarray[i] + preSynInput - neurons[i].state);
             neurons[i].activation = activation.getActivation((neurons[i].state + neurons[i].bias) * neurons[i].gain);
         }
     }
@@ -88,6 +88,7 @@ public class CTRNN implements Loggable<Float>{
             this.bias = bias;
             this.tau = tau;
             this.weights = weights;
+            this.state = 0.5f;
         }
         
     }

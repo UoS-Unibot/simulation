@@ -9,6 +9,7 @@ import mockit.Expectations;
 import mockit.Mocked;
 import org.junit.Test;
 import org.unisim.simulation.robot.IRobotController;
+import org.unisim.simulation.robot.RobotInput;
 import org.unisim.simulation.robot.SimulatedRobotBody;
 
 /**
@@ -22,6 +23,7 @@ public class SimulationControllerTest {
     
     @Mocked IRobotController controller;
     @Mocked SimulatedRobotBody robot;
+    @Mocked RobotInput robotinput;
     RunController sim;
 
     @Test

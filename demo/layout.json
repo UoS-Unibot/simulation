@@ -15,7 +15,7 @@
         {
             "name": "circuit",
             "tauR": [1, 1],
-            "gainR": [1, 2],
+            "gainR": [1, 3],
             "biasR": [0, 0],
             "weightsR": [-5,5]
         }        
@@ -45,7 +45,7 @@
                     "gain": "g5",
                     "bias": "g6",
                     "conns": ["mL","mR"],
-                    "weights": ["g7","g8"]
+                    "weights": ["g7","g7"]
                 },
                 {
                     "name": "i2",
@@ -53,7 +53,7 @@
                     "gain": "g5",
                     "bias": "g6",
                     "conns": ["mL","mR"],
-                    "weights": ["g8","g7"]
+                    "weights": ["g7","g7"]
                 }
             ]
         },
@@ -63,19 +63,19 @@
             "neurons": [
                 {
                     "name": "mL",
-                    "tau": "g9",
-                    "gain": "g10",
-                    "bias": "g11",
+                    "tau": "g8",
+                    "gain": "g9",
+                    "bias": "g10",
                     "conns": ["mL","mR"],
-                    "weights": ["g12","g13"]
+                    "weights": ["g11","g12"]
                 },
                 {
                     "name": "mR",
-                    "tau": "g9",
-                    "gain": "g10",
-                    "bias": "g11",
-                    "conns": ["mL","mR"],
-                    "weights": ["g12","g13"]
+                    "tau": "g8",
+                    "gain": "g9",
+                    "bias": "g10",
+                    "conns": ["mR","mL"],
+                    "weights": ["g11","g12"]
                 }
             ]
         }

@@ -20,19 +20,23 @@ import org.unisim.simulation.robot.ctrnn.CTRNNLayout;
  * @author miles
  */
 public class GAEndToEnd {
-    
+
     GA ga;
     RobotExperiment exp;
-    
+
     @Test
     public void GAEndToEnd() throws IOException {
-        File file = new File(System.getProperty("user.dir") + "/user/CTRNN Layouts/Simple5Neuron3LayerController.json");
+        File file = new File(System.getProperty("user.dir")
+                + "/user/CTRNN Layouts/Simple5Neuron3LayerController.json");
         CTRNNLayout layout = JSONCTRNNLayout.fromFile(file).toCTRNNLayout();
-        SimulationWorld world = JSONWorld.fromFile(new File(System.getProperty("user.dir") + "/user/Worlds/5x5_Two_Objects.json"));
+        SimulationWorld world = JSONWorld.fromFile(new File(System.getProperty(
+                "user.dir") + "/user/Worlds/5x5_Two_Objects.json"));
         exp = new RobotExperiment(layout, world);
         ga = new GA(new RobotPhenotype(exp));
-        while(!ga.isFinished())
+        while (!ga.isFinished()) {
             ga.doNextGeneration();
+            System.out.println(ga.getDataRow().toString());
+        }
     }
-    
+
 }
