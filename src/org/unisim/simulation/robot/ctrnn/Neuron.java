@@ -17,7 +17,7 @@ public class Neuron {
     public ArrayList<Integer> conns = new ArrayList<>(); //stores IDs of neurons this connects to
     public CTRNNParamRanges ParamRanges;
     
-    public float tauG,gainG,biasG;
+    public float tauValue,gainValue,biasValue;
     public int tauGID,gainGID,biasGID;
     public ArrayList<Integer> weightsGID = new ArrayList<>();
     public ArrayList<Float> weightsG = new ArrayList<>();
@@ -44,17 +44,17 @@ public class Neuron {
     public void setGenes(float tau, float bias, float gain, ArrayList<Float> weights) {
         if(weights != null)
             this.weightsG = (ArrayList<Float>) weights.clone();
-        this.tauG=tau;this.biasG=bias;this.gainG=gain;
+        this.tauValue=tau;this.biasValue=bias;this.gainValue=gain;
     }
     
     public float getMappedTau() {
-        return ParamRanges.tau.map(tauG);
+        return ParamRanges.tau.map(tauValue);
     }
     public float getMappedGain() {
-        return ParamRanges.gain.map(gainG);
+        return ParamRanges.gain.map(gainValue);
     }
     public float getMappedBias() {
-        return ParamRanges.bias.map(biasG);
+        return ParamRanges.bias.map(biasValue);
     }
     public ArrayList<Float> getMappedWeights() {
         return ParamRanges.weights.map(weightsG);
@@ -62,7 +62,7 @@ public class Neuron {
 
     @Override
     public String toString() {
-        return "\n\tNeuron{" + "ID=" + ID + ", conns=" + conns + ", ParamRanges=" + ParamRanges + ", tauG=" + tauG + ", gainG=" + gainG + ", biasG=" + biasG + ", tauGID=" + tauGID + ", gainGID=" + gainGID + ", biasGID=" + biasGID + ", weightsGID=" + weightsGID + ", weightsG=" + weightsG + ", name=" + name + '}';
+        return "\n\tNeuron{" + "ID=" + ID + ", conns=" + conns + ", ParamRanges=" + ParamRanges + ", tauG=" + tauValue + ", gainG=" + gainValue + ", biasG=" + biasValue + ", tauGID=" + tauGID + ", gainGID=" + gainGID + ", biasGID=" + biasGID + ", weightsGID=" + weightsGID + ", weightsG=" + weightsG + ", name=" + name + '}';
     }
     
     

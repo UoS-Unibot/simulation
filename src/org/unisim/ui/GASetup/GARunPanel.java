@@ -14,9 +14,10 @@ import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
-import org.unisim.exp.Experiment;
-import org.unisim.exp.ExperimentController;
-import org.unisim.exp.params.Parameters;
+import org.unisim.genesis.GAParameters;
+import org.unisim.genesis.robotGA.RobotExperiment;
+import org.unisim.genesis.robotGA.RobotGARunner;
+import org.unisim.genesis.robotGA.RobotPhenotype;
 import org.unisim.simulation.core.SimulationWorld;
 import org.unisim.simulation.robot.ctrnn.CTRNNLayout;
 import org.unisim.ui.TextOutput;
@@ -35,19 +36,15 @@ public class GARunPanel extends javax.swing.JPanel implements TextOutput {
         lblDir.setText(generateUniqueFilename());
         lblOutputSaved.setText("");
     }
+    
+    private RobotExperiment exp;
+    private RobotGARunner gaRunner;
 
-    Parameters params;
-    SimulationWorld world;
-    CTRNNLayout layout;
-
-    public void setUpExperiment(Parameters params, SimulationWorld world, CTRNNLayout layout) {
-        this.params = params;
-        this.world = world;
-        this.layout=layout;
+    public void setUpExperiment(GAParameters params, SimulationWorld world, CTRNNLayout layout) {
+        exp = new RobotExperiment(layout, world);
         btnStart.setEnabled(true);
     }
 
-    ExperimentController control;
 
     private String generateUniqueFilename() {
         StringBuilder sb = new StringBuilder();
@@ -60,19 +57,28 @@ public class GARunPanel extends javax.swing.JPanel implements TextOutput {
         return sb.toString();
     }
 
+    Thread gaThread;
+    
     private void startPressed() {
         if (btnStart.isSelected()) {
-            control = new ExperimentController(new Experiment(params, layout, world));
-            control.addTextOutput(this);
+            gaRunner = new RobotGARunner(
+                    new RobotPhenotype(exp), true);
+            addLine(gaRunner.getProgressReportHeader());
+            gaRunner.setListener(new RobotGARunner.GAListener() {
+                @Override
+                public void doUpdate() {
+                    prgProgress.setValue(Math.round(gaRunner.getProgress()));
+                    addLine(gaRunner.getProgressReportLine());
+                }
+            });
+            gaThread = new Thread(gaRunner);
+            gaThread.start();
             btnStart.setText("Pause");
             btnReset.setEnabled(true);
-
-            control.setWorkingDir(Paths.get(lblDir.getText()));
-            control.run((int) spnNRuns.getValue(), (int) spnNThreads.getValue());
         } else {
             btnStart.setText("Start");
+            gaRunner.setRunning(false);
             btnReset.setEnabled(false);
-            control.stop();
         }
     }
 
@@ -249,7 +255,7 @@ public class GARunPanel extends javax.swing.JPanel implements TextOutput {
 
     private void btnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnResetActionPerformed
         btnStart.doClick();
-        control = null;
+        gaRunner = null;
     }//GEN-LAST:event_btnResetActionPerformed
 
     private void chkSaveReportsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_chkSaveReportsActionPerformed

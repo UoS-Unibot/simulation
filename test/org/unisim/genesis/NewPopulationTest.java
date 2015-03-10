@@ -25,11 +25,11 @@ public class NewPopulationTest {
     @Mocked Phenotype phenotype;
     @Mocked Individual ind;
     //@Injectable Individual newInd;
-    NewPopulation pop;
+    Population pop;
 
     @Test
     public void populationSelectsRandomIndexWithinPopulation() {
-        pop = new NewPopulation(phenotype, 10);
+        pop = new Population(phenotype, 10);
         new Expectations() {{
             rand.nextInt(10);
         }};
@@ -38,7 +38,7 @@ public class NewPopulationTest {
     
     @Test
     public void populationSelectsSecondIndWithinDemeSize() {
-        pop = new NewPopulation(phenotype, 10);
+        pop = new Population(phenotype, 10);
         new Expectations() {{
             rand.nextInt(anyInt); result = 2;
         }};
@@ -48,7 +48,7 @@ public class NewPopulationTest {
     
     @Test
     public void populationWrapsSecondIndIfOutOfBounds() {
-        pop = new NewPopulation(phenotype, 10);
+        pop = new Population(phenotype, 10);
         new Expectations() {{
             rand.nextInt(anyInt); result = 14;
         }};
@@ -57,7 +57,7 @@ public class NewPopulationTest {
     
     @Test
     public void getRandomWithinDemeLoopsUntilDifferentIndividualsFound() {
-         pop = new NewPopulation(phenotype, 10);
+         pop = new Population(phenotype, 10);
         new Expectations() {{
             rand.nextInt(anyInt); returns(4,4,4,2);
         }};
@@ -66,7 +66,7 @@ public class NewPopulationTest {
     
     @Test
     public void reproduceMutatesIndividualWithLowerFitness() {
-        pop = new NewPopulation(phenotype, 2);
+        pop = new Population(phenotype, 2);
         new Expectations() {{
             ind.getFitness(); returns(2f,1f);
             ind.reproduce(anyFloat, anyFloat, (float[])any);result = ind;

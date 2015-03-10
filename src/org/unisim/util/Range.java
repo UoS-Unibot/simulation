@@ -76,4 +76,11 @@ public class Range {
         }
         return true;
     }
+
+    @Override
+    public String toString() {
+        return "Range{" + "low=" + low + ", high=" + high + '}';
+    }
+    
+    
 }

@@ -5,9 +5,15 @@
  */
 package org.unisim.io;
 
+import com.google.common.base.Joiner;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.List;
 
 /**
  *
@@ -15,29 +21,49 @@ import java.util.HashMap;
  */
 public final class DataFile {
 
-    public DataFile() {
+    private final Collection<String> headers;
+    private final Collection<Collection<Object>> data;
+    private final Loggable loggable;
+    public static DataFile fromLoggable(Loggable loggable) {
+        return new DataFile(loggable,loggable.getHeaders());
     }
 
-    public DataFile(String[] categoryTitles) {
-        for(String title : categoryTitles)
-            addCategory(title);
+    private DataFile(Loggable loggable,Collection<String> headers) {
+        this(loggable);
+        addHeaders(headers);
+    }
+
+    private DataFile(Loggable loggable) {
+        headers = new ArrayList<>();
+        data = new ArrayList<>();
+        this.loggable = loggable;
+    }
+
+    public void update() {
+        addDataRow(loggable.getDataRow());
     }
     
-    private final HashMap<String,ArrayList<Double>> data = new HashMap<>();
-    
-    public void addCategory(String categoryName) {
-        if(data.containsKey(categoryName)) {
-            throw new IllegalStateException("Data already contains category");
+    public void addHeaders(Collection<String> headers) {
+        this.headers.addAll(headers);
+    }
+
+    public void addDataRow(List<Object> data) {
+        this.data.add(data);
+    }
+
+    public void saveToCSV(File file) throws FileNotFoundException, IOException {
+        if (!file.exists()) {
+            file.mkdirs();
+            file.createNewFile();
         }
-        data.put(categoryName, new ArrayList<Double>());
+        PrintWriter pw = new PrintWriter(file);
+        Joiner headerJoiner = Joiner.on(",").useForNull("");
+        Joiner dataJoiner = Joiner.on(",").useForNull("0");
+        pw.println(headerJoiner.join(headers));
+        for(Collection<Object> dataLine : data) {
+            pw.println(dataJoiner.join(dataLine));
+        }
+        pw.close();
     }
-    
-    public void removeCategory(String categoryName) {
-        data.remove(categoryName);
-    }
-    
-    public void addData(String categoryName, double dataPoint) {
-        data.get(categoryName).add(dataPoint);
-    }
-    
+
 }

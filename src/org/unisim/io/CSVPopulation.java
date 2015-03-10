@@ -13,8 +13,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 import org.unisim.genesis.Genotype;
-import org.unisim.simulation.robot.ctrnn.CTRNNLayout;
 import org.unisim.io.ctrnn.JSONCTRNNLayout;
+import org.unisim.simulation.robot.ctrnn.CTRNNLayout;
 
 /**
  *
@@ -58,10 +58,10 @@ public class CSVPopulation {
     }
 
     public Genotype getGenotypeAt(int id) {
-        float[] genes = new float[layout.genomeLength];
+        float[] genes = new float[layout.getGenotypeLength()];
         if(layout == null)
             return null;
-        for(int i = 0; i < layout.genomeLength; i++) {
+        for(int i = 0; i < layout.getGenotypeLength(); i++) {
             genes[i] = Float.valueOf(individuals.get(id).get("gene " + i));
         }
         return Genotype.withGenes(genes);

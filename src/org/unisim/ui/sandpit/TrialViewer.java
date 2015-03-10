@@ -12,7 +12,6 @@ import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferStrategy;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
-import org.unisim.genesis.RobotIndividual;
 import org.unisim.reality.RunController;
 import org.unisim.simulation.robot.SimulatedRobotBody;
 import org.unisim.simulation.robot.ctrnn.CTRNNLayout;
@@ -23,7 +22,6 @@ import org.unisim.simulation.robot.ctrnn.CTRNNLayout;
  */
 public class TrialViewer extends SandPitCanvas implements Runnable {
     CTRNNLayout layout;
-    RobotIndividual ind;
     RunController controller;
     private boolean simulationLoaded = false;
     private SimulatedRobotBody robot;
@@ -46,7 +44,6 @@ public class TrialViewer extends SandPitCanvas implements Runnable {
     private void step() {
         controller.step();
         path.step(robot.getPosition());
-        //randomiseRobot();
     }
 
     @Override
@@ -60,6 +57,7 @@ public class TrialViewer extends SandPitCanvas implements Runnable {
         DELAY = Math.round(1000 / (60 * newDelay));
     }
 
+    @Override
     public void run() {
         if (!simulationLoaded) {
             return;

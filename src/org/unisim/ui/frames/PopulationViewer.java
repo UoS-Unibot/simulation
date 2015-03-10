@@ -20,7 +20,7 @@ import javax.swing.RowSorter;
 import javax.swing.SortOrder;
 import javax.swing.table.TableModel;
 import javax.swing.table.TableRowSorter;
-import org.unisim.exp.Experiment;
+import org.unisim.genesis.robotGA.RobotExperiment;
 import org.unisim.ui.frames.TrialViewerFrame;
 import org.unisim.ui.UIUtils;
 import org.unisim.io.CSVPopulation;
@@ -52,7 +52,7 @@ public class PopulationViewer extends javax.swing.JInternalFrame {
                     tvf.setVisible(true);
                     CSVPopulation pop = ((PopulationTM)jTable1.getModel()).getPop();
                     
-                    tvf.loadSimulation(Experiment.fromDirectory(new File(pop.getFilename()).getParent()), ((PopulationTM)jTable1.getModel()).getPop().getGenotypeAt(jTable1.getSelectedRow()));
+                    tvf.loadSimulation(RobotExperiment.fromDirectory(new File(pop.getFilename()).getParent()), ((PopulationTM)jTable1.getModel()).getPop().getGenotypeAt(jTable1.getSelectedRow()));
                     getParent().add(tvf);
                 } catch (IOException ex) {
                     Logger.getLogger(PopulationViewer.class.getName()).log(Level.SEVERE, null, ex);

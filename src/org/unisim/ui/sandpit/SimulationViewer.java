@@ -10,16 +10,13 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JPanel;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
-import org.unisim.exp.Experiment;
-import org.unisim.exp.params.Parameters;
+import org.unisim.genesis.GAParameters.GABuilder;
+import org.unisim.genesis.robotGA.RobotExperiment;
 import org.unisim.genesis.Genotype;
-import org.unisim.genesis.RobotIndividual;
-import org.unisim.simulation.robot.ctrnn.CTRNNController;
 import org.unisim.simulation.robot.ctrnn.CTRNNLayout;
 import org.unisim.io.ctrnn.JSONCTRNNLayout;
 import org.unisim.reality.RunController;
@@ -73,25 +70,24 @@ public class SimulationViewer extends JPanel {
         
     }
     
-    public void loadSimulation(Experiment exp,Genotype geno) {
-        RunController controller = new SimulationBuilder(new CTRNNController(exp.getLayout(), exp.getParam().getController_timestep())).setWorld(exp.getWorld()).build();
+    public void loadSimulation(RobotExperiment exp,Genotype geno) {
+        RunController controller = new SimulationBuilder(exp.getLayout().getCTRNNController(geno.getGenes())).setWorld(exp.getWorld()).build();
         cv.loadSimulation(controller);
     }
     
     public void loadRandomControllerWithDefaultLayout() {
         CTRNNLayout layout;
-        RobotIndividual ind;
+        
         try {
             layout = JSONCTRNNLayout.fromFile(new File(System.getProperty("user.dir") + "/user/CTRNN Layouts/Simple5Neuron3LayerController.json")).toCTRNNLayout();
         } catch (IOException ex) {
             Logger.getLogger(SandPitCanvas.class.getName()).log(Level.SEVERE, null, ex);
             return;
         }
-        Experiment exp = new Experiment();
-        exp.setLayout(layout);
-        exp.setParam(new Parameters());
-        ind = new RobotIndividual(exp);
-        RunController controller = new SimulationBuilder(new CTRNNController(exp.getLayout(), new Parameters().getController_timestep())).setWorldSize(new Vector2D(10,10)).build();
+        
+        Genotype g = Genotype.withRandomGenome(layout.getGenotypeLength());
+        
+        RunController controller = new SimulationBuilder(layout.getCTRNNController(g.getGenes())).setWorldSize(new Vector2D(10,10)).build();
         cv.loadSimulation(controller);
     }
 

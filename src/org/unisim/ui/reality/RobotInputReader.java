@@ -5,6 +5,7 @@
  */
 package org.unisim.ui.reality;
 
+import com.google.common.collect.Lists;
 import java.io.File;
 import java.io.IOException;
 import java.util.Timer;
@@ -17,7 +18,7 @@ import jssc.SerialPortException;
 import jssc.SerialPortTimeoutException;
 import org.unisim.reality.RealRobotBody;
 import org.unisim.reality.SerialCommunicator;
-import org.unisim.util.DataFile;
+import org.unisim.io.DataFile;
 
 /**
  *
@@ -39,7 +40,7 @@ public class RobotInputReader extends javax.swing.JFrame {
         lblSonar3.setText(String.valueOf(sonars[2]));
         lblSonar4.setText(String.valueOf(sonars[3]));
         if (logData) {
-            data.addDataRow(range, sonars[0], sonars[1], sonars[2], sonars[3]);
+            data.update();
         }
     }
 
@@ -459,8 +460,7 @@ public class RobotInputReader extends javax.swing.JFrame {
 
             logData = chkSave.isSelected();
             if (logData) {
-                data = new DataFile("Range", "Sonar1", "Sonar2", "Sonar3",
-                        "Sonar4");
+                data = DataFile.fromLoggable(robot);
             }
 
             final Timer t = new Timer();

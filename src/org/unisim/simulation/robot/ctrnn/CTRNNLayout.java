@@ -5,131 +5,82 @@
  */
 package org.unisim.simulation.robot.ctrnn;
 
+import com.google.common.primitives.Ints;
 import java.util.ArrayList;
-import org.unisim.genesis.Phenotype;
+import java.util.List;
+import org.unisim.simulation.robot.ctrnn.CTRNN.CTRNNNeuron;
 
 /**
- * Specifies a layout for a CTRNN, with multiple layers of neurons.
  *
- * @author Miles
+ * @author miles
  */
 public class CTRNNLayout {
 
-    public static CTRNNLayout copyWithNewGenes(CTRNNLayout original, float[] genes) {
-        CTRNNLayout newLayout = new CTRNNLayout(original);
-        return newLayout;
+    int getNumberOfNeurons() {
+        return allNeurons.size();
     }
     
-    private CTRNNLayout(CTRNNLayout copy) {
-        layers = copy.layers;
-        geneMapping = copy.geneMapping;
-        genomeLength = copy.genomeLength;
-        sensorInputs = copy.sensorInputs;
-        motorOutputs = copy.motorOutputs;
+    private final List<List<LayoutNeuron>> layers;
+    private final List<LayoutNeuron> allNeurons = new ArrayList<>();
+    private final List<Integer> sensorIDs;
+    private final int leftMotorID,rightMotorID;
+    private final String filename;
+    private final GeneMapping geneMapping;
+    private final float integrationStepSize;
+    
+    public CTRNNLayout(List<List<LayoutNeuron>> layers, List<Integer> sensorIDs,
+            int leftMotorID, int rightMotorID, GeneMapping geneMapping,
+            float integrationStepSize) {
+        this("",layers, sensorIDs, leftMotorID, rightMotorID, geneMapping,
+                integrationStepSize);
+    }
+
+    public CTRNNLayout(
+            String filename,
+            List<List<LayoutNeuron>> layers,
+            List<Integer> sensorIDs,
+            int leftMotorID, int rightMotorID, 
+            GeneMapping geneMapping,
+            float integrationStepSize
+    ) {
+        for(List<LayoutNeuron> layer : layers)
+            allNeurons.addAll(layer);
+        this.layers = layers;
+        this.sensorIDs = sensorIDs;
+        this.leftMotorID = leftMotorID;
+        this.rightMotorID = rightMotorID;
+        this.geneMapping = geneMapping;
+        this.integrationStepSize = integrationStepSize;
+        this.filename = filename;
+    }
+
+    public String getFilename() {
+        return filename;
+    }
+
+    
+    
+    
+    public int getGenotypeLength() {
+        return geneMapping.getHighestGeneID() + 1;
     }
     
-    public CTRNNLayout(LayoutBuilder builder) {
-        filename = builder.getFilename();
-        layers = builder.getLayers();
-        geneMapping = builder.getGeneMapping();
-        genomeLength = builder.getGenomeLength();
-        sensorInputs = builder.getSensorInputs();
-        motorOutputs = builder.getMotorOutputs();
-    }
-
-    public String filename = "";
-    public ArrayList<Layer> layers = new ArrayList<>();
-    public int genomeLength = 0;
-    public ArrayList<Integer> sensorInputs = new ArrayList<>();
-    public ArrayList<Integer> motorOutputs = new ArrayList<>();
-    public GeneMapping geneMapping = new GeneMapping();
-
-    public CTRNNLayout() {
-    }
-
-    public int getTotalN() {
-        int t = 0;
-        for (Layer l : layers) {
-            t += l.neurons.size();
+    public CTRNNController getCTRNNController(float[] genes) {
+        CTRNNNeuron[] realNeurons = new CTRNNNeuron[allNeurons.size()];
+        for (int i = 0; i < allNeurons.size(); i++) {
+            realNeurons[i] = allNeurons.get(i).getCTRNNNeuron(allNeurons.size(), genes);
         }
-        return t;
-    }
-
-    public Neuron getFromID(int ID) {
-        for (Layer l : layers) {
-            for (Neuron n : l.neurons) {
-                if (ID == n.ID) {
-                    return n;
-                }
-            }
-        }
-        return null;
-    }
-
-    public ArrayList<Neuron> getAllNeurons() {
-        ArrayList<Neuron> neurons = new ArrayList<>(getTotalN());
-        for (Layer l : layers) {
-            for (Neuron n : l.neurons) {
-                neurons.add(n);
-            }
-        }
-        return neurons;
-    }
-
-    public Neuron getMotorNeuron(boolean getLeft) {
-        if (getLeft) {
-            return getFromID(motorOutputs.get(0));
-        } else {
-            return getFromID(motorOutputs.get(1));
-        }
-    }
-
-    public int getGenomeLength() {
-        return genomeLength;
-    }
-
-    public void updateGenes(float[] genes) {
-        for (Layer layer : layers) {
-            for (Neuron neuron : layer.neurons) {
-                float tauG, biasG, gainG;
-                ArrayList<Float> weightsG = new ArrayList<>(neuron.weightsG.size());
-
-                if (neuron.tauGID == -1) {
-                    tauG = neuron.tauG;
-                } else {
-                    tauG = genes[neuron.tauGID];
-                }
-
-                if (neuron.biasGID == -1) {
-                    biasG = neuron.biasG;
-                } else {
-                    biasG = genes[neuron.biasGID];
-                }
-
-                if (neuron.gainGID == -1) {
-                    gainG = neuron.gainG;
-                } else {
-                    gainG = genes[neuron.gainGID];
-                }
-
-                for (int i = 0; i < neuron.weightsGID.size(); i++) {
-                    if (neuron.weightsGID.get(i) == -1) {
-                        weightsG.add(neuron.weightsG.get(i));
-                    } else {
-                        weightsG.add(genes[neuron.weightsGID.get(i)]);
-                    }
-                }
-
-                neuron.setGenes(tauG, biasG, gainG, weightsG);
-            }
-        }
+        return new CTRNNController(realNeurons, Ints.toArray(sensorIDs), integrationStepSize, 0.6f,leftMotorID,rightMotorID);
     }
 
     @Override
     public String toString() {
-        return "CTRNNLayout{" + "filename=" + filename + ", layers=" + layers + ", genomeLength=" + genomeLength + ", sensorInputs=" + sensorInputs + ", motorOutputs=" + motorOutputs + ", geneMapping=" + geneMapping + '}';
+        return "CTRNNLayout{" + "layers=" + layers + ", allNeurons=" + allNeurons +
+                ", sensorIDs=" + sensorIDs + ", leftMotorID=" + leftMotorID +
+                ", rightMotorID=" + rightMotorID + ", geneMapping=" + geneMapping +
+                ", integrationStepSize=" + integrationStepSize + '}';
     }
 
     
-
+    
 }

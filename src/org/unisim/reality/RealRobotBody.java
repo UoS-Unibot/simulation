@@ -1,11 +1,14 @@
 package org.unisim.reality;
 
+import com.google.common.collect.Lists;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import jssc.SerialPortException;
 import jssc.SerialPortTimeoutException;
+import org.unisim.io.Loggable;
 import org.unisim.simulation.robot.IRobotBody;
 
 /**
@@ -14,7 +17,7 @@ import org.unisim.simulation.robot.IRobotBody;
  *
  * @author Miles Bryant <mb459 at sussex.ac.uk>
  */
-public class RealRobotBody implements IRobotBody {
+public class RealRobotBody implements IRobotBody,Loggable {
 
     private final SerialCommunicator serial;
     private final SerialParameters parameters;
@@ -179,5 +182,27 @@ public class RealRobotBody implements IRobotBody {
             "#q\\s*(\\d{1,3}.\\d*)\\s*");
     private final Pattern SONAR_PATTERN = Pattern.compile(
             "#!\\s*(\\d{1,3}.\\d*)\\s*(\\d{1,3}.\\d*)\\s*(\\d{1,3}.\\d*)\\s*(\\d{1,3}.\\d*)\\s*");
+
+    @Override
+    public List getHeaders() {
+        return Lists.newArrayList(
+                "Rangefinder",
+                "Sonar1",
+                "Sonar2",
+                "Sonar3",
+                "Sonar4"
+        );
+    }
+
+    @Override
+    public List getDataRow() {
+        return Lists.newArrayList(
+                getRange(),
+                getSonars()[0],
+                getSonars()[1],
+                getSonars()[2],
+                getSonars()[3]
+        );
+    }
 
 }

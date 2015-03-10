@@ -5,14 +5,16 @@
  */
 package org.unisim.simulation.robot;
 
+import com.google.common.collect.Lists;
+import java.util.List;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.unisim.io.Loggable;
 import org.unisim.simulation.core.SimulationWorld;
 import org.unisim.simulation.geometry.Line;
 import org.unisim.simulation.geometry.Shape2D;
 
+public class SimulatedRobotBody implements IRobotBody, Loggable<Double> {
 
-public class SimulatedRobotBody implements IRobotBody {
-    
     private final float timeStepLength;
     private Vector2D position;
     private double heading;
@@ -23,32 +25,32 @@ public class SimulatedRobotBody implements IRobotBody {
     private boolean live = true;
 
     public SimulatedRobotBody(SimulationWorld world) {
-        this(world,new Vector2D(0.6,0.6),1f/60f);
+        this(world, new Vector2D(0.6, 0.6), 1f / 60f);
     }
 
-    
-    
-    public SimulatedRobotBody(SimulationWorld world,Vector2D size,float timeStepLength) {
+    public SimulatedRobotBody(SimulationWorld world, Vector2D size,
+            float timeStepLength) {
         this.timeStepLength = timeStepLength;
         position = Vector2D.ZERO;
         heading = 0;
         this.world = world;
         this.size = size;
         shape = Shape2D.createRectangleFromCenter(position, size, heading);
-        rangeFinderLine = Line.fromPolarVec(getRangeFinderBase(), heading, world.getBounds().getNorm());
+        rangeFinderLine = Line.fromPolarVec(getRangeFinderBase(), heading,
+                world.getBounds().getNorm());
     }
-    
+
     /**
      * @return Where the base of the rangefinder is currently located.
      */
     private Vector2D getRangeFinderBase() {
-        return shape.getLocalToWorldCoords(new Vector2D(size.getX() / 2,size.getY() / 2));
+        return shape.getLocalToWorldCoords(new Vector2D(size.getX() / 2, size.
+                getY() / 2));
     }
-    
+
     public Line getShortenedRangeFinderLine() {
         return Line.fromPolarVec(getRangeFinderBase(), heading, getRange());
     }
-    
 
     @Override
     public double getRange() {
@@ -57,14 +59,14 @@ public class SimulatedRobotBody implements IRobotBody {
 
     @Override
     public double[] getSonars() {
-        return new double[]{0,0,0,0};
+        return new double[]{0, 0, 0, 0};
     }
 
     @Override
     public boolean isLive() {
         return live;
     }
-    
+
     public Vector2D getPosition() {
         return position;
     }
@@ -80,26 +82,26 @@ public class SimulatedRobotBody implements IRobotBody {
     public Shape2D getShape() {
         return shape;
     }
-    
-    
 
     @Override
     public void step(double velocity, double angularVelocity) {
-        if(!live)
+        if (!live) {
             return;
+        }
         //Calculate movement vector
         double dist = velocity * timeStepLength;
-        Vector2D changeV = new Vector2D(dist * Math.cos(heading), dist * Math.sin(heading));
+        Vector2D changeV = new Vector2D(dist * Math.cos(heading), dist * Math.
+                sin(heading));
         shape.translate(changeV);
         position = position.add(changeV);
-        rangeFinderLine.translate(changeV);        
-        
+        rangeFinderLine.translate(changeV);
+
         //Calculate actual rotation
         double changeA = (angularVelocity * timeStepLength) % (2 * Math.PI);
         rangeFinderLine.rotate(changeA);
         shape.rotate(changeA);
         heading += changeA;
-        
+
         world.checkCollisions(this);
     }
 
@@ -110,9 +112,33 @@ public class SimulatedRobotBody implements IRobotBody {
     public SimulationWorld getWorld() {
         return world;
     }
-    
-    
-    
-    
-    
+
+    @Override
+    public List getHeaders() {
+        return Lists.newArrayList(
+                "RobotX",
+                "RobotY",
+                "Heading",
+                "Rangefinder",
+                "Sonar1",
+                "Sonar2",
+                "Sonar3",
+                "Sonar4"
+        );
+    }
+
+    @Override
+    public List<Double> getDataRow() {
+        return Lists.newArrayList(
+                position.getX(),
+                position.getY(),
+                heading,
+                getRange(),
+                getSonars()[0],
+                getSonars()[1],
+                getSonars()[2],
+                getSonars()[3]
+        );
+    }
+
 }

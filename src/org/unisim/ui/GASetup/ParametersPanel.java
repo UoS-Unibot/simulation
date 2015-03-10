@@ -5,12 +5,11 @@
  */
 package org.unisim.ui.GASetup;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFileChooser;
-import org.unisim.exp.params.Parameters;
+import org.unisim.genesis.GAParameters;
 import org.unisim.ui.UIUtils;
 
 /**
@@ -19,7 +18,7 @@ import org.unisim.ui.UIUtils;
  */
 public class ParametersPanel extends javax.swing.JPanel {
     
-    Parameters param = new Parameters();
+    GAParameters param = new GAParameters.GABuilder().build();
 
     /**
      * Creates new form Parameters
@@ -196,7 +195,7 @@ public class ParametersPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnDefaultActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDefaultActionPerformed
-        param = new org.unisim.exp.params.Parameters();
+        param = new GAParameters.GABuilder().build();
     }//GEN-LAST:event_btnDefaultActionPerformed
 
     private void btnLoadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLoadActionPerformed
@@ -206,7 +205,7 @@ public class ParametersPanel extends javax.swing.JPanel {
         int returnVal = fc.showOpenDialog(this);
         if(returnVal == JFileChooser.APPROVE_OPTION) {
             try {
-                param = org.unisim.exp.params.Parameters.fromJSONFile(fc.getSelectedFile());
+                param = new GAParameters.GABuilder(fc.getSelectedFile()).build();
             } catch (IOException ex) {
                 Logger.getLogger(ParametersPanel.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -220,14 +219,14 @@ public class ParametersPanel extends javax.swing.JPanel {
         int returnVal = fc.showSaveDialog(this);
         if(returnVal == JFileChooser.APPROVE_OPTION) {
             try {
-                param.saveToFile(fc.getSelectedFile());
+                param.saveToJSON(fc.getSelectedFile());
             } catch (IOException ex) {
                 Logger.getLogger(ParametersPanel.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }//GEN-LAST:event_btnSaveActionPerformed
 
-    public org.unisim.exp.params.Parameters getParam() {
+    public GAParameters getParam() {
         return param;
     }
 

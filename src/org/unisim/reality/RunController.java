@@ -5,6 +5,9 @@
  */
 package org.unisim.reality;
 
+import com.google.common.collect.Lists;
+import java.util.List;
+import org.unisim.io.Loggable;
 import org.unisim.simulation.robot.IRobotBody;
 import org.unisim.simulation.robot.IRobotController;
 import org.unisim.simulation.robot.RobotInput;
@@ -21,10 +24,8 @@ public class RunController {
     private boolean live = true;
 
     public RunController(IRobotController controller, IRobotBody robot) {
-        this(controller,robot,1/60);
+        this(controller,robot,1f/60f);
     }
-
-    
     
     public RunController(IRobotController controller, IRobotBody robot,double timeStep) {
         this.controller = controller;
@@ -55,6 +56,7 @@ public class RunController {
     public double getTimeStep() {
         return timeStep;
     }
+
     
     
     

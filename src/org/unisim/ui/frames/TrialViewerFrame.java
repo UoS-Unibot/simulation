@@ -5,7 +5,7 @@
  */
 package org.unisim.ui.frames;
 
-import org.unisim.exp.Experiment;
+import org.unisim.genesis.robotGA.RobotExperiment;
 import org.unisim.genesis.Genotype;
 
 /**
@@ -21,7 +21,7 @@ public class TrialViewerFrame extends javax.swing.JInternalFrame {
         initComponents();
     }
     
-    public void loadSimulation(Experiment exp,Genotype geno) {
+    public void loadSimulation(RobotExperiment exp,Genotype geno) {
         simulationViewer1.loadSimulation(exp, geno);
     }
 
