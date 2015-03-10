@@ -21,6 +21,7 @@ public class VisualiserTest extends JFrame {
         this.add(simViewer);
         this.pack();
         simViewer.loadRandomControllerWithDefaultLayout();
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
     
     public static void main(String args[]) {

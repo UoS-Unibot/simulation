@@ -5,6 +5,10 @@
  */
 package org.unisim.genesis.robotGA;
 
+import com.google.common.primitives.Doubles;
+import java.util.LinkedList;
+import java.util.List;
+import org.apache.commons.math3.stat.descriptive.moment.Variance;
 import org.unisim.genesis.Phenotype;
 import org.unisim.reality.RunController;
 import org.unisim.simulation.core.SimulationBuilder;
@@ -36,11 +40,14 @@ public final class RobotPhenotype implements Phenotype {
         float totalTrialLength = (float) (30000f *sc.getTimeStep());
         float i;
         float sum = 0;
+        List<Double> angularVelos = new LinkedList<>();
         for(i = 0; sc.isLive() & i < totalTrialLength;i += sc.getTimeStep()) {
             sc.step();
-            sum += sc.getController().getVelocity();
+            angularVelos.add(sc.getController().getAngularVelocity());
         }
-        return (float) (i / (totalTrialLength)) * sum/totalTrialLength;
+        double angVariance = var.evaluate(Doubles.toArray(
+                angularVelos));
+        return (float) (i / (totalTrialLength) * angVariance);
     }
-
+    private static final Variance var = new Variance();
 }

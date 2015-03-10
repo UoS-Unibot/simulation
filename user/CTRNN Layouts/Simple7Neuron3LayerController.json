@@ -30,8 +30,8 @@
                     "tau": "g0",
                     "gain": "g1",
                     "bias": "g2",
-                    "conns": ["i1","i2","i3","i4"],
-                    "weights": ["g3","g4","g5","g6"]
+                    "conns": ["i1","i2"],
+                    "weights": ["g3","g3"]
                 }
             ]
         },
@@ -41,35 +41,19 @@
             "neurons": [
                 {
                     "name": "i1",
-                    "tau": "g7",
-                    "gain": "g8",
-                    "bias": "g9",
+                    "tau": "g4",
+                    "gain": "g5",
+                    "bias": "g6",
                     "conns": ["mL","mR"],
-                    "weights": ["g10","g11"]
+                    "weights": ["g7","g8"]
                 },
                 {
                     "name": "i2",
-                    "tau": "g7",
-                    "gain": "g8",
-                    "bias": "g9",
+                    "tau": "g4",
+                    "gain": "g5",
+                    "bias": "g6",
                     "conns": ["mL","mR"],
-                    "weights": ["g12","g13"]
-                },
-                {
-                    "name": "i3",
-                    "tau": "g7",
-                    "gain": "g8",
-                    "bias": "g9",
-                    "conns": ["mL","mR"],
-                    "weights": ["g14","g15"]
-                },
-                {
-                    "name": "i4",
-                    "tau": "g7",
-                    "gain": "g8",
-                    "bias": "g9",
-                    "conns": ["mL","mR"],
-                    "weights": ["g16","g17"]
+                    "weights": ["g8","g7"]
                 }
             ]
         },
@@ -79,19 +63,19 @@
             "neurons": [
                 {
                     "name": "mL",
-                    "tau": "g18",
-                    "gain": "g19",
-                    "bias": "g20",
+                    "tau": "g9",
+                    "gain": "g10",
+                    "bias": "g11",
                     "conns": ["mL","mR"],
-                    "weights": ["g21","g22"]
+                    "weights": ["g12","g13"]
                 },
                 {
                     "name": "mR",
-                    "tau": "g18",
-                    "gain": "g19",
-                    "bias": "g20",
+                    "tau": "g9",
+                    "gain": "g10",
+                    "bias": "g11",
                     "conns": ["mL","mR"],
-                    "weights": ["g23","g24"]
+                    "weights": ["g12","g13"]
                 }
             ]
         }

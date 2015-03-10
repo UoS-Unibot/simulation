@@ -24,6 +24,7 @@ public class SimulatedRobotBody implements IRobotBody, Loggable<Double> {
     private final Shape2D shape;
     private boolean live = true;
     private double range;
+    private final float rangeFinderMaxLength;
 
     public SimulatedRobotBody(SimulationWorld world) {
         this(world, new Vector2D(0.6, 0.6), 1f / 60f);
@@ -36,9 +37,9 @@ public class SimulatedRobotBody implements IRobotBody, Loggable<Double> {
         heading = 0;
         this.world = world;
         this.size = size;
+        rangeFinderMaxLength = (float) (2 * world.getBounds().getNorm());
         shape = Shape2D.createRectangleFromCenter(position, size, heading);
-        rangeFinderLine = Line.fromPolarVec(getRangeFinderBase(), heading,
-                world.getBounds().getNorm());
+        rangeFinderLine = getNewRangeFinder();
     }
 
     /**
@@ -49,11 +50,15 @@ public class SimulatedRobotBody implements IRobotBody, Loggable<Double> {
                 getY() / 2));
     }
 
+    private Line getNewRangeFinder() {
+        return Line.fromPolarVec(getRangeFinderBase(), heading,
+                rangeFinderMaxLength
+        );
+    }
+
     public Line getShortenedRangeFinderLine() {
-        System.out.println(range);
         fromPolarVec
                 = Line.fromPolarVec(getRangeFinderBase(), heading, getRange());
-        System.out.println(fromPolarVec.p2.toString());
         return fromPolarVec;
     }
     private Line fromPolarVec;
@@ -100,14 +105,13 @@ public class SimulatedRobotBody implements IRobotBody, Loggable<Double> {
                 sin(heading));
         shape.translate(changeV);
         position = position.add(changeV);
-        rangeFinderLine.translate(changeV);
+        rangeFinderLine = getNewRangeFinder();
 
         //Calculate actual rotation
         double changeA = (angularVelocity * timeStepLength) % (2 * Math.PI);
-        rangeFinderLine.rotate(changeA);
         shape.rotate(changeA);
         heading += changeA;
-
+        
         world.checkCollisions(this);
         range = world.findRange(rangeFinderLine);
     }

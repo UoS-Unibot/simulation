@@ -43,8 +43,10 @@ public class SandpitRenderer {
         g2.setColor(new Color(45,45,45));
         //g2.draw(robot.getShape().toJava2DShape());
         g2.fill(robot.getShape().toJava2DShape());
-        g2.setColor(Color.RED);
         g2.setStroke(bstroke);
+//        g2.setColor(Color.GREEN);
+//        g2.draw(robot.getRangeFinderLine().toLine2D());
+        g2.setColor(Color.RED);
         g2.draw(robot.getShortenedRangeFinderLine().toLine2D());
     }
     

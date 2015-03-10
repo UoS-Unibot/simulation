@@ -119,10 +119,20 @@ public class Line extends Shape2D {
     private static double cross2D(Vector2D v1, Vector2D v2) {
         return v1.getX() * v2.getY() - v1.getY() * v2.getX();
     }
+
+    @Override
+    public String toString() {
+        return "Line{" + "p1=" + p1 + ", p2=" + p2 + '}';
+    }
+    
+    
+    
     
     public static LineIntersection getNoIntersection() {
         return LineIntersection.noIntersection();
     }
+    
+    
 
     public static class LineIntersection {
 
