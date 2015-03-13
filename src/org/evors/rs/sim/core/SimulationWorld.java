@@ -104,12 +104,12 @@ public class SimulationWorld {
     }
 
     public float traceRay(Line rangeFinderLine) {
-        double lowestDist = 0; //will return this if no intersection found
+        double lowestDist = rangeFinderLine.getLength(); //will return this if no intersection found
 
         for (Shape2D obj : objects) {
             Intersection li = obj.getSmallestIntersection(rangeFinderLine);
             if (li.isIntersection) {
-                if (lowestDist == 0 || li.getSmallestLineDist() < lowestDist) {
+                if (li.getSmallestLineDist() < lowestDist) {
                     lowestDist = li.getSmallestLineDist();
                 }
             }

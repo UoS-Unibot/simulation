@@ -29,9 +29,9 @@ public class RobotGARunner implements Runnable {
     private GAListener listener;
     private final GAParameters parameters;
 
-    public RobotGARunner(RobotPhenotype robotPhenotype, boolean loggingEnabled) {
-        parameters = new GAParameters.GABuilder().build();
-        ga = new GA(robotPhenotype);
+    public RobotGARunner(RobotPhenotype robotPhenotype, boolean loggingEnabled, GAParameters parameters) {
+        this.parameters = parameters;
+        ga = new GA(robotPhenotype, parameters);
         if (loggingEnabled) {
             gaDataFile = DataFile.fromLoggable(ga);
         }

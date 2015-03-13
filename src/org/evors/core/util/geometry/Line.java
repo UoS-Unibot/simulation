@@ -204,12 +204,16 @@ public class Line extends Polygon {
     private Vector2D getRotatedPoint(Vector2D pivot, Vector2D point,
             double deltaAngle) {
         return new Vector2D(
-                pivot.getX() + LookupFunctions.cos(deltaAngle) * (point.getX() - pivot.
+                pivot.getX() + LookupFunctions.cos(deltaAngle) * (point.getX()
+                - pivot.
                 getX())
-                - LookupFunctions.sin(deltaAngle) * (point.getY() - pivot.getY()),
-                pivot.getY() + LookupFunctions.sin(deltaAngle) * (point.getX() - pivot.
+                - LookupFunctions.sin(deltaAngle)
+                * (point.getY() - pivot.getY()),
+                pivot.getY() + LookupFunctions.sin(deltaAngle) * (point.getX()
+                - pivot.
                 getX())
-                + LookupFunctions.cos(deltaAngle) * (point.getY() - pivot.getY())
+                + LookupFunctions.cos(deltaAngle)
+                * (point.getY() - pivot.getY())
         );
     }
 
@@ -221,7 +225,8 @@ public class Line extends Polygon {
      */
     public double getShortestDistToPoint(Vector2D point) {
         /**
-         * Adapted from C code by Prof Phil Husbands.
+         * Adapted from C code by Prof Phil Husbands and
+         * http://stackoverflow.com/questions/849211/shortest-distance-between-a-point-and-a-line-segment
          */
         double l2, t;
         Vector2D A, B, proj;

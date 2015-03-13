@@ -13,12 +13,13 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferStrategy;
+import java.util.Arrays;
 import java.util.List;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.evors.core.RunController;
 import org.evors.rs.sim.robot.SimulatedRobotBody;
+import org.evors.rs.sim.robot.ctrnn.CTRNN;
 import org.evors.rs.sim.robot.ctrnn.CTRNNLayout;
-import org.evors.rs.unibot.sim.SimulatedUnibot;
 
 /**
  *
@@ -161,11 +162,19 @@ public class TrialViewer extends SandPitCanvas implements Runnable {
             SandpitRenderer.drawRobot(g2, robot);
         }
         g2.setTransform(prevTrans);
-        drawText(g2, String.format(
-                "Time: %.2f\nRobot position: {%.2f,%.2f}\nRobot heading: %.2f\nRange: %.2f",
-                time, robot.
-                getPosition().getX(), robot.getPosition().getY(), robot.
-                getHeading(), robot.getInput()[0]));
+        drawText(
+                g2,
+                String.format(
+                        "Time: %.2f\nRobot position: {%.2f,%.2f}\nRobot heading: %.2f\nInputs:%s\nNeurons:%s",
+                        time,
+                        robot.getPosition().getX(),
+                        robot.getPosition().getY(),
+                        robot.getHeading(),
+                        Arrays.toString(robot.getInput()),
+                        Arrays.toString(((CTRNN) controller.getController()).
+                                getNeurons())
+                )
+        );
     }
 
     public void render() {

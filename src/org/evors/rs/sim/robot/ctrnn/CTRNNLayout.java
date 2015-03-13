@@ -70,7 +70,7 @@ public class CTRNNLayout {
         for (int i = 0; i < allNeurons.size(); i++) {
             realNeurons[i] = allNeurons.get(i).getCTRNNNeuron(allNeurons.size(), genes);
         }
-        return new CTRNNController(realNeurons, Ints.toArray(sensorIDs), integrationStepSize, 0.6f,leftMotorID,rightMotorID);
+        return new CTRNNController(realNeurons, Ints.toArray(sensorIDs), integrationStepSize, 0.13f,leftMotorID,rightMotorID);
     }
 
     @Override

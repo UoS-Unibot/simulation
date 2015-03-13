@@ -37,7 +37,7 @@ public class CTRNNController extends CTRNN implements IRobotController{
 
     @Override
     public double getAngularVelocity() {
-        return (getNeurons()[rightMotorID].activation - getNeurons()[leftMotorID].activation) / axleWidth;
+        return (getNeurons()[rightMotorID].activation - getNeurons()[leftMotorID].activation) * 1000;
     }
     
    

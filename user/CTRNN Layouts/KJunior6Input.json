@@ -1,0 +1,119 @@
+{
+    "metadata": {
+        "title": "Simple network with 6 inputs for KJunior",
+        "author": "Miles Bryant",
+        "description": "Simple network with 6 IR inputs, 2 interneurons and 2 motor neurons"
+    },
+    "paramranges": [
+        {
+            "name": "sensory",
+            "tauR": [1, 2],
+            "gainR": [0, 2],
+            "biasR": [-1, 1],
+            "weightsR": [-5,5]
+        },
+        {
+            "name": "circuit",
+            "tauR": [1, 2],
+            "gainR": [1, 2],
+            "biasR": [-1, 1],
+            "weightsR": [-5,5]
+        }        
+    ],
+    "layers": [
+        {
+            "desc": "sensory",
+            "params": "sensory",
+            "neurons": [
+                {
+                    "name": "s0",
+                    "tau": "g0",
+                    "gain": "g1",
+                    "bias": "g2",
+                    "conns": ["i1","i2"],
+                    "weights": ["g3","g4"]
+                },{
+                    "name": "s1",
+                    "tau": "g0",
+                    "gain": "g1",
+                    "bias": "g2",
+                    "conns": ["i1","i2"],
+                    "weights": ["g5","g6"]
+                },{
+                    "name": "s2",
+                    "tau": "g0",
+                    "gain": "g1",
+                    "bias": "g2",
+                    "conns": ["i1","i2"],
+                    "weights": ["g7","g8"]
+                },{
+                    "name": "s3",
+                    "tau": "g0",
+                    "gain": "g1",
+                    "bias": "g2",
+                    "conns": ["i1","i2"],
+                    "weights": ["g8","g7"]
+                },{
+                    "name": "s4",
+                    "tau": "g0",
+                    "gain": "g1",
+                    "bias": "g2",
+                    "conns": ["i1","i2"],
+                    "weights": ["g6","g5"]
+                },{
+                    "name": "s5",
+                    "tau": "g0",
+                    "gain": "g1",
+                    "bias": "g2",
+                    "conns": ["i1","i2"],
+                    "weights": ["g4","g3"]
+                }
+            ]
+        },
+        {
+            "desc": "interneurons",
+            "params": "circuit",
+            "neurons": [
+                {
+                    "name": "i1",
+                    "tau": "g9",
+                    "gain": "g10",
+                    "bias": "g11",
+                    "conns": ["mL","mR"],
+                    "weights": ["g12","g13"]
+                },
+                {
+                    "name": "i2",
+                    "tau": "g9",
+                    "gain": "g10",
+                    "bias": "g11",
+                    "conns": ["mL","mR"],
+                    "weights": ["g13","g12"]
+                }
+            ]
+        },
+        {
+            "desc": "motors",
+            "params": "circuit",
+            "neurons": [
+                {
+                    "name": "mL",
+                    "tau": "g14",
+                    "gain": "g15",
+                    "bias": "g16",
+                    "conns": ["mL","mR"],
+                    "weights": ["g17","g18"]
+                },
+                {
+                    "name": "mR",
+                    "tau": "g14",
+                    "gain": "g15",
+                    "bias": "g16",
+                    "conns": ["mL","mR"],
+                    "weights": ["g18","g17"]
+                }
+            ]
+        }
+        
+    ]
+}

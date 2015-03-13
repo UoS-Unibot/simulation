@@ -11,7 +11,6 @@ import org.evors.core.RunController;
 import org.evors.core.IRobotController;
 import org.evors.core.util.geometry.Shape2D;
 import org.evors.rs.sim.robot.SimulatedRobotBody;
-import org.evors.rs.unibot.sim.SimulatedUnibot;
 
 /**
  * Builds an SimulationController instance, specifying an IRobotController and
@@ -22,7 +21,7 @@ public class SimulationBuilder {
     private Vector2D worldSize = new Vector2D(5, 5);
     private Vector2D robotSize = new Vector2D(0.6, 0.6);
     private float timeStepLength = 1f / 60f;
-    private IRobotController controller;
+    private final IRobotController controller;
     private boolean loggingEnabled = false;
     private SimulationWorld world;
     private final SimulatedRobotBody robot;

@@ -90,6 +90,13 @@ public class CTRNN implements Loggable<Float>{
             this.weights = weights;
             this.state = 0.5f;
         }
+
+        @Override
+        public String toString() {
+            return String.format("%.3f", activation);
+        }
+        
+        
         
     }
     
