@@ -23,7 +23,7 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
  *
  * @author Miles Bryant <mb459 at sussex.ac.uk>
  */
-public class Line extends Shape2D {
+public class Line extends Polygon {
 
     /**
      * Base point of the line segment.
@@ -141,7 +141,7 @@ public class Line extends Shape2D {
     }
 
     /**
-     * Implementation of Shape2D; returns a collection with the sole member
+     * Implementation of Polygon; returns a collection with the sole member
      * being this line.
      *
      * @return a single element Collection with this Line.
@@ -160,8 +160,8 @@ public class Line extends Shape2D {
      * @return a LineIntersection object with information about the
      * intersection.
      */
-    public LineIntersection getIntersection(Line line2) {
-        return new LineIntersection(this, line2);
+    public Intersection.LineLine getIntersection(Line line2) {
+        return Intersection.LineLine.calculate(this, line2);
     }
 
     /**
@@ -215,6 +215,30 @@ public class Line extends Shape2D {
                 getX())
                 + Math.cos(deltaAngle) * (point.getY() - pivot.getY())
         );
+    }
+
+    public double getShortestDistToPoint(Vector2D point) {
+        /**
+         * Adapted from C code by Prof Phil Husbands.
+         */
+        double l, t;
+        Vector2D A, B, proj;
+        Vector2D line = p2.subtract(p1);
+        l = getLength();
+        if (l == 0) {
+            return point.subtract(p1).getNorm();
+        }
+        A = point.subtract(p1);
+        B = line;
+        t = A.dotProduct(B) / (l * l);
+        if (t < 0) {
+            return point.subtract(A).getNorm(); //actual point lies off p1
+        } else if (t > 1) {
+            return point.subtract(B).getNorm(); //lies off p2
+        } else {
+            proj = A.add(t, B);
+            return proj.getNorm();
+        }
     }
 
     /**
@@ -285,11 +309,49 @@ public class Line extends Shape2D {
             return new LineIntersection();
         }
 
+        public static LineIntersection fromSmallestCircleLine(Line line,
+                Circle circle) {
+            //Implemented from http://mathworld.wolfram.com/Circle-LineIntersection.html
+
+            double dx = line.p2.getX() - line.p1.getX(),
+                    dy = line.p2.getY() - line.p1.getY(),
+                    dr = Math.sqrt(dx * dx + dy * dy),
+                    D = line.p1.getX() * line.p2.getY() - line.p1.getY()
+                    * line.p2.
+                    getX(), discrim = circle.getRadius() * circle.getRadius()
+                    * dr - D * D;
+            if (discrim < 0 || discrim == 0) { //no intersection or line at a tangent, avoids root -1/ root 0
+                return Line.LineIntersection.noIntersection();
+            }
+            double line1DistToIntersect,
+                    line2DistToIntersect = NaN,
+                    x1, y1, x2, y2;
+            Vector2D intersectionPoint;
+            x1 = (D * dy + sgn(dy) * dx * discrim) / (dr * dr);
+            x2 = (D * dy - sgn(dy) * dx * discrim) / (dr * dr);
+            y1 = (D * dx + Math.abs(dy) * discrim) / (dr * dr);
+            y2 = (D * dy + Math.abs(dy) * discrim) / (dr * dr);
+            return null;
+        }
+
+        private static int sgn(double x) {
+            return x < 0 ? -1 : 1;
+        }
+
         private LineIntersection() {
             isIntersection = false;
             line1DistToIntersect = NaN;
             line2DistToIntersect = NaN;
             intersectionPoint = Vector2D.NaN;
+        }
+
+        public LineIntersection(boolean isIntersection,
+                double line1DistToIntersect, double line2DistToIntersect,
+                Vector2D intersectionPoint) {
+            this.isIntersection = isIntersection;
+            this.line1DistToIntersect = line1DistToIntersect;
+            this.line2DistToIntersect = line2DistToIntersect;
+            this.intersectionPoint = intersectionPoint;
         }
 
         /**

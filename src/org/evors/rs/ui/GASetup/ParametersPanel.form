@@ -35,15 +35,15 @@
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace max="32767" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="btnLoad" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="btnSave" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="btnDefault" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
-              <Component id="jPanel1" min="-2" pref="245" max="-2" attributes="0"/>
-              <EmptySpace max="32767" attributes="0"/>
+              <Component id="jPanel1" min="-2" pref="136" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -81,8 +81,6 @@
               <Group type="102" alignment="0" attributes="0">
                   <EmptySpace max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jLabel5" linkSize="3" alignment="0" min="-2" pref="141" max="-2" attributes="0"/>
-                      <Component id="jLabel6" linkSize="3" alignment="0" min="-2" pref="125" max="-2" attributes="0"/>
                       <Component id="jLabel7" linkSize="3" alignment="0" min="-2" pref="125" max="-2" attributes="0"/>
                       <Component id="jLabel4" linkSize="3" alignment="0" min="-2" max="-2" attributes="0"/>
                       <Component id="jLabel3" linkSize="3" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -91,8 +89,6 @@
                   </Group>
                   <EmptySpace pref="40" max="32767" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="spnCross1" linkSize="1" alignment="1" max="32767" attributes="0"/>
-                      <Component id="spnCross2" linkSize="1" alignment="1" max="32767" attributes="0"/>
                       <Component id="spnCross3" linkSize="1" alignment="1" max="32767" attributes="0"/>
                       <Component id="spnCross" linkSize="1" alignment="1" pref="63" max="32767" attributes="0"/>
                       <Component id="spnMut" linkSize="1" alignment="1" max="32767" attributes="0"/>
@@ -100,11 +96,6 @@
                       <Component id="spnPop" linkSize="1" alignment="1" max="32767" attributes="0"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
-              </Group>
-              <Group type="102" attributes="0">
-                  <EmptySpace min="12" pref="12" max="-2" attributes="0"/>
-                  <Component id="jCheckBox1" max="32767" attributes="0"/>
-                  <EmptySpace min="12" pref="12" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -136,18 +127,6 @@
                       <Component id="spnCross3" linkSize="2" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="jLabel6" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="spnCross2" linkSize="2" alignment="3" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="jLabel5" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="spnCross1" linkSize="2" alignment="3" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="jCheckBox1" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="78" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -180,25 +159,6 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JSpinner" name="spnCross">
-        </Component>
-        <Component class="javax.swing.JLabel" name="jLabel5">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="CTRNN Euler timestep"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JSpinner" name="spnCross1">
-        </Component>
-        <Component class="javax.swing.JLabel" name="jLabel6">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="&lt;html&gt;Number of fitness evaluation trials&lt;/html&gt;"/>
-          </Properties>
-        </Component>
-        <Component class="javax.swing.JSpinner" name="spnCross2">
-        </Component>
-        <Component class="javax.swing.JCheckBox" name="jCheckBox1">
-          <Properties>
-            <Property name="text" type="java.lang.String" value="Terminate trial on collision"/>
-          </Properties>
         </Component>
         <Component class="javax.swing.JSpinner" name="spnCross3">
         </Component>

@@ -3,7 +3,9 @@ package org.evors.rs.sim.core;
 import java.util.Collection;
 import java.util.LinkedList;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.evors.core.util.geometry.Intersection;
 import org.evors.core.util.geometry.Line;
+import org.evors.core.util.geometry.Polygon;
 import org.evors.core.util.geometry.Shape2D;
 import org.evors.rs.sim.robot.SimulatedRobotBody;
 
@@ -81,7 +83,7 @@ public class SimulationWorld {
      *
      * @param object WorldObj to add.
      */
-    public void createWorldObject(Shape2D object) {
+    public void createWorldObject(Polygon object) {
         objects.add(object);
     }
 
@@ -105,10 +107,10 @@ public class SimulationWorld {
         double lowestDist = 0; //will return this if no intersection found
 
         for (Shape2D obj : objects) {
-            Line.LineIntersection li = obj.getSmallestLineIntersection(rangeFinderLine);
+            Intersection li = obj.getSmallestIntersection(rangeFinderLine);
             if (li.isIntersection) {
-                if (lowestDist == 0 || li.line1DistToIntersect < lowestDist) {
-                    lowestDist = li.line1DistToIntersect;
+                if (lowestDist == 0 || li.getSmallestLineDist() < lowestDist) {
+                    lowestDist = li.getSmallestLineDist();
                 }
             }
         }

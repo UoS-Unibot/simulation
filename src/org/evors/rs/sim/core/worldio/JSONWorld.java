@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.evors.rs.sim.core.SimulationWorld;
+import org.evors.core.util.geometry.Polygon;
 import org.evors.core.util.geometry.Shape2D;
 
 /**
@@ -46,7 +47,7 @@ public class JSONWorld {
     public Collection<Shape2D> getWorldObjects() {
         ArrayList<Shape2D> worldobjects = new ArrayList<>();
         for (JSONWorldObject obj : objects) {
-            worldobjects.add(Shape2D.createRectangleFromCenter(new Vector2D(obj.getPosition()[0], obj.getPosition()[1]), new Vector2D(obj.getSize()[0], obj.getSize()[1]), 0));
+            worldobjects.add(Polygon.createRectangleFromCenter(new Vector2D(obj.getPosition()[0], obj.getPosition()[1]), new Vector2D(obj.getSize()[0], obj.getSize()[1]), 0));
         }
         return worldobjects;
     }

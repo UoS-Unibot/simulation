@@ -5,7 +5,7 @@
  */
 package org.evors.core.util.geometry;
 
-import org.evors.core.util.geometry.Shape2D;
+import org.evors.core.util.geometry.Polygon;
 import org.evors.core.util.geometry.Line;
 import java.util.ArrayList;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
@@ -21,9 +21,9 @@ import static org.evors.core.TestUtils.vIsIn;
  *
  * @author miles
  */
-public class Shape2DTest {
+public class PolygonTest {
 
-    public Shape2DTest() {
+    public PolygonTest() {
     }
 
     @BeforeClass
@@ -44,13 +44,13 @@ public class Shape2DTest {
 
     @Test
     public void createRectangleShouldCreatePoints() {
-        Shape2D shape = Shape2D.createRectangleFromCenter(Vector2D.ZERO, new Vector2D(2, 2), 0);
+        Polygon shape = Polygon.createRectangleFromCenter(Vector2D.ZERO, new Vector2D(2, 2), 0);
         assertFalse(shape.isEmpty());
     }
 
     @Test
     public void createRectangleShouldCreatePointsAtn1_1__1_1__1_n1__n1_n1() {
-        Shape2D shape = Shape2D.createRectangleFromCenter(Vector2D.ZERO, new Vector2D(2, 2), 0);
+        Polygon shape = Polygon.createRectangleFromCenter(Vector2D.ZERO, new Vector2D(2, 2), 0);
         ArrayList<Vector2D> points = new ArrayList<>(4);
         points.add(new Vector2D(-1,1));
         points.add(new Vector2D(1,1));
@@ -64,15 +64,15 @@ public class Shape2DTest {
 
     @Test
     public void rectangleDoesntIntersectAnotherRectangle() {
-        Shape2D rect1 = Shape2D.createRectangleFromCenter(Vector2D.ZERO, new Vector2D(2, 2), 0);
-        Shape2D rect2 = Shape2D.createRectangleFromCenter(new Vector2D(0, 5), new Vector2D(2, 2), 0);
+        Polygon rect1 = Polygon.createRectangleFromCenter(Vector2D.ZERO, new Vector2D(2, 2), 0);
+        Polygon rect2 = Polygon.createRectangleFromCenter(new Vector2D(0, 5), new Vector2D(2, 2), 0);
         assertFalse("Rectangles intersect", rect1.intersectsWith(rect2));
     }
 
     @Test
     public void rectangleIntersectsAnotherRectangle() {
-        Shape2D rect1 = Shape2D.createRectangleFromCenter(Vector2D.ZERO, new Vector2D(2, 2), 0);
-        Shape2D rect2 = Shape2D.createRectangleFromCenter(new Vector2D(0, 1), new Vector2D(2, 2), Math.PI / 4);
+        Polygon rect1 = Polygon.createRectangleFromCenter(Vector2D.ZERO, new Vector2D(2, 2), 0);
+        Polygon rect2 = Polygon.createRectangleFromCenter(new Vector2D(0, 1), new Vector2D(2, 2), Math.PI / 4);
         assertTrue("Rectangles don't intersect", rect1.intersectsWith(rect2));
     }
 

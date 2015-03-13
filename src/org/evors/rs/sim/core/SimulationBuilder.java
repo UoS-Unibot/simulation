@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.evors.core.RunController;
-import org.evors.core.util.geometry.Shape2D;
+import org.evors.core.util.geometry.Polygon;
 import org.evors.core.IRobotController;
 import org.evors.rs.sim.robot.SimulatedRobotBody;
 
@@ -24,7 +24,7 @@ public class SimulationBuilder {
     private Vector2D robotPosition = Vector2D.ZERO;
     private float robotInitialHeading = 0;
     private float timeStepLength = 1f / 60f;
-    private Collection<Shape2D> worldObjects = new ArrayList<>(0);
+    private Collection<Polygon> worldObjects = new ArrayList<>(0);
     private IRobotController controller;
     private boolean loggingEnabled = false;
     private SimulationWorld world;
@@ -124,7 +124,7 @@ public class SimulationBuilder {
      * @return SimulationBuilder instance for further parameter setting or
      * building.
      */
-    public SimulationBuilder setWorldObjects(Collection<Shape2D> worldObjects) {
+    public SimulationBuilder setWorldObjects(Collection<Polygon> worldObjects) {
         this.worldObjects = worldObjects;
         return this;
     }

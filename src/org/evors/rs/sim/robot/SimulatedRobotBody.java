@@ -12,6 +12,7 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.evors.core.io.Loggable;
 import org.evors.rs.sim.core.SimulationWorld;
 import org.evors.core.util.geometry.Line;
+import org.evors.core.util.geometry.Polygon;
 import org.evors.core.util.geometry.Shape2D;
 
 public class SimulatedRobotBody implements IRobotBody, Loggable<Double> {
@@ -22,7 +23,7 @@ public class SimulatedRobotBody implements IRobotBody, Loggable<Double> {
     private final Vector2D size;
     private final SimulationWorld world;
     private Line rangeFinderLine;
-    private final Shape2D shape;
+    private final Polygon shape;
     private boolean live = true;
     private double range;
     private final float rangeFinderMaxLength;
@@ -39,7 +40,7 @@ public class SimulatedRobotBody implements IRobotBody, Loggable<Double> {
         this.world = world;
         this.size = size;
         rangeFinderMaxLength = (float) (2 * world.getBounds().getNorm());
-        shape = Shape2D.createRectangleFromCenter(position, size, heading);
+        shape = Polygon.createRectangleFromCenter(position, size, heading);
         rangeFinderLine = getNewRangeFinder();
     }
 
@@ -91,7 +92,7 @@ public class SimulatedRobotBody implements IRobotBody, Loggable<Double> {
         return rangeFinderLine;
     }
 
-    public Shape2D getShape() {
+    public Polygon getShape() {
         return shape;
     }
 

@@ -5,7 +5,6 @@
  */
 package org.evors.rs.sim.core;
 
-import org.evors.rs.sim.core.SimulationWorld;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
@@ -13,6 +12,7 @@ import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import org.junit.Before;
 import org.evors.core.util.geometry.Line;
+import org.evors.core.util.geometry.Polygon;
 import org.evors.core.util.geometry.Shape2D;
 
 /**
@@ -27,19 +27,19 @@ public class SimulationWorldTest {
     SimulationWorld world;
     Line rangeF;
     
-    private Shape2D create22obj(float x, float y) {
-        return Shape2D.createRectangleFromCenter(new Vector2D(x, y), new Vector2D(2, 2), 0);
+    private Polygon create22obj(float x, float y) {
+        return Polygon.createRectangleFromCenter(new Vector2D(x, y), new Vector2D(2, 2), 0);
     }
     
     Collection<Shape2D> objects = new ArrayList<>();
-    Shape2D objOfSize2_2At4_0 = create22obj(4, 0);
-    Shape2D objOfSize2_2At4_4 = create22obj(4, 4);
-    Shape2D objOfSize2_2At0_8 = create22obj(0, 8);
-    Shape2D objOfSize2_2Atn6_6 = create22obj(-6, 6);
-    Shape2D objOfSize2_2Atn9_0 = create22obj(-9, 0);
-    Shape2D objOfSize2_2Atn5_n5 = create22obj(-5, -5);
-    Shape2D objOfSize2_2At0_n3 = create22obj(0, -3);
-    Shape2D objOfSize2_2At3_n3 = create22obj(3, -3);
+    Polygon objOfSize2_2At4_0 = create22obj(4, 0);
+    Polygon objOfSize2_2At4_4 = create22obj(4, 4);
+    Polygon objOfSize2_2At0_8 = create22obj(0, 8);
+    Polygon objOfSize2_2Atn6_6 = create22obj(-6, 6);
+    Polygon objOfSize2_2Atn9_0 = create22obj(-9, 0);
+    Polygon objOfSize2_2Atn5_n5 = create22obj(-5, -5);
+    Polygon objOfSize2_2At0_n3 = create22obj(0, -3);
+    Polygon objOfSize2_2At3_n3 = create22obj(3, -3);
     
     @Before
     public void setUp() {
