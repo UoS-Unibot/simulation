@@ -10,6 +10,7 @@ import java.io.IOException;
 import org.apache.commons.io.FileUtils;
 import org.evors.rs.sim.core.worldio.JSONWorld;
 import org.evors.rs.sim.core.SimulationWorld;
+import org.evors.rs.sim.robot.SimulatedRobotBody;
 import org.evors.rs.sim.robot.ctrnn.io.JSONCTRNNLayout;
 import org.evors.rs.sim.robot.ctrnn.CTRNNLayout;
 
@@ -19,13 +20,27 @@ import org.evors.rs.sim.robot.ctrnn.CTRNNLayout;
  */
 public class RobotExperiment {
     private CTRNNLayout layout;
+    private SimulatedRobotBody robot;
     private SimulationWorld world;
     private String dir;
 
-    public RobotExperiment(CTRNNLayout layout, SimulationWorld world) {
+    public RobotExperiment(CTRNNLayout layout, SimulatedRobotBody robot,
+            SimulationWorld world) {
         this.layout = layout;
+        this.robot = robot;
         this.world = world;
     }
+
+    
+    
+    public RobotExperiment(CTRNNLayout layout, SimulatedRobotBody robot,
+            SimulationWorld world, String dir) {
+        this.layout = layout;
+        this.robot = robot;
+        this.world = world;
+        this.dir = dir;
+    }
+
 
     public RobotExperiment() {
     }
@@ -75,6 +90,15 @@ public class RobotExperiment {
     public void setWorld(SimulationWorld world) {
         this.world = world;
     }
+
+    public SimulatedRobotBody getRobot() {
+        return robot;
+    }
+
+    public void setRobot(SimulatedRobotBody robot) {
+        this.robot = robot;
+    }
+    
     
     
     

@@ -5,11 +5,7 @@
  */
 package org.evors.rs.ui.sandpit;
 
-import org.evors.rs.ui.sandpit.SandpitRenderer;
-import org.evors.rs.ui.sandpit.SandPitCanvas;
-import org.evors.rs.ui.sandpit.PathTracer;
 import com.google.common.base.Splitter;
-import com.google.common.collect.Lists;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -22,6 +18,7 @@ import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.evors.core.RunController;
 import org.evors.rs.sim.robot.SimulatedRobotBody;
 import org.evors.rs.sim.robot.ctrnn.CTRNNLayout;
+import org.evors.rs.unibot.sim.SimulatedUnibot;
 
 /**
  *
@@ -168,7 +165,7 @@ public class TrialViewer extends SandPitCanvas implements Runnable {
                 "Time: %.2f\nRobot position: {%.2f,%.2f}\nRobot heading: %.2f\nRange: %.2f",
                 time, robot.
                 getPosition().getX(), robot.getPosition().getY(), robot.
-                getHeading(), robot.getRange()));
+                getHeading(), robot.getInput()[0]));
     }
 
     public void render() {

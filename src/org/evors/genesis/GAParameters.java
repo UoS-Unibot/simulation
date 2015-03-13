@@ -20,6 +20,10 @@ public class GAParameters {
     private final int populationSize;
     private final int generations;
     private final int demesize;
+    
+    public static GAParameters getDefault() {
+        return new GABuilder().build();
+    }
 
     private GAParameters(float mutrate, float crossrate, int populationSize,
             int generations, int demesize) {
@@ -34,6 +38,7 @@ public class GAParameters {
         values.put("populationSize", populationSize);
         values.put("generations", generations);
         values.put("demesize", demesize);
+        mapper = new ObjectMapper();
     }
 
     public float getMutrate() {
@@ -74,8 +79,8 @@ public class GAParameters {
         public GABuilder(File file) throws IOException {
             ObjectMapper mapper = new ObjectMapper();
             Map<String,Object> values = mapper.readValue(file, Map.class);
-            mutrate = (float)values.get("mutrate");
-            crossrate = (float)values.get("crossrate");
+            mutrate = ((Double)values.get("mutrate")).floatValue();
+            crossrate = ((Double)values.get("crossrate")).floatValue();
             populationSize = (int)values.get("populationSize");
             generations = (int)values.get("generations");
             demesize = (int)values.get("demesize");

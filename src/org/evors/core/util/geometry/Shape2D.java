@@ -1,16 +1,13 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.evors.core.util.geometry;
 
 import java.awt.Shape;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 /**
+ * The Shape2D represents an abstract shape which can be moved around, rotated
+ * and checked for intersections with other shapes.
  *
- * @author miles
+ * @author Miles Bryant <mb459 at sussex.ac.uk>
  */
 public interface Shape2D {
 
@@ -84,7 +81,12 @@ public interface Shape2D {
      */
     void translate(Vector2D deltaMovement);
 
+    /**
+     *
+     * @param rangeFinderLine
+     * @return
+     */
     public Intersection getSmallestIntersection(
             Line rangeFinderLine);
-    
+
 }

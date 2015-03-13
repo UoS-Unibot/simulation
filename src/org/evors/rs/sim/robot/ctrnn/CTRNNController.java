@@ -26,8 +26,8 @@ public class CTRNNController extends CTRNN implements IRobotController{
     }
 
     @Override
-    public void step(RobotInput input) {
-        super.integrate(new float[]{(float)input.getRange()});
+    public void step(float[] input) {
+        super.integrate(input);
     }
 
     @Override

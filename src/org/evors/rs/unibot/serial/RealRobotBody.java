@@ -17,7 +17,7 @@ import org.evors.core.IRobotBody;
  *
  * @author Miles Bryant <mb459 at sussex.ac.uk>
  */
-public class RealRobotBody implements IRobotBody,Loggable {
+public class RealRobotBody implements IRobotBody, Loggable {
 
     private final SerialCommunicator serial;
     private final SerialParameters parameters;
@@ -89,10 +89,9 @@ public class RealRobotBody implements IRobotBody,Loggable {
     }
 
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
-    @Override
     public double getRange() {
         Double d = lastRange;
         if (d.isNaN()) {
@@ -111,7 +110,6 @@ public class RealRobotBody implements IRobotBody,Loggable {
         return lastRange;
     }
 
-    @Override
     public double[] getSonars() {
         double[] s;
         if (lastSonarReadings == null) {
@@ -203,6 +201,17 @@ public class RealRobotBody implements IRobotBody,Loggable {
                 getSonars()[2],
                 getSonars()[3]
         );
+    }
+
+    @Override
+    public float[] getInput() {
+        return new float[]{
+            (float)getRange(),
+            (float)getSonars()[0],
+            (float)getSonars()[1],
+            (float)getSonars()[2],
+            (float)getSonars()[3]
+        };
     }
 
 }

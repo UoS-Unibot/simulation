@@ -43,7 +43,7 @@ public class RunControllerRealRobotBodyIntegration {
             SerialPortTimeoutException {
         new Expectations() {
             {
-                controller.step((RobotInput) any);
+                controller.step((float[])any);
                 controller.getVelocity();
                 result = 1.0;
                 controller.getAngularVelocity();
@@ -63,7 +63,7 @@ public class RunControllerRealRobotBodyIntegration {
             SerialPortTimeoutException {
         new Expectations() {
             {
-                controller.step((RobotInput) any);
+                controller.step((float[])any);
                 controller.getVelocity();
                 result = 1.0;
                 controller.getAngularVelocity();

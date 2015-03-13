@@ -16,6 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JDesktopPane;
 import javax.swing.JFileChooser;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.evors.genesis.GAParameters;
 import org.evors.rs.genesis.RobotExperiment;
 import org.evors.rs.genesis.RobotGARunner;
@@ -25,6 +26,7 @@ import org.evors.rs.sim.core.SimulationWorld;
 import org.evors.rs.sim.robot.ctrnn.CTRNNLayout;
 import org.evors.rs.ui.utils.TextOutput;
 import org.evors.rs.ui.frames.PopulationViewer;
+import org.evors.rs.unibot.sim.SimulatedUnibot;
 
 /**
  *
@@ -46,7 +48,8 @@ public class GARunPanel extends javax.swing.JPanel implements TextOutput {
 
     public void setUpExperiment(GAParameters params, SimulationWorld world,
             CTRNNLayout layout) {
-        exp = new RobotExperiment(layout, world);
+        exp = new RobotExperiment(layout, new SimulatedUnibot(world,
+                new Vector2D(0.6,0.6), 1f/60f), world);
         btnStart.setEnabled(true);
     }
 

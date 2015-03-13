@@ -49,7 +49,7 @@ public class RunController {
      * IRobotController's output.
      */
     public void step() {
-        controller.step(new RobotInput(robot.getRange(), robot.getSonars()));
+        controller.step(robot.getInput());
         robot.step(controller.getVelocity(), controller.getAngularVelocity());
         live = robot.isLive();
     }

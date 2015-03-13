@@ -58,57 +58,57 @@ public class SimulationWorldTest {
 
     @Test
     public void rangeFindShouldReturn3WithAngleOf0() {
-        double result = world.findRange(rangeF);
+        double result = world.traceRay(rangeF);
         assertEquals(3f, result, 0.0001);
     }
 
     @Test
     public void rangeFindShouldReturnroot18WithAngleOfPi4() {
         rangeF.rotate((float) (Math.PI / 4));
-        double result = world.findRange(rangeF);
+        double result = world.traceRay(rangeF);
         assertEquals(Math.sqrt(18), result, 0.0001);
     }
 
     @Test
     public void findRangeShouldReturn7WithAngleOfPi2() {
         rangeF.rotate((float) (Math.PI / 2));
-        double result = world.findRange(rangeF);
+        double result = world.traceRay(rangeF);
         assertEquals(7f, result, 0.0001);
     }
 
     @Test
     public void findRangeShouldReturnsqr50WithAngleOf3Pi4() {
         rangeF.rotate((float) (3 * Math.PI / 4));
-        double result = world.findRange(rangeF);
+        double result = world.traceRay(rangeF);
         assertEquals(Math.sqrt(50), result, 0.0001);
     }
 
     @Test
     public void findRangeShouldReturn8WithAngleOfPi() {
         rangeF.rotate((float) (Math.PI));
-        double result = world.findRange(rangeF);
+        double result = world.traceRay(rangeF);
         assertEquals(8f, result, 0.0001);
     }
 
     @Test
     public void findRangeShouldReturnroot32WithAngleOf5Pi4() {
         rangeF.rotate((float) (5 * Math.PI / 4));
-        double result = world.findRange(rangeF);
+        double result = world.traceRay(rangeF);
         assertEquals(Math.sqrt(32), result, 0.0001);
     }
 
     @Test
     public void findRangeShouldReturn2WithAngleOf3Pi2() {
         rangeF.rotate((float) (3 * Math.PI / 2));
-        double result = world.findRange(rangeF);
+        double result = world.traceRay(rangeF);
         assertEquals(2, result, 0.0001);
     }
 
     @Test
     public void findRangeShouldReturnroot8WithAngleOf7Pi4() {
         rangeF.rotate((float) (7 * Math.PI / 4));
-        double result = world.findRange(rangeF);
-        assertEquals(Math.sqrt(8), result, 0.0001);
+        double result = world.traceRay(rangeF);
+        assertEquals(Math.sqrt(8), result, 0.001);
     }
     
 }

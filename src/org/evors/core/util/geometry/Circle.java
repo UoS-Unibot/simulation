@@ -1,31 +1,49 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.evors.core.util.geometry;
 
 import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
+import java.awt.image.LookupTable;
 import static java.lang.Math.abs;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.evors.core.util.LookupFunctions;
 
 /**
+ * Represents a regular circle with a center point and radius.
  *
- * @author miles
+ * @author Miles Bryant <mb459 at sussex.ac.uk>
  */
 public class Circle implements Shape2D {
 
+    /**
+     * Creates a new Circle with center point specified as a Vector2D and a
+     * radius.
+     *
+     * @param centerPoint Vector2D of center point.
+     * @param radius Radius. Must be nonnegative.
+     * @return A new Circle with specified parameters.
+     */
     public static Circle getFromCenter(Vector2D centerPoint, double radius) {
         return new Circle(centerPoint, radius);
     }
 
+    /**
+     * Creates a new Circle with center point specified as coordinates and a
+     * radius.
+     *
+     * @param centerX X coordinate of center point.
+     * @param centerY Y coordinate of center point.
+     * @param radius Radius. Must be nonnegative.
+     * @return A new Circle with specified parameters.
+     */
     public static Circle getFromCenter(double centerX, double centerY,
             double radius) {
         return getFromCenter(new Vector2D(centerX, centerY), radius);
     }
 
     private Circle(Vector2D center, double radius) {
+        if (radius < 0) {
+            throw new IllegalArgumentException("Radius must be nonnegative");
+        }
         this.center = center;
         this.radius = radius;
     }
@@ -39,6 +57,11 @@ public class Circle implements Shape2D {
         return center;
     }
 
+    /**
+     * Gets the radius of this circle.
+     *
+     * @return
+     */
     public double getRadius() {
         return radius;
     }
@@ -47,8 +70,8 @@ public class Circle implements Shape2D {
     public Vector2D getLocalToWorldCoords(Vector2D localCoords) {
         return getCenter().add(
                 new Vector2D(
-                        localCoords.getX() * Math.cos(rotation),
-                        localCoords.getY() * Math.sin(rotation)
+                        localCoords.getX() * LookupFunctions.cos(rotation),
+                        localCoords.getY() * LookupFunctions.sin(rotation)
                 )
         );
     }
@@ -70,11 +93,17 @@ public class Circle implements Shape2D {
             }
         } else if (shape instanceof Line) {
             Line line = (Line) shape;
+            if (intersectsWithLine(line)) {
+                System.out.println("intersection, circle at " + getCenter().
+                        toString() + ",line at " + line.toString());
+            }
             return intersectsWithLine(line);
         } else if (shape instanceof Polygon) {
             Polygon poly = (Polygon) shape;
             for (Line l : poly.getLines()) {
                 if (intersectsWithLine(l)) {
+                    System.out.println("intersection, circle at " + getCenter().
+                            toString() + ",line at " + l.toString());
                     return true;
                 }
             }
@@ -82,14 +111,15 @@ public class Circle implements Shape2D {
         return false;
     }
 
-    public boolean intersectsWithLine(Line line) {
+    private boolean intersectsWithLine(Line line) {
         return line.getShortestDistToPoint(center) < radius;
     }
 
     @Override
     public void move(double distance, double deltaAngle) {
-        translate(new Vector2D(distance * Math.cos(getRotation()), distance
-                * Math.sin(getRotation())));
+        translate(new Vector2D(distance * LookupFunctions.cos(getRotation()),
+                distance
+                * LookupFunctions.sin(getRotation())));
         rotate(deltaAngle);
     }
 

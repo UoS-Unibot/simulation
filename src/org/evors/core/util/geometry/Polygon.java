@@ -5,7 +5,7 @@ import java.awt.geom.Path2D;
 import java.util.Collection;
 import java.util.LinkedList;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
-import org.evors.core.util.geometry.Line.LineIntersection;
+import org.evors.core.util.LookupFunctions;
 
 /**
  * The Polygon class represents a group of lines. Shape-Shape intersections for
@@ -126,8 +126,8 @@ public class Polygon implements Shape2D {
     public Vector2D getLocalToWorldCoords(Vector2D localCoords) {
         return getCenter().add(
                 new Vector2D(
-                        localCoords.getX() * Math.cos(rotation),
-                        localCoords.getY() * Math.sin(rotation)
+                        localCoords.getX() * LookupFunctions.cos(rotation),
+                        localCoords.getY() * LookupFunctions.sin(rotation)
                 )
         );
     }
@@ -140,8 +140,8 @@ public class Polygon implements Shape2D {
      */
     @Override
     public void move(double distance, double deltaAngle) {
-        translate(new Vector2D(distance * Math.cos(getRotation()), distance
-                * Math.sin(getRotation())));
+        translate(new Vector2D(distance * LookupFunctions.cos(getRotation()), distance
+                * LookupFunctions.sin(getRotation())));
         rotate(deltaAngle);
     }
 
@@ -194,7 +194,7 @@ public class Polygon implements Shape2D {
      * tracing.
      *
      * @param line Line to check for intersections.
-     * @return the LineIntersection with the lowest segment distance.
+     * @return the Intersection with the lowest segment distance.
      */
     @Override
     public Intersection getSmallestIntersection(Line line) {

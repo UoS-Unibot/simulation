@@ -5,8 +5,6 @@
  */
 package org.evors.rs.ui.sandpit;
 
-import org.evors.rs.ui.sandpit.SandPitControls;
-import org.evors.rs.ui.sandpit.SandPitCanvas;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -15,13 +13,12 @@ import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JPanel;
-import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
-import org.evors.genesis.GAParameters.GABuilder;
 import org.evors.rs.genesis.RobotExperiment;
 import org.evors.genesis.Genotype;
 import org.evors.rs.sim.robot.ctrnn.CTRNNLayout;
 import org.evors.rs.sim.robot.ctrnn.io.JSONCTRNNLayout;
 import org.evors.core.RunController;
+import org.evors.rs.kjunior.SimulatedKJunior;
 import org.evors.rs.sim.core.SimulationBuilder;
 
 /**
@@ -31,6 +28,8 @@ import org.evors.rs.sim.core.SimulationBuilder;
 public class SimulationViewer extends JPanel {
 
     private TrialViewer cv;
+    private RobotExperiment exp;
+    private Genotype geno;
 
     public SimulationViewer() {
         this.setLayout(new GridBagLayout());
@@ -43,25 +42,26 @@ public class SimulationViewer extends JPanel {
         cv = new TrialViewer();
         cv.setPreferredSize(new Dimension(800, 600));
         this.add(cv, gbc);
-        
+
         gbc.gridy = 2;
         SandPitControls ctrl = new SandPitControls();
         this.add(ctrl, gbc);
-        
+
         ctrl.addListener(new VisualiserListener() {
 
             @Override
             public void setRunning(boolean isRunning) {
-                if(isRunning)
+                if (isRunning) {
                     cv.start();
-                else
+                } else {
                     cv.stop();
+                }
             }
 
             @Override
             public void restart() {
                 cv.stop();
-                loadRandomControllerWithDefaultLayout();
+                loadSimulation(exp, geno);
             }
 
             @Override
@@ -69,29 +69,37 @@ public class SimulationViewer extends JPanel {
                 cv.setDelay(newSpeed);
             }
         });
-        
+
     }
-    
-    public void loadSimulation(RobotExperiment exp,Genotype geno) {
-        RunController controller = new SimulationBuilder(exp.getLayout().getCTRNNController(geno.getGenes())).setWorld(exp.getWorld()).build();
-        cv.loadSimulation(controller);
-    }
-    
-    public void loadRandomControllerWithDefaultLayout() {
-        CTRNNLayout layout;
-        
-        try {
-            layout = JSONCTRNNLayout.fromFile(new File(System.getProperty("user.dir") + "/user/CTRNN Layouts/Simple5Neuron3LayerController.json")).toCTRNNLayout();
-        } catch (IOException ex) {
-            Logger.getLogger(SandPitCanvas.class.getName()).log(Level.SEVERE, null, ex);
-            return;
-        }
-        
-        Genotype g = Genotype.withRandomGenome(layout.getGenotypeLength());
-        
-        RunController controller = new SimulationBuilder(layout.getCTRNNController(g.getGenes())).setWorldSize(new Vector2D(10,10)).build();
+
+    public void loadSimulation(RobotExperiment exp, Genotype geno) {
+        this.exp = exp;
+        this.geno = geno;
+        RunController controller = new SimulationBuilder(
+                exp.getLayout().getCTRNNController(geno.getGenes()),
+                new SimulatedKJunior(exp.getWorld(), 1f/60f)
+        ).setWorld(exp.getWorld()).build();
         cv.loadSimulation(controller);
     }
 
+    public void loadRandomControllerWithDefaultLayout() throws IOException {
+        CTRNNLayout layout;
+
+        try {
+            layout = JSONCTRNNLayout.fromFile(new File(System.getProperty(
+                    "user.dir")
+                    + "/user/CTRNN Layouts/Simple5Neuron3LayerController.json")).
+                    toCTRNNLayout();
+        } catch (IOException ex) {
+            Logger.getLogger(SandPitCanvas.class.getName()).log(Level.SEVERE,
+                    null, ex);
+            return;
+        }
+
+        this.geno = Genotype.withRandomGenome(layout.getGenotypeLength());
+        this.exp = RobotExperiment.fromDirectory(System.getProperty(
+                "user.dir") + "/demo/");
+        loadSimulation(exp, geno);
+    }
 
 }

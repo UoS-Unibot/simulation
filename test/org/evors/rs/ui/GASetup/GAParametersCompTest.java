@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.evors.rs.sim.robot.ctrnn;
+package org.evors.rs.ui.GASetup;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -12,10 +12,14 @@ import static org.junit.Assert.*;
  *
  * @author miles
  */
-public class CTRNNTest {
+public class GAParametersCompTest {
     
-    public CTRNNTest() {
+    public GAParametersCompTest() {
     }
 
+    @Test
+    public void defaultGAParametersComp() {
+        GAParametersComp gap = new GAParametersComp();
+    }
     
 }

@@ -8,6 +8,7 @@ package org.evors.genesis;
 import org.evors.genesis.GA;
 import java.io.File;
 import java.io.IOException;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.junit.Test;
 import org.evors.rs.genesis.RobotExperiment;
 import org.evors.rs.genesis.RobotPhenotype;
@@ -15,6 +16,7 @@ import org.evors.rs.sim.robot.ctrnn.io.JSONCTRNNLayout;
 import org.evors.rs.sim.core.worldio.JSONWorld;
 import org.evors.rs.sim.core.SimulationWorld;
 import org.evors.rs.sim.robot.ctrnn.CTRNNLayout;
+import org.evors.rs.unibot.sim.SimulatedUnibot;
 
 /**
  *
@@ -32,7 +34,8 @@ public class GAEndToEnd {
         CTRNNLayout layout = JSONCTRNNLayout.fromFile(file).toCTRNNLayout();
         SimulationWorld world = JSONWorld.fromFile(new File(System.getProperty(
                 "user.dir") + "/user/Worlds/5x5_Two_Objects.json"));
-        exp = new RobotExperiment(layout, world);
+        exp = new RobotExperiment(layout, new SimulatedUnibot(world,
+                new Vector2D(0.6,0.6), 1f/60f), world);
         ga = new GA(new RobotPhenotype(exp));
         while (!ga.isFinished()) {
             ga.doNextGeneration();

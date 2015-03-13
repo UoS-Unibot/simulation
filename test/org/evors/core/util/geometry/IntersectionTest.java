@@ -156,4 +156,20 @@ public class IntersectionTest {
         assertThat(icl.intersectp1,vEquals(new Vector2D(0,2)));
         assertThat(icl.intersectp2,vEquals(new Vector2D(0,-2)));
     }
+    
+    @Test
+    public void circleAndLineDoNotIntersect() {
+        //Reproducing a bug
+        circle = Circle.getFromCenter(new Vector2D(0.3467132624,0.0035458654), 0.065);
+        Line line = Line.fromCoords(-1.2, -1.2, -0.8, -1.2);
+        assertFalse(circle.intersectsWith(line));
+    }
+    
+    @Test
+    public void circleAndLineDoNotIntersect2() {
+        //Reproducing a bug
+        circle = Circle.getFromCenter(new Vector2D(0.3396085131,-0.0168142506), 0.065);
+        Line line = Line.fromCoords(0.8, 0.8, 1.2, 0.8);
+        assertFalse(circle.intersectsWith(line));
+    }
 }

@@ -19,7 +19,7 @@ import org.junit.Test;
  */
 public class TestUtils {
     
-    public static final double EPS = 1E-5;
+    public static final double EPS = 1E-4;
     
     public static Matcher<Vector2D> vEquals(final Vector2D v,final double eps) {
             return new BaseMatcher<Vector2D>() {

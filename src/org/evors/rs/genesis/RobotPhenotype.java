@@ -13,16 +13,19 @@ import org.evors.genesis.Phenotype;
 import org.evors.core.RunController;
 import org.evors.rs.sim.core.SimulationBuilder;
 import org.evors.rs.sim.core.SimulationWorld;
+import org.evors.rs.sim.robot.SimulatedRobotBody;
 import org.evors.rs.sim.robot.ctrnn.CTRNNLayout;
 
 public final class RobotPhenotype implements Phenotype {
 
     private final CTRNNLayout layout;
     private final SimulationWorld world;
+    private final SimulatedRobotBody robot;
     
     public RobotPhenotype(RobotExperiment exp) {
         layout = exp.getLayout();
         world = exp.getWorld();
+        robot = exp.getRobot();
     }
 
     @Override
@@ -34,7 +37,7 @@ public final class RobotPhenotype implements Phenotype {
     public float calculateFitness(float[] genes) {
 
         RunController sc
-                = new SimulationBuilder(layout.getCTRNNController(genes)).setWorld(world).
+                = new SimulationBuilder(layout.getCTRNNController(genes),robot).setWorld(world).
                 build();
         
         float totalTrialLength = (float) (30000f *sc.getTimeStep());

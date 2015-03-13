@@ -15,6 +15,7 @@ import org.evors.rs.sim.core.SimulationWorld;
 import org.evors.core.IRobotController;
 import org.evors.rs.sim.robot.SimulatedRobotBody;
 import static org.evors.core.TestUtils.vEquals;
+import org.evors.rs.unibot.sim.SimulatedUnibot;
 
 /**
  *
@@ -28,7 +29,7 @@ public class EndToEndTests {
     
     @Test
     public void controllerWith0VelocityDoesNotMoveRobot() {
-        robot = new SimulatedRobotBody(world);
+        robot = new SimulatedUnibot(world,new Vector2D(0.6,0.6), 1f/60f);
         sim = new RunController(controller,robot);
         new Expectations() {{
             controller.getVelocity(); result = 0;
@@ -42,7 +43,7 @@ public class EndToEndTests {
     
     @Test
     public void controllerWith1VelocityMoves1Meter() {
-        robot = new SimulatedRobotBody(world);
+        robot = new SimulatedUnibot(world,new Vector2D(0.6,0.6), 1f/60f);
         sim = new RunController(controller,robot);
         new Expectations() {{
             controller.getVelocity(); result = 1;

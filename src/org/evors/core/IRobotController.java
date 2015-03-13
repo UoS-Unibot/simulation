@@ -21,7 +21,7 @@ public interface IRobotController {
      *
      * @param input RobotInput
      */
-    public void step(RobotInput input);
+    public void step(float[] input);
 
     /**
      * Gets the current velocity output of the controller in metres/second.

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.evors.core.util.geometry;
 
 import java.awt.geom.Line2D;
@@ -10,6 +5,7 @@ import static java.lang.Double.NaN;
 import java.util.Collection;
 import java.util.LinkedList;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
+import org.evors.core.util.LookupFunctions;
 
 /**
  * The Line class is the basis of the geometry API, representing a line segment
@@ -59,8 +55,8 @@ public class Line extends Polygon {
     private static Vector2D translatePolar(Vector2D v, double angle,
             double length) {
         return new Vector2D(
-                v.getX() + length * Math.cos(angle),
-                v.getY() + length * Math.sin(angle)
+                v.getX() + length * LookupFunctions.cos(angle),
+                v.getY() + length * LookupFunctions.sin(angle)
         );
     }
 
@@ -208,36 +204,42 @@ public class Line extends Polygon {
     private Vector2D getRotatedPoint(Vector2D pivot, Vector2D point,
             double deltaAngle) {
         return new Vector2D(
-                pivot.getX() + Math.cos(deltaAngle) * (point.getX() - pivot.
+                pivot.getX() + LookupFunctions.cos(deltaAngle) * (point.getX() - pivot.
                 getX())
-                - Math.sin(deltaAngle) * (point.getY() - pivot.getY()),
-                pivot.getY() + Math.sin(deltaAngle) * (point.getX() - pivot.
+                - LookupFunctions.sin(deltaAngle) * (point.getY() - pivot.getY()),
+                pivot.getY() + LookupFunctions.sin(deltaAngle) * (point.getX() - pivot.
                 getX())
-                + Math.cos(deltaAngle) * (point.getY() - pivot.getY())
+                + LookupFunctions.cos(deltaAngle) * (point.getY() - pivot.getY())
         );
     }
 
+    /**
+     * Gets the shortest distance from the line to a given point.
+     *
+     * @param point Point to get distance from.
+     * @return Shortest distance from the line to a given point
+     */
     public double getShortestDistToPoint(Vector2D point) {
         /**
          * Adapted from C code by Prof Phil Husbands.
          */
-        double l, t;
+        double l2, t;
         Vector2D A, B, proj;
         Vector2D line = p2.subtract(p1);
-        l = getLength();
-        if (l == 0) {
+        l2 = line.getNormSq();
+        if (l2 == 0) {
             return point.subtract(p1).getNorm();
         }
         A = point.subtract(p1);
         B = line;
-        t = A.dotProduct(B) / (l * l);
+        t = A.dotProduct(B) / l2;
         if (t < 0) {
-            return point.subtract(A).getNorm(); //actual point lies off p1
+            return point.subtract(p1).getNorm(); //actual point lies off p1
         } else if (t > 1) {
-            return point.subtract(B).getNorm(); //lies off p2
+            return point.subtract(p2).getNorm(); //lies off p2
         } else {
-            proj = A.add(t, B);
-            return proj.getNorm();
+            proj = p1.add(t, line);
+            return point.subtract(proj).getNorm();
         }
     }
 
@@ -257,157 +259,12 @@ public class Line extends Polygon {
     }
 
     /**
+     * Provides a string representation of this line.
      *
      * @return
      */
     @Override
     public String toString() {
         return "Line{" + "p1=" + p1 + ", p2=" + p2 + '}';
-    }
-
-    /**
-     * Provides a LineIntersection with intersecting = false.
-     *
-     * @return
-     */
-    public static LineIntersection getNoIntersection() {
-        return LineIntersection.noIntersection();
-    }
-
-    /**
-     * Computes Line - Line intersections and provides information about
-     * intersection point and distances on either line segment.
-     */
-    public static class LineIntersection {
-
-        /**
-         * Whether the two Lines given intersect.
-         */
-        public final boolean isIntersection;
-        /**
-         * Distance between line.p1 and the intersection point. Is NaN if there
-         * is no intersection.
-         */
-        public final double line1DistToIntersect,
-                /**
-                 * Distance between line2.p1 and the intersection point. Is NaN
-                 * if there is no intersection.
-                 */
-                line2DistToIntersect;
-
-        /**
-         * Point of intersection. Is NaN if there is no intersection.
-         */
-        public final Vector2D intersectionPoint;
-
-        /**
-         * Provides a LineIntersection with intersecting = false.
-         *
-         * @return
-         */
-        public static LineIntersection noIntersection() {
-            return new LineIntersection();
-        }
-
-        public static LineIntersection fromSmallestCircleLine(Line line,
-                Circle circle) {
-            //Implemented from http://mathworld.wolfram.com/Circle-LineIntersection.html
-
-            double dx = line.p2.getX() - line.p1.getX(),
-                    dy = line.p2.getY() - line.p1.getY(),
-                    dr = Math.sqrt(dx * dx + dy * dy),
-                    D = line.p1.getX() * line.p2.getY() - line.p1.getY()
-                    * line.p2.
-                    getX(), discrim = circle.getRadius() * circle.getRadius()
-                    * dr - D * D;
-            if (discrim < 0 || discrim == 0) { //no intersection or line at a tangent, avoids root -1/ root 0
-                return Line.LineIntersection.noIntersection();
-            }
-            double line1DistToIntersect,
-                    line2DistToIntersect = NaN,
-                    x1, y1, x2, y2;
-            Vector2D intersectionPoint;
-            x1 = (D * dy + sgn(dy) * dx * discrim) / (dr * dr);
-            x2 = (D * dy - sgn(dy) * dx * discrim) / (dr * dr);
-            y1 = (D * dx + Math.abs(dy) * discrim) / (dr * dr);
-            y2 = (D * dy + Math.abs(dy) * discrim) / (dr * dr);
-            return null;
-        }
-
-        private static int sgn(double x) {
-            return x < 0 ? -1 : 1;
-        }
-
-        private LineIntersection() {
-            isIntersection = false;
-            line1DistToIntersect = NaN;
-            line2DistToIntersect = NaN;
-            intersectionPoint = Vector2D.NaN;
-        }
-
-        public LineIntersection(boolean isIntersection,
-                double line1DistToIntersect, double line2DistToIntersect,
-                Vector2D intersectionPoint) {
-            this.isIntersection = isIntersection;
-            this.line1DistToIntersect = line1DistToIntersect;
-            this.line2DistToIntersect = line2DistToIntersect;
-            this.intersectionPoint = intersectionPoint;
-        }
-
-        /**
-         * Constructs a new LineIntersection between the specified lines,
-         * computing whether there is an intersection.
-         *
-         * @param line1
-         * @param line2
-         */
-        public LineIntersection(Line line1, Line line2) {
-            /**
-             * Implementation of http://stackoverflow.com/a/565282 Imagine that
-             * both lines can be represented by the vectors p + r and q + s.
-             * This algorithm attempts to find two scalars t and u such that p +
-             * tr = q + us; this is the intersection point. Several cases must
-             * be ruled out - collinearity (lines are 'lined up'), overlapping
-             * lines and parallel lines.
-             */
-            Vector2D q = line2.p1,
-                    p = line1.p1,
-                    s = line2.p2.subtract(line2.p1),
-                    r = line1.p2.subtract(line1.p1),
-                    qp = q.subtract(p);
-            double rs = cross2D(r, s),
-                    qpCrossR = cross2D(qp, r),
-                    qpCrossS = cross2D(qp, s),
-                    t = qpCrossS / rs,
-                    u = qpCrossR / rs;
-            if (rs == 0) {
-                isIntersection = false;
-                /**
-                 * There are three possible cases if the cross product of r and
-                 * s is 0, all of which result in Nan being returned: (1) the
-                 * lines are parallel and do not intersect, (2) the lines are
-                 * collinear and disjoint, with no intersection, or (3) the
-                 * lines are collinear and overlapping, with no definitive
-                 * intersection point.
-                 */
-                intersectionPoint = Vector2D.NaN;
-                line1DistToIntersect = NaN;
-                line2DistToIntersect = NaN;
-            } else if (0 < t && t < 1
-                    & 0 < u & u < 1) {
-                //lines intersect, return p + tr
-                intersectionPoint = p.add(t, r);
-                isIntersection = true;
-                line1DistToIntersect = t * r.getNorm();
-                line2DistToIntersect = u * s.getNorm();
-            } else {
-                //non parallel and not intersecting
-                intersectionPoint = Vector2D.NaN;
-                isIntersection = false;
-                line1DistToIntersect = NaN;
-                line2DistToIntersect = NaN;
-            }
-        }
-
     }
 }

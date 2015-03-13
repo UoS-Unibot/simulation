@@ -7,6 +7,7 @@ package org.evors.rs.ui;
 
 import java.beans.PropertyVetoException;
 import java.io.IOException;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JFrame;
@@ -22,12 +23,17 @@ import org.evors.rs.ui.utils.UIUtils;
  * @author miles
  */
 public class MainUI extends javax.swing.JFrame {
+    private static final Logger LOG = Logger.getLogger(MainUI.class.getName());
 
+    
+    
     /**
      * Creates new form MainUI
      */
     public MainUI() {
         initComponents();
+        LOG.setLevel(Level.ALL);
+        LOG.addHandler(new ConsoleHandler());
     }
 
     /**

@@ -103,7 +103,7 @@ public class SimulationWorld {
         return new Vector2D(5,5);
     }
 
-    public double findRange(Line rangeFinderLine) {
+    public float traceRay(Line rangeFinderLine) {
         double lowestDist = 0; //will return this if no intersection found
 
         for (Shape2D obj : objects) {

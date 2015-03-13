@@ -8,19 +8,13 @@ package org.evors.core;
  */
 public interface IRobotBody {
 
-    /**
-     * Gets the rangefinder value of this robot.
-     *
-     * @return
-     */
-    public double getRange();
 
     /**
-     * Gets sonar data from this robot.
+     * Gets sensory input data from this robot.
      *
      * @return
      */
-    public double[] getSonars();
+    public float[] getInput();
 
     /**
      * Whether this robot is live and able to move; this can be used to

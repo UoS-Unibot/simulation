@@ -5,13 +5,13 @@
  */
 package org.evors.rs.sim.core;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.evors.core.RunController;
-import org.evors.core.util.geometry.Polygon;
 import org.evors.core.IRobotController;
+import org.evors.core.util.geometry.Shape2D;
 import org.evors.rs.sim.robot.SimulatedRobotBody;
+import org.evors.rs.unibot.sim.SimulatedUnibot;
 
 /**
  * Builds an SimulationController instance, specifying an IRobotController and
@@ -21,39 +21,28 @@ public class SimulationBuilder {
 
     private Vector2D worldSize = new Vector2D(5, 5);
     private Vector2D robotSize = new Vector2D(0.6, 0.6);
-    private Vector2D robotPosition = Vector2D.ZERO;
-    private float robotInitialHeading = 0;
     private float timeStepLength = 1f / 60f;
-    private Collection<Polygon> worldObjects = new ArrayList<>(0);
     private IRobotController controller;
     private boolean loggingEnabled = false;
     private SimulationWorld world;
+    private final SimulatedRobotBody robot;
 
     /**
      * Instantiates the builder - optional parameters are set to their defaults.
      *
      * @param controller IRobotController used to control the robot.
      */
-    public SimulationBuilder(IRobotController controller) {
+    public SimulationBuilder(IRobotController controller,
+            SimulatedRobotBody robot) {
         this.controller = controller;
+        this.robot = robot;
     }
 
-    public SimulationBuilder(IRobotController controller, SimulationWorld world) {
+    public SimulationBuilder(IRobotController controller, SimulationWorld world,
+            SimulatedRobotBody robot) {
         this.controller = controller;
         this.world = world;
-    }
-
-    /**
-     * Sets the world bounds in metres, 5mx5m by default.
-     *
-     * @param worldSize Vector2D with dimensions of the world's bounds in
-     * metres.
-     * @return SimulationBuilder instance for further parameter setting or
-     * building.
-     */
-    public SimulationBuilder setWorldSize(Vector2D worldSize) {
-        this.worldSize = worldSize;
-        return this;
+        this.robot = robot;
     }
 
     public SimulationBuilder setWorld(SimulationWorld world) {
@@ -70,32 +59,6 @@ public class SimulationBuilder {
      */
     public SimulationBuilder setRobotSize(Vector2D robotSize) {
         this.robotSize = robotSize;
-        return this;
-    }
-
-    /**
-     * Sets the initial position of the robot in metres - [0,0] by default.
-     *
-     * @param robotPosition Vector2D with the robot's initial position in world
-     * coordinates
-     * @return SimulationBuilder instance for further parameter setting or
-     * building.
-     */
-    public SimulationBuilder setRobotPosition(Vector2D robotPosition) {
-        this.robotPosition = robotPosition;
-        return this;
-    }
-
-    /**
-     * Sets the initial heading of the robot in radians - 0 by default.
-     *
-     * @param robotInitialHeading Angle in radians specifying initial heading of
-     * the robot.
-     * @return SimulationBuilder instance for further parameter setting or
-     * building.
-     */
-    public SimulationBuilder setRobotInitialHeading(float robotInitialHeading) {
-        this.robotInitialHeading = robotInitialHeading;
         return this;
     }
 
@@ -124,9 +87,10 @@ public class SimulationBuilder {
      * @return SimulationBuilder instance for further parameter setting or
      * building.
      */
-    public SimulationBuilder setWorldObjects(Collection<Polygon> worldObjects) {
-        this.worldObjects = worldObjects;
-        return this;
+    public SimulationBuilder setWorldObjects(Collection<Shape2D> worldObjects) {
+        SimulationWorld world = new SimulationWorld(worldSize);
+        world.addWorldObjects(worldObjects);
+        return setWorld(world);
     }
 
     public SimulationBuilder setLogging(boolean enabled) {
@@ -140,9 +104,10 @@ public class SimulationBuilder {
      * @return final SimulationController
      */
     public RunController build() {
-        if(world == null)
+        if (world == null) {
             world = new SimulationWorld(worldSize);
-        return new RunController(controller,new SimulatedRobotBody(world,robotSize,timeStepLength));
+        }
+        return new RunController(controller, robot);
     }
 
 }

@@ -9,10 +9,10 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Stroke;
-import org.evors.rs.sim.robot.SimulatedRobotBody;
 import org.evors.rs.sim.core.SimulationWorld;
 import org.evors.core.util.geometry.Line;
 import org.evors.core.util.geometry.Shape2D;
+import org.evors.rs.sim.robot.SimulatedRobotBody;
 
 /**
  *
@@ -38,14 +38,7 @@ public class SandpitRenderer {
         }
     }
     public static void drawRobot(Graphics2D g2,SimulatedRobotBody robot) {
-        g2.setColor(new Color(45,45,45));
-        //g2.draw(robot.getShape().toJava2DShape());
-        g2.fill(robot.getShape().toJava2DShape());
-        g2.setStroke(bstroke);
-//        g2.setColor(Color.GREEN);
-//        g2.draw(robot.getRangeFinderLine().toLine2D());
-        g2.setColor(Color.RED);
-        g2.draw(robot.getShortenedRangeFinderLine().toLine2D());
+        robot.render(g2);
     }
     
     

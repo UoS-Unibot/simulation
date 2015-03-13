@@ -1,16 +1,14 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.evors.core.util.geometry;
 
 import static java.lang.Double.NaN;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 
 /**
+ * Represents an intersection calculation between two shapes, storing whether an
+ * intersection is present, and the smallest line distance depending on the
+ * types of shapes.
  *
- * @author miles
+ * @author Miles Bryant <mb459 at sussex.ac.uk>
  */
 public class Intersection {
 
@@ -19,15 +17,20 @@ public class Intersection {
      */
     public final Vector2D intersectionPoint;
     /**
-     * Whether the two Lines given intersect.
+     * Whether the two Shape2Ds given intersect.
      */
     public final boolean isIntersection;
 
-    public Intersection(Vector2D intersectionPoint, boolean isIntersection) {
+    private Intersection(Vector2D intersectionPoint, boolean isIntersection) {
         this.intersectionPoint = intersectionPoint;
         this.isIntersection = isIntersection;
     }
 
+    /**
+     * Used to return an Intersection object specifying no intersection present
+     *
+     * @return an Intersection with isIntersection set to false.
+     */
     public static Intersection noIntersection() {
         return new Intersection(Vector2D.NaN, false);
     }
@@ -36,6 +39,13 @@ public class Intersection {
         return v1.getX() * v2.getY() - v1.getY() * v2.getX();
     }
 
+    /**
+     * Used to get the lowest line distance to the intersection - NaN by
+     * default, but overridden by more specific Intersection subclasses with
+     * their own implementation.
+     *
+     * @return NaN
+     */
     public double getSmallestLineDist() {
         return Double.NaN;
     }
@@ -64,7 +74,7 @@ public class Intersection {
 
         private LineLine(double line1DistToIntersect,
                 double line2DistToIntersect,
-                Vector2D intersectionPoint,boolean intersecting) {
+                Vector2D intersectionPoint, boolean intersecting) {
             super(intersectionPoint, intersecting);
             this.line1DistToIntersect = line1DistToIntersect;
             this.line2DistToIntersect = line2DistToIntersect;
@@ -74,8 +84,9 @@ public class Intersection {
          * Constructs a new LineIntersection between the specified lines,
          * computing whether there is an intersection.
          *
-         * @param line1
-         * @param line2
+         * @param line1 First line.
+         * @param line2 Second line.
+         * @return A LineLine object with the details of the intersection.
          */
         public static LineLine calculate(Line line1, Line line2) {
             /**
@@ -127,9 +138,17 @@ public class Intersection {
                 line2DistToIntersect = NaN;
             }
             return new LineLine(line1DistToIntersect, line2DistToIntersect,
-                    intersectionPoint,isIntersection);
+                    intersectionPoint, isIntersection);
         }
 
+        /**
+         * Returns the distance of the first line p1 to the intersection point.
+         * Use line2DistToIntersect for the second line, and calculate distance
+         * from the intersection point for other points.
+         *
+         * @return distance between first line p1 and intersection point, or NaN
+         * if no intersection.
+         */
         @Override
         public double getSmallestLineDist() {
             return line1DistToIntersect;
@@ -137,13 +156,36 @@ public class Intersection {
 
     }
 
+    /**
+     * Represents an intersection between a circle and a line.
+     */
     public static class CircleLine extends Intersection {
 
-        public final Vector2D intersectp1, intersectp2;
-        public final boolean isTangent;
-        public final double linedistP1, linedistP2;
+        /**
+         * Point of first line intersection. NaN if no intersection.
+         */
+        public final Vector2D intersectp1,
+                /**
+                 * Point of second line intersection. NaN if line given is
+                 * tangent to the circle
+                 */
+                intersectp2;
 
-        public CircleLine() {
+        /**
+         * Whether the line given is a tangent to the circle.
+         */
+        public final boolean isTangent;
+        /**
+         * Distance from the first line segment to the first intersection point.
+         */
+        public final double linedistP1,
+                /**
+                 * Distance from the second intersection point to the end of the
+                 * line.
+                 */
+                linedistP2;
+
+        private CircleLine() {
             super(Vector2D.NaN, false);
             this.intersectp1 = Vector2D.NaN;
             this.intersectp2 = Vector2D.NaN;
@@ -162,6 +204,14 @@ public class Intersection {
             this.linedistP2 = linedistP2;
         }
 
+        /**
+         * Calculates an intersection between the given circle and line.
+         *
+         * @param circle Circle
+         * @param line Line
+         * @return a CircleLine intersection object with information about the
+         * intersection
+         */
         public static CircleLine calculate(Circle circle, Line line) {
 
             //Implemented from http://mathworld.wolfram.com/Circle-LineIntersection.html
@@ -172,8 +222,9 @@ public class Intersection {
                     dy = line.p2.getY() - line.p1.getY(),
                     dr = Math.sqrt(dx * dx + dy * dy),
                     D = line.p1.getX() * line.p2.getY() - line.p1.getY()
-                    * line.p2.getX(), 
-                    discrim = circle.getRadius() * circle.getRadius() * dr * dr - D * D;
+                    * line.p2.getX(),
+                    discrim = circle.getRadius() * circle.getRadius() * dr * dr
+                    - D * D;
             if (discrim < 0) { //no intersection
                 return new CircleLine();
             } else if (discrim == 0) {
@@ -203,11 +254,15 @@ public class Intersection {
             return x < 0 ? -1 : 1;
         }
 
+        /**
+         * Returns the smallest line distance to intersection.
+         *
+         * @return the line distance from the line p1 to the intersection.
+         */
         @Override
         public double getSmallestLineDist() {
-            return Math.min(linedistP1,linedistP2);
+            return linedistP1;
         }
-        
-        
+
     }
 }

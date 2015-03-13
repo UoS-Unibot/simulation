@@ -3,52 +3,62 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.evors.rs.sim.robot;
+package org.evors.rs.unibot.sim;
 
-import org.evors.rs.sim.robot.SimulatedRobotBody;
+import java.util.Random;
 import mockit.Expectations;
 import mockit.Mocked;
 import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import org.junit.Before;
-import org.junit.Test;
-import org.evors.rs.sim.core.SimulationWorld;
-import org.evors.core.util.geometry.Line;
 import static org.evors.core.TestUtils.vEquals;
+import org.evors.core.util.geometry.Line;
+import org.evors.rs.sim.core.SimulationWorld;
+import org.junit.Test;
+import static org.junit.Assert.*;
+import org.junit.Before;
 
 /**
  *
  * @author miles
  */
-public class SimulatedRobotBodyTest {
+public class SimulatedUnibotTest {
 
-    public SimulatedRobotBodyTest() {
+    public SimulatedUnibotTest() {
     }
 
-    SimulatedRobotBody robot;
+    SimulatedUnibot robot;
     @Mocked SimulationWorld world;
+    @Mocked Random rand;
+    
+    @Test
+    public void testSomeMethod() {
+    }
 
     @Before
     public void setUp() {
-        new Expectations() {{
-            world.getBounds(); result = new Vector2D(5,5);
-        }};
-        robot = new SimulatedRobotBody(world);
+        new Expectations() {
+            {
+                world.getBounds();
+                result = new Vector2D(5, 5);
+            }
+        };
+        robot = new SimulatedUnibot(world, new Vector2D(0.6,0.6),1f/60f);
     }
-    
+
     public void setUpForRangeFinder() {
-        new Expectations() {{
-            world.getBounds(); result = new Vector2D(5,5);
-        }};
-        robot = new SimulatedRobotBody(world,new Vector2D(2,2),1f/60f);
+        new Expectations() {
+            {
+                world.getBounds();
+                result = new Vector2D(5, 5);
+            }
+        };
+        robot = new SimulatedUnibot(world, new Vector2D(2, 2), 1f / 60f);
     }
-    
+
     @Test
     public void newRobotCreatesRangeFinderAt1_0__1PlusRoot50_0() {
         setUpForRangeFinder();
-        assertThat(robot.getRangeFinderLine().p1, vEquals(1,0));
-        assertThat(robot.getRangeFinderLine().p2, vEquals(1+Math.sqrt(50),0));
+        assertThat(robot.getRangeFinderLine().p1, vEquals(1, 0));
+        assertThat(robot.getRangeFinderLine().p2, vEquals(1 + Math.sqrt(50), 0));
     }
 
     @Test
@@ -56,29 +66,29 @@ public class SimulatedRobotBodyTest {
         robot.step(0, 0);
         assertThat(robot.getPosition(), vEquals(0, 0));
     }
-    
+
     @Test
     public void shapeDoesntMoveWhenRobotDoesnt() {
         robot.step(0, 0);
-        assertThat(robot.getShape().getCenter(), vEquals(0,0));
+        assertThat(robot.getShape().getCenter(), vEquals(0, 0));
     }
-    
+
     @Test
     public void shapeMoves1MWhenRobotMoves1M() {
         for (int i = 0; i < 60; i++) {
             robot.step(1, 0);
         }
-        assertThat(robot.getShape().getCenter(), vEquals(1,0));
+        assertThat(robot.getShape().getCenter(), vEquals(1, 0));
     }
-    
+
     @Test
     public void rangeFinderDoesntMoveWhenRobotDoesntMove() {
         setUpForRangeFinder();
         robot.step(0, 0);
-        assertThat(robot.getRangeFinderLine().p1, vEquals(1,0));
-        assertThat(robot.getRangeFinderLine().p2, vEquals(1+Math.sqrt(50),0));
+        assertThat(robot.getRangeFinderLine().p1, vEquals(1, 0));
+        assertThat(robot.getRangeFinderLine().p2, vEquals(1 + Math.sqrt(50), 0));
     }
-    
+
     @Test
     public void rangeFinderMoves1MeterWhenRobotMoves1Meter() {
         setUpForRangeFinder();
@@ -86,7 +96,7 @@ public class SimulatedRobotBodyTest {
             robot.step(1, 0);
         }
         assertThat(robot.getRangeFinderLine().p1, vEquals(2, 0));
-        assertThat(robot.getRangeFinderLine().p2, vEquals(2+Math.sqrt(50), 0));
+        assertThat(robot.getRangeFinderLine().p2, vEquals(2 + Math.sqrt(50), 0));
     }
 
     @Test
@@ -129,10 +139,13 @@ public class SimulatedRobotBodyTest {
     public void getRangePollsWorldForRange() {
         new Expectations() {
             {
-                world.findRange(robot.getRangeFinderLine()); result = 1;
+                world.traceRay((Line) any);
+                result = 1f;
+                rand.nextGaussian();
+                result = 0;
             }
         };
-        assertEquals(1,robot.getRange(),0.0001);
+        robot.step(0, 0);
+        assertEquals(1f, robot.getInput()[0], 0.0001);
     }
-
 }
